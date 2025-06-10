@@ -14,6 +14,10 @@ export default function Navbar() {
     setIsMenuOpen(!isMenuOpen)
   }
 
+  const closeMenu = () => {
+    setIsMenuOpen(false)
+  }
+
   const navLinks = [
     { name: "Home", href: "/" },
     { name: "About", href: "/about" },
@@ -27,7 +31,7 @@ export default function Navbar() {
       <div className="container mx-auto px-4 md:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center">
+          <Link href="/" className="flex items-center" onClick={closeMenu}>
             <span className="text-xl font-bold text-[#B22222]">Hanna's Connect</span>
           </Link>
 
@@ -69,30 +73,36 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden bg-white border-t border-gray-200 py-4 px-4">
+        <div className="md:hidden bg-white border-t border-gray-200 py-4 px-4 shadow-lg">
           <nav className="flex flex-col space-y-4">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}
-                className={`text-sm font-medium transition-colors ${
-                  pathname === link.href ? "text-[#B22222]" : "text-gray-600 hover:text-[#B22222]"
+                className={`text-sm font-medium transition-colors py-2 px-3 rounded-md ${
+                  pathname === link.href
+                    ? "text-[#B22222] bg-[#B22222]/10"
+                    : "text-gray-600 hover:text-[#B22222] hover:bg-gray-50"
                 }`}
-                onClick={() => setIsMenuOpen(false)}
+                onClick={closeMenu}
               >
                 {link.name}
               </Link>
             ))}
-            <div className="flex flex-col space-y-2 pt-2 border-t border-gray-200">
+            <div className="flex flex-col space-y-3 pt-4 border-t border-gray-200">
               <Button
                 variant="outline"
                 className="border-[#B22222] text-[#B22222] hover:bg-[#B22222] hover:text-white w-full shadow-sm font-medium"
                 asChild
               >
-                <Link href="/login">Log In</Link>
+                <Link href="/login" onClick={closeMenu}>
+                  Log In
+                </Link>
               </Button>
               <Button className="bg-[#B22222] hover:bg-[#8B0000] text-white w-full shadow-sm font-medium" asChild>
-                <Link href="/register">Sign Up</Link>
+                <Link href="/register" onClick={closeMenu}>
+                  Sign Up
+                </Link>
               </Button>
             </div>
           </nav>
