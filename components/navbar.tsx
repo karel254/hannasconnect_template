@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Menu, X } from "lucide-react"
+import { Menu, X, Heart } from "lucide-react"
 import { usePathname } from "next/navigation"
 
 export default function Navbar() {
@@ -18,6 +18,11 @@ export default function Navbar() {
     setIsMenuOpen(false)
   }
 
+  // Don't show navbar on home page for clean look
+  if (pathname === "/") {
+    return null
+  }
+
   const navLinks = [
     { name: "Home", href: "/" },
     { name: "About", href: "/about" },
@@ -27,12 +32,13 @@ export default function Navbar() {
   ]
 
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+    <header className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50 shadow-sm">
       <div className="container mx-auto px-4 md:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center" onClick={closeMenu}>
-            <span className="text-xl font-bold text-[#B22222]">Hanna's Connect</span>
+          <Link href="/" className="flex items-center gap-2" onClick={closeMenu}>
+            <Heart className="w-6 h-6 text-[#B22222] dark:text-red-400 fill-current" />
+            <span className="text-xl font-bold text-[#B22222] dark:text-red-400">Hanna's Connect</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -42,7 +48,9 @@ export default function Navbar() {
                 key={link.name}
                 href={link.href}
                 className={`text-sm font-medium transition-colors ${
-                  pathname === link.href ? "text-[#B22222]" : "text-gray-600 hover:text-[#B22222]"
+                  pathname === link.href
+                    ? "text-[#B22222] dark:text-red-400"
+                    : "text-gray-600 dark:text-gray-300 hover:text-[#B22222] dark:hover:text-red-400"
                 }`}
               >
                 {link.name}
@@ -54,18 +62,21 @@ export default function Navbar() {
           <div className="hidden md:flex items-center space-x-4">
             <Button
               variant="outline"
-              className="border-[#B22222] text-[#B22222] hover:bg-[#B22222] hover:text-white shadow-sm font-medium"
+              className="border-[#B22222] text-[#B22222] hover:bg-[#B22222] hover:text-white dark:border-red-400 dark:text-red-400 dark:hover:bg-red-400 dark:hover:text-white shadow-sm font-medium"
               asChild
             >
               <Link href="/login">Log In</Link>
             </Button>
-            <Button className="bg-[#B22222] hover:bg-[#8B0000] text-white shadow-sm font-medium" asChild>
+            <Button
+              className="bg-[#B22222] hover:bg-[#8B0000] dark:bg-red-600 dark:hover:bg-red-700 text-white shadow-sm font-medium"
+              asChild
+            >
               <Link href="/register">Sign Up</Link>
             </Button>
           </div>
 
           {/* Mobile Menu Button */}
-          <button className="md:hidden text-gray-600 focus:outline-none" onClick={toggleMenu}>
+          <button className="md:hidden text-gray-600 dark:text-gray-300 focus:outline-none" onClick={toggleMenu}>
             {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
         </div>
@@ -73,7 +84,7 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden bg-white border-t border-gray-200 py-4 px-4 shadow-lg">
+        <div className="md:hidden bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm border-t border-gray-200 dark:border-gray-700 py-4 px-4 shadow-lg">
           <nav className="flex flex-col space-y-4">
             {navLinks.map((link) => (
               <Link
@@ -81,25 +92,28 @@ export default function Navbar() {
                 href={link.href}
                 className={`text-sm font-medium transition-colors py-2 px-3 rounded-md ${
                   pathname === link.href
-                    ? "text-[#B22222] bg-[#B22222]/10"
-                    : "text-gray-600 hover:text-[#B22222] hover:bg-gray-50"
+                    ? "text-[#B22222] dark:text-red-400 bg-[#B22222]/10 dark:bg-red-400/10"
+                    : "text-gray-600 dark:text-gray-300 hover:text-[#B22222] dark:hover:text-red-400 hover:bg-gray-50 dark:hover:bg-gray-800"
                 }`}
                 onClick={closeMenu}
               >
                 {link.name}
               </Link>
             ))}
-            <div className="flex flex-col space-y-3 pt-4 border-t border-gray-200">
+            <div className="flex flex-col space-y-3 pt-4 border-t border-gray-200 dark:border-gray-700">
               <Button
                 variant="outline"
-                className="border-[#B22222] text-[#B22222] hover:bg-[#B22222] hover:text-white w-full shadow-sm font-medium"
+                className="border-[#B22222] text-[#B22222] hover:bg-[#B22222] hover:text-white dark:border-red-400 dark:text-red-400 dark:hover:bg-red-400 dark:hover:text-white w-full shadow-sm font-medium"
                 asChild
               >
                 <Link href="/login" onClick={closeMenu}>
                   Log In
                 </Link>
               </Button>
-              <Button className="bg-[#B22222] hover:bg-[#8B0000] text-white w-full shadow-sm font-medium" asChild>
+              <Button
+                className="bg-[#B22222] hover:bg-[#8B0000] dark:bg-red-600 dark:hover:bg-red-700 text-white w-full shadow-sm font-medium"
+                asChild
+              >
                 <Link href="/register" onClick={closeMenu}>
                   Sign Up
                 </Link>

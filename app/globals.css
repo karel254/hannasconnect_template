@@ -84,42 +84,6 @@
 }
 
 /* Custom animations */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-fadeIn {
-  animation: fadeIn 0.3s ease-out;
-}
-
-/* Gradient text */
-.gradient-text {
-  background: linear-gradient(135deg, #b22222, #ff69b4);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Glass morphism effect */
-.glass {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.dark .glass {
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-/* Custom animations for hero section */
 @keyframes float {
   0%,
   100% {
@@ -149,7 +113,52 @@
   animation-delay: 1.5s;
 }
 
-/* Enhance existing animations */
+/* Delay utilities */
+.delay-500 {
+  animation-delay: 0.5s;
+}
+
+.delay-1000 {
+  animation-delay: 1s;
+}
+
+.delay-1500 {
+  animation-delay: 1.5s;
+}
+
+.delay-2000 {
+  animation-delay: 2s;
+}
+
+.delay-3000 {
+  animation-delay: 3s;
+}
+
+.delay-4000 {
+  animation-delay: 4s;
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, #b22222, #ff69b4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glass morphism effect */
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.dark .glass {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Enhanced animations */
 @keyframes pulse {
   0%,
   100% {
@@ -175,5 +184,37 @@
   100% {
     transform: scale(2);
     opacity: 0;
+  }
+}
+
+/* Custom hover effects */
+.group:hover .group-hover\:rotate-180 {
+  transform: rotate(180deg);
+}
+
+.group:hover .group-hover\:rotate-12 {
+  transform: rotate(12deg);
+}
+
+.group:hover .group-hover\:bounce {
+  animation: bounce 0.5s ease-in-out;
+}
+
+/* Responsive grid improvements */
+@media (max-width: 768px) {
+  .grid-cols-2 > * {
+    min-height: 140px;
+  }
+}
+
+@media (min-width: 768px) {
+  .grid-cols-2 > * {
+    min-height: 180px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid-cols-2 > * {
+    min-height: 200px;
   }
 }
