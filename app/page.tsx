@@ -54,10 +54,12 @@ export default function Home() {
                   </span>
                 </h1>
 
-                <p className="text-xl md:text-2xl text-white/95 max-w-2xl leading-relaxed drop-shadow-lg">
-                  Where <strong className="text-yellow-300">values matter more than looks</strong>. Connect
-                  authentically with people who share your vision for life.
-                </p>
+                <div className="bg-white/15 backdrop-blur-md rounded-2xl p-6 border border-white/30 shadow-2xl">
+                  <p className="text-xl md:text-2xl text-white/95 leading-relaxed drop-shadow-lg">
+                    Where <strong className="text-yellow-300">values matter more than looks</strong>. Connect
+                    authentically with people who share your vision for life.
+                  </p>
+                </div>
 
                 <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20 shadow-2xl">
                   <p className="text-xl italic text-yellow-300 font-light mb-2 drop-shadow-md">
