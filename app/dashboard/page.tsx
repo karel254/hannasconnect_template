@@ -27,6 +27,7 @@ import {
   Sun,
   Monitor,
   UserMinus,
+  Users,
 } from "lucide-react"
 import { sendConnectionRequest, acceptConnection, rejectConnection } from "../actions"
 import { useToast } from "@/components/ui/use-toast"
@@ -46,7 +47,7 @@ export default function Dashboard() {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const typingTimeoutRef = useRef<NodeJS.Timeout>()
 
-  // Real-time timestamp function
+  // Real-time timestamp function - updated to work properly
   const getCurrentTime = () => {
     const now = new Date()
     return now.toLocaleTimeString([], {
@@ -54,6 +55,11 @@ export default function Dashboard() {
       minute: "2-digit",
       hour12: true,
     })
+  }
+
+  // Add a function to get full timestamp for message storage
+  const getFullTimestamp = () => {
+    return new Date().toISOString()
   }
 
   // Auto-scroll to bottom of messages
@@ -488,6 +494,7 @@ export default function Dashboard() {
       sender: "you",
       text: messageInput,
       timestamp: getCurrentTime(),
+      fullTimestamp: getFullTimestamp(), // Store full timestamp for sorting
     }
 
     setMessages((prev) => [...prev, newMessage])
@@ -505,7 +512,8 @@ export default function Dashboard() {
         id: Date.now() + 1,
         sender: "them",
         text: `Thanks for your message! I appreciate you reaching out. How has your day been?`,
-        timestamp: getCurrentTime(),
+        timestamp: getCurrentTime(), // This will be the actual time when response is sent
+        fullTimestamp: getFullTimestamp(),
       }
       setMessages((prev) => [...prev, responseMessage])
     }, 2000)
@@ -518,25 +526,33 @@ export default function Dashboard() {
     // Mark as read
     setChatUsers((prev) => prev.map((u) => (u.id === user.id ? { ...u, unread: false } : u)))
 
-    // Load chat history (in a real app, this would come from a database)
+    // Load chat history with realistic timestamps
+    const now = new Date()
+    const tenMinutesAgo = new Date(now.getTime() - 10 * 60000)
+    const eightMinutesAgo = new Date(now.getTime() - 8 * 60000)
+    const fiveMinutesAgo = new Date(now.getTime() - 5 * 60000)
+
     setMessages([
       {
         id: 1,
         sender: "them",
         text: `Hi there! I'm ${user.name}. It's nice to connect with you!`,
-        timestamp: "10:30 AM",
+        timestamp: tenMinutesAgo.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true }),
+        fullTimestamp: tenMinutesAgo.toISOString(),
       },
       {
         id: 2,
         sender: "you",
         text: "Hello! It's great to connect with you too. How are you doing today?",
-        timestamp: "10:32 AM",
+        timestamp: eightMinutesAgo.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true }),
+        fullTimestamp: eightMinutesAgo.toISOString(),
       },
       {
         id: 3,
         sender: "them",
         text: "I'm doing well, thank you! I noticed we have some common interests. Would you like to chat more about them?",
-        timestamp: "10:35 AM",
+        timestamp: fiveMinutesAgo.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true }),
+        fullTimestamp: fiveMinutesAgo.toISOString(),
       },
     ])
   }
@@ -611,6 +627,7 @@ export default function Dashboard() {
                 <div className="space-y-1">
                   {[
                     { key: "matches", icon: Heart, label: "Matches" },
+                    { key: "members", icon: Users, label: "Members" },
                     { key: "requests", icon: User, label: "Requests", badge: connectionRequests.length },
                     {
                       key: "messages",
@@ -635,7 +652,13 @@ export default function Dashboard() {
                           ? "bg-[#B22222] text-white dark:bg-red-600"
                           : "hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-300"
                       }`}
-                      onClick={() => handleTabChange(key)}
+                      onClick={() => {
+                        if (key === "members") {
+                          window.location.href = "/members"
+                        } else {
+                          handleTabChange(key)
+                        }
+                      }}
                     >
                       <Icon className="mr-3 h-4 w-4 flex-shrink-0" />
                       <span className="truncate">{label}</span>
