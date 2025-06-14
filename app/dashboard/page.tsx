@@ -62,14 +62,10 @@ export default function Dashboard() {
     return new Date().toISOString()
   }
 
-  // Auto-scroll to bottom of messages
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }
-
-  useEffect(() => {
-    scrollToBottom()
-  }, [messages])
+  // Remove automatic scrolling - let it be natural
+  // useEffect(() => {
+  //   scrollToBottom()
+  // }, [messages])
 
   // User profile information
   const [userProfile, setUserProfile] = useState({
@@ -873,7 +869,7 @@ export default function Dashboard() {
               </Card>
             )}
 
-            {/* Active Chat - Full Screen on Mobile, Responsive on Desktop */}
+            {/* Active Chat - No automatic scrolling */}
             {(activeTab === "chat" || activeTab === "messages") && activeChatUser && (
               <Card className="shadow-md flex flex-col dark:bg-gray-800 dark:border-gray-700 h-[calc(100vh-140px)] sm:h-[calc(100vh-160px)] lg:h-[calc(100vh-200px)]">
                 <CardHeader className="pb-3 border-b flex-shrink-0 dark:border-gray-600 px-4 py-3">
@@ -972,6 +968,7 @@ export default function Dashboard() {
                     </div>
                   )}
 
+                  {/* Reference div for potential manual scrolling - but no automatic scrolling */}
                   <div ref={messagesEndRef} />
                 </CardContent>
 
