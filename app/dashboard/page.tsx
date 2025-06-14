@@ -522,6 +522,7 @@ export default function Dashboard() {
   const openChat = (user: any) => {
     setActiveChatUser(user)
     setActiveTab("chat")
+    setIsMobileMenuOpen(false) // Close mobile menu if open
 
     // Mark as read
     setChatUsers((prev) => prev.map((u) => (u.id === user.id ? { ...u, unread: false } : u)))
@@ -559,15 +560,24 @@ export default function Dashboard() {
 
   // Typing indicator component
   const TypingIndicator = () => (
-    <div className="flex items-center space-x-2 p-3 bg-gray-100 dark:bg-gray-700 rounded-lg max-w-[70%]">
-      <Avatar className="h-6 w-6">
+    <div className="flex items-center space-x-2 p-2 sm:p-3 bg-white dark:bg-gray-700 rounded-2xl rounded-bl-md max-w-[70%] shadow-sm">
+      <Avatar className="h-5 w-5 sm:h-6 sm:w-6">
         <AvatarImage src={activeChatUser?.icon || "/placeholder.svg"} alt={activeChatUser?.name} />
         <AvatarFallback className="text-xs">{activeChatUser?.name?.charAt(0)}</AvatarFallback>
       </Avatar>
       <div className="flex space-x-1">
-        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
-        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></div>
-        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></div>
+        <div
+          className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-gray-400 rounded-full animate-bounce"
+          style={{ animationDelay: "0ms" }}
+        ></div>
+        <div
+          className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-gray-400 rounded-full animate-bounce"
+          style={{ animationDelay: "150ms" }}
+        ></div>
+        <div
+          className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-gray-400 rounded-full animate-bounce"
+          style={{ animationDelay: "300ms" }}
+        ></div>
       </div>
       <span className="text-xs text-gray-500 dark:text-gray-400">typing...</span>
     </div>
@@ -750,7 +760,7 @@ export default function Dashboard() {
             )}
 
             {/* Messages Tab */}
-            {activeTab === "messages" && (
+            {activeTab === "messages" && !activeChatUser && (
               <Card className="shadow-md dark:bg-gray-800 dark:border-gray-700">
                 <CardHeader>
                   <CardTitle className="text-xl sm:text-2xl text-[#B22222] dark:text-red-400">Messages</CardTitle>
@@ -790,7 +800,7 @@ export default function Dashboard() {
                           <CardContent className="p-4">
                             <div className="flex items-center">
                               <div className="relative mr-4 flex-shrink-0">
-                                <Avatar className="h-12 w-12">
+                                <Avatar className="h-12 w-12 sm:h-14 sm:w-14">
                                   <AvatarImage src={user.icon || "/placeholder.svg"} alt={user.name} />
                                   <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                                 </Avatar>
@@ -801,14 +811,14 @@ export default function Dashboard() {
                               <div className="flex-1 min-w-0">
                                 <div className="flex justify-between items-start">
                                   <div className="flex-1 min-w-0">
-                                    <h3 className="font-semibold text-[#B22222] dark:text-red-400 truncate flex items-center">
+                                    <h3 className="font-semibold text-[#B22222] dark:text-red-400 truncate flex items-center text-base sm:text-lg">
                                       {user.name}
                                       {user.unread && <div className="ml-2 w-2 h-2 bg-[#FF69B4] rounded-full"></div>}
                                     </h3>
                                     <p className="text-sm text-gray-600 dark:text-gray-300 truncate">
                                       {user.lastMessage}
                                     </p>
-                                    <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center">
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center mt-1">
                                       {user.isOnline ? <span className="text-green-500">Online</span> : user.time}
                                     </p>
                                   </div>
@@ -863,21 +873,24 @@ export default function Dashboard() {
               </Card>
             )}
 
-            {/* Active Chat */}
-            {activeTab === "chat" && activeChatUser && (
-              <Card className="shadow-md h-[calc(100vh-200px)] flex flex-col dark:bg-gray-800 dark:border-gray-700">
-                <CardHeader className="pb-3 border-b flex-shrink-0 dark:border-gray-600">
+            {/* Active Chat - Full Screen on Mobile, Responsive on Desktop */}
+            {(activeTab === "chat" || activeTab === "messages") && activeChatUser && (
+              <Card className="shadow-md flex flex-col dark:bg-gray-800 dark:border-gray-700 h-[calc(100vh-140px)] sm:h-[calc(100vh-160px)] lg:h-[calc(100vh-200px)]">
+                <CardHeader className="pb-3 border-b flex-shrink-0 dark:border-gray-600 px-4 py-3">
                   <div className="flex items-center">
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="mr-2 transition-all duration-200"
-                      onClick={() => setActiveTab("messages")}
+                      className="mr-2 transition-all duration-200 p-2"
+                      onClick={() => {
+                        setActiveChatUser(null)
+                        setActiveTab("messages")
+                      }}
                     >
                       <ArrowLeft className="h-4 w-4" />
                     </Button>
-                    <div className="relative mr-3">
-                      <Avatar className="h-10 w-10">
+                    <div className="relative mr-3 flex-shrink-0">
+                      <Avatar className="h-10 w-10 sm:h-12 sm:w-12">
                         <AvatarImage src={activeChatUser.icon || "/placeholder.svg"} alt={activeChatUser.name} />
                         <AvatarFallback>{activeChatUser.name.charAt(0)}</AvatarFallback>
                       </Avatar>
@@ -885,37 +898,69 @@ export default function Dashboard() {
                         <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full"></div>
                       )}
                     </div>
-                    <div>
-                      <CardTitle className="text-lg text-[#B22222] dark:text-red-400">{activeChatUser.name}</CardTitle>
-                      <CardDescription className="text-xs dark:text-gray-400">
+                    <div className="flex-1 min-w-0">
+                      <CardTitle className="text-base sm:text-lg text-[#B22222] dark:text-red-400 truncate">
+                        {activeChatUser.name}
+                      </CardTitle>
+                      <CardDescription className="text-xs sm:text-sm dark:text-gray-400">
                         {activeChatUser.isOnline ? "Online" : "Last seen recently"}
                       </CardDescription>
                     </div>
+                    <div className="flex items-center space-x-2 ml-2">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0 dark:hover:bg-gray-600">
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="dark:bg-gray-800 dark:border-gray-600">
+                          <DropdownMenuItem className="text-gray-700 dark:text-gray-300">
+                            <User className="mr-2 h-4 w-4" />
+                            View Profile
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => handleUnfriendUser(activeChatUser)}
+                            className="text-red-600 focus:text-red-600 dark:text-red-400 dark:focus:text-red-400"
+                          >
+                            <UserMinus className="mr-2 h-4 w-4" />
+                            Unfriend
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => handleBlockUser(activeChatUser)}
+                            className="text-red-600 focus:text-red-600 dark:text-red-400 dark:focus:text-red-400"
+                          >
+                            <X className="mr-2 h-4 w-4" />
+                            Block User
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
                   </div>
                 </CardHeader>
-                <CardContent className="flex-1 overflow-y-auto p-4 space-y-4">
+
+                <CardContent className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4 bg-gray-50 dark:bg-gray-900/50">
                   {messages.map((message) => (
                     <div
                       key={message.id}
                       className={`flex ${message.sender === "you" ? "justify-end" : "justify-start"}`}
                     >
                       {message.sender === "them" && (
-                        <Avatar className="h-8 w-8 mr-2 mt-1 flex-shrink-0">
+                        <Avatar className="h-6 w-6 sm:h-8 sm:w-8 mr-2 mt-1 flex-shrink-0">
                           <AvatarImage src={activeChatUser.icon || "/placeholder.svg"} alt={activeChatUser.name} />
-                          <AvatarFallback>{activeChatUser.name.charAt(0)}</AvatarFallback>
+                          <AvatarFallback className="text-xs">{activeChatUser.name.charAt(0)}</AvatarFallback>
                         </Avatar>
                       )}
-                      <div className="max-w-[70%]">
+                      <div className="max-w-[85%] sm:max-w-[75%] lg:max-w-[70%]">
                         <div
-                          className={`rounded-lg p-3 transition-all duration-200 ${
+                          className={`rounded-2xl px-3 py-2 sm:px-4 sm:py-3 transition-all duration-200 ${
                             message.sender === "you"
-                              ? "bg-[#B22222] text-white"
-                              : "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200"
+                              ? "bg-[#B22222] text-white rounded-br-md"
+                              : "bg-white text-gray-800 dark:bg-gray-700 dark:text-gray-200 rounded-bl-md shadow-sm"
                           }`}
                         >
-                          <p className="text-sm">{message.text}</p>
+                          <p className="text-sm sm:text-base leading-relaxed break-words">{message.text}</p>
                         </div>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 px-1">{message.timestamp}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 px-2">{message.timestamp}</p>
                       </div>
                     </div>
                   ))}
@@ -929,23 +974,24 @@ export default function Dashboard() {
 
                   <div ref={messagesEndRef} />
                 </CardContent>
-                <div className="p-4 border-t flex-shrink-0 dark:border-gray-600">
+
+                <div className="p-3 sm:p-4 border-t flex-shrink-0 dark:border-gray-600 bg-white dark:bg-gray-800">
                   {isTyping && (
                     <div className="text-xs text-gray-500 dark:text-gray-400 mb-2 px-1">You are typing...</div>
                   )}
-                  <form onSubmit={handleSendMessage} className="flex items-center gap-2">
+                  <form onSubmit={handleSendMessage} className="flex items-center gap-2 sm:gap-3">
                     <Input
                       placeholder="Type your message..."
                       value={messageInput}
                       onChange={handleMessageInputChange}
-                      className="flex-1 h-10 dark:bg-gray-700 dark:border-gray-600 transition-all duration-200"
+                      className="flex-1 h-10 sm:h-12 dark:bg-gray-700 dark:border-gray-600 transition-all duration-200 rounded-full px-4"
                     />
                     <Button
                       type="submit"
-                      className="bg-[#B22222] hover:bg-[#8B0000] h-10 px-4 transition-all duration-200"
+                      className="bg-[#B22222] hover:bg-[#8B0000] h-10 sm:h-12 w-10 sm:w-12 p-0 rounded-full transition-all duration-200 flex-shrink-0"
                       disabled={!messageInput.trim()}
                     >
-                      <Send size={18} />
+                      <Send size={16} className="sm:w-5 sm:h-5" />
                     </Button>
                   </form>
                 </div>
