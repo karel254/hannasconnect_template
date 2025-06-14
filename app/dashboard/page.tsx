@@ -8,6 +8,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Input } from "@/components/ui/input"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import {
   Heart,
   MessageCircle,
@@ -23,17 +25,16 @@ import {
   MoreVertical,
   Moon,
   Sun,
+  Monitor,
   UserMinus,
 } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { sendConnectionRequest, acceptConnection, rejectConnection } from "../actions"
 import { useToast } from "@/components/ui/use-toast"
 import { useTheme } from "@/contexts/theme-context"
 
 export default function Dashboard() {
   const { toast } = useToast()
-  const { theme, setLightTheme, setDarkTheme } = useTheme()
+  const { theme, resolvedTheme, setLightTheme, setDarkTheme, setSystemTheme } = useTheme()
   const [activeTab, setActiveTab] = useState("matches")
   const [activeChatUser, setActiveChatUser] = useState<any>(null)
   const [messageInput, setMessageInput] = useState("")
@@ -44,6 +45,16 @@ export default function Dashboard() {
   const [otherUserTyping, setOtherUserTyping] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const typingTimeoutRef = useRef<NodeJS.Timeout>()
+
+  // Real-time timestamp function
+  const getCurrentTime = () => {
+    const now = new Date()
+    return now.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    })
+  }
 
   // Auto-scroll to bottom of messages
   const scrollToBottom = () => {
@@ -471,12 +482,12 @@ export default function Dashboard() {
       clearTimeout(typingTimeoutRef.current)
     }
 
-    // Add message to chat
+    // Add message to chat with real-time timestamp
     const newMessage = {
       id: Date.now(),
       sender: "you",
       text: messageInput,
-      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      timestamp: getCurrentTime(),
     }
 
     setMessages((prev) => [...prev, newMessage])
@@ -487,14 +498,14 @@ export default function Dashboard() {
       setOtherUserTyping(true)
     }, 500)
 
-    // Simulate response after 2 seconds
+    // Simulate response after 2 seconds with real-time timestamp
     setTimeout(() => {
       setOtherUserTyping(false)
       const responseMessage = {
         id: Date.now() + 1,
         sender: "them",
         text: `Thanks for your message! I appreciate you reaching out. How has your day been?`,
-        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        timestamp: getCurrentTime(),
       }
       setMessages((prev) => [...prev, responseMessage])
     }, 2000)
@@ -652,6 +663,69 @@ export default function Dashboard() {
 
           {/* Main Content */}
           <div className="w-full lg:w-3/4">
+            {/* Matches Tab */}
+            {activeTab === "matches" && (
+              <Card className="shadow-md dark:bg-gray-800 dark:border-gray-700">
+                <CardHeader>
+                  <CardTitle className="text-xl sm:text-2xl text-[#B22222] dark:text-red-400">Your Matches</CardTitle>
+                  <CardDescription className="text-sm sm:text-base dark:text-gray-400">
+                    People who might be perfect for you
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {matches.map((match) => (
+                      <Card key={match.id} className="hover:shadow-lg transition-shadow dark:bg-gray-700">
+                        <CardContent className="p-6">
+                          <div className="flex items-center mb-4">
+                            <Avatar className="h-16 w-16 mr-4">
+                              <AvatarImage src={match.icon || "/placeholder.svg"} alt={match.name} />
+                              <AvatarFallback>{match.name.charAt(0)}</AvatarFallback>
+                            </Avatar>
+                            <div className="flex-1">
+                              <h3 className="font-semibold text-lg text-[#B22222] dark:text-red-400">
+                                {match.name}, {match.age}
+                              </h3>
+                              <p className="text-gray-600 dark:text-gray-300">{match.occupation}</p>
+                              <p className="text-sm text-gray-500 dark:text-gray-400">{match.lastActive}</p>
+                            </div>
+                            {match.compatibility && (
+                              <Badge className="bg-[#DAA520] hover:bg-[#B8860B] text-white">
+                                {match.compatibility}
+                              </Badge>
+                            )}
+                          </div>
+                          <div className="flex flex-wrap gap-2 mb-4">
+                            {match.interests.map((interest, index) => (
+                              <Badge key={index} variant="outline" className="text-xs">
+                                {interest}
+                              </Badge>
+                            ))}
+                          </div>
+                          <div className="flex gap-2">
+                            <Button
+                              variant="outline"
+                              className="flex-1 border-[#B22222] text-[#B22222] hover:bg-[#B22222] hover:text-white"
+                              size="sm"
+                            >
+                              View Profile
+                            </Button>
+                            <Button
+                              className="flex-1 bg-[#B22222] hover:bg-[#8B0000] text-white"
+                              size="sm"
+                              onClick={() => handleSendConnectionRequest(match)}
+                            >
+                              <Heart size={14} className="mr-1" /> Connect
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             {/* Messages Tab */}
             {activeTab === "messages" && (
               <Card className="shadow-md dark:bg-gray-800 dark:border-gray-700">
@@ -855,7 +929,7 @@ export default function Dashboard() {
               </Card>
             )}
 
-            {/* Settings Tab */}
+            {/* Settings Tab with Enhanced Theme Options */}
             {activeTab === "settings" && (
               <Card className="shadow-md dark:bg-gray-800 dark:border-gray-700">
                 <CardHeader>
@@ -900,7 +974,7 @@ export default function Dashboard() {
                           <h3 className="text-lg font-semibold text-[#B22222] dark:text-red-400 mb-4">
                             Theme Preferences
                           </h3>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             <Card
                               className={`cursor-pointer transition-all duration-300 ${
                                 theme === "light"
@@ -911,8 +985,8 @@ export default function Dashboard() {
                             >
                               <CardContent className="p-4 text-center">
                                 <Sun className="h-8 w-8 mx-auto mb-2 text-yellow-500" />
-                                <h4 className="font-semibold dark:text-gray-200">Light Theme</h4>
-                                <p className="text-sm text-gray-600 dark:text-gray-400">Clean and bright interface</p>
+                                <h4 className="font-semibold dark:text-gray-200">Light</h4>
+                                <p className="text-sm text-gray-600 dark:text-gray-400">Clean and bright</p>
                               </CardContent>
                             </Card>
 
@@ -926,11 +1000,30 @@ export default function Dashboard() {
                             >
                               <CardContent className="p-4 text-center">
                                 <Moon className="h-8 w-8 mx-auto mb-2 text-blue-500" />
-                                <h4 className="font-semibold dark:text-gray-200">Dark Theme</h4>
+                                <h4 className="font-semibold dark:text-gray-200">Dark</h4>
                                 <p className="text-sm text-gray-600 dark:text-gray-400">Easy on the eyes</p>
                               </CardContent>
                             </Card>
+
+                            <Card
+                              className={`cursor-pointer transition-all duration-300 ${
+                                theme === "system"
+                                  ? "ring-2 ring-[#B22222] dark:ring-red-400 scale-105"
+                                  : "hover:shadow-md hover:scale-102"
+                              } dark:bg-gray-700 dark:border-gray-600`}
+                              onClick={setSystemTheme}
+                            >
+                              <CardContent className="p-4 text-center">
+                                <Monitor className="h-8 w-8 mx-auto mb-2 text-gray-500" />
+                                <h4 className="font-semibold dark:text-gray-200">System</h4>
+                                <p className="text-sm text-gray-600 dark:text-gray-400">Follows device</p>
+                              </CardContent>
+                            </Card>
                           </div>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                            Current theme: <span className="font-medium">{theme}</span>
+                            {theme === "system" && ` (${resolvedTheme})`}
+                          </p>
                         </div>
 
                         <div>
@@ -972,15 +1065,138 @@ export default function Dashboard() {
                       </div>
                     </TabsContent>
 
-                    {/* Other tabs content remains the same but with improved transitions */}
-                    {/* ... (keeping the rest of the settings tabs for brevity) ... */}
+                    {/* Other tabs content would go here */}
+                    <TabsContent value="notifications" className="mt-6">
+                      <div className="text-center py-8">
+                        <p className="text-gray-500 dark:text-gray-400">Notification settings coming soon...</p>
+                      </div>
+                    </TabsContent>
+
+                    <TabsContent value="privacy" className="mt-6">
+                      <div className="text-center py-8">
+                        <p className="text-gray-500 dark:text-gray-400">Privacy settings coming soon...</p>
+                      </div>
+                    </TabsContent>
+
+                    <TabsContent value="account" className="mt-6">
+                      <div className="text-center py-8">
+                        <p className="text-gray-500 dark:text-gray-400">Account settings coming soon...</p>
+                      </div>
+                    </TabsContent>
                   </Tabs>
                 </CardContent>
               </Card>
             )}
 
-            {/* Other tabs (matches, requests, etc.) remain the same but with improved transitions */}
-            {/* ... (keeping other tabs for brevity) ... */}
+            {/* Other tabs would be implemented similarly */}
+            {activeTab === "requests" && (
+              <Card className="shadow-md dark:bg-gray-800 dark:border-gray-700">
+                <CardHeader>
+                  <CardTitle className="text-xl sm:text-2xl text-[#B22222] dark:text-red-400">
+                    Connection Requests
+                  </CardTitle>
+                  <CardDescription className="text-sm sm:text-base dark:text-gray-400">
+                    People who want to connect with you
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {connectionRequests.length === 0 ? (
+                    <div className="text-center py-8">
+                      <p className="text-gray-500 dark:text-gray-400 mb-4">No connection requests at this time.</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {connectionRequests.map((request) => (
+                        <Card key={request.id} className="dark:bg-gray-700">
+                          <CardContent className="p-6">
+                            <div className="flex items-center">
+                              <Avatar className="h-16 w-16 mr-4">
+                                <AvatarImage src={request.icon || "/placeholder.svg"} alt={request.name} />
+                                <AvatarFallback>{request.name.charAt(0)}</AvatarFallback>
+                              </Avatar>
+                              <div className="flex-1">
+                                <h3 className="font-medium text-lg text-[#B22222] dark:text-red-400">
+                                  {request.name}, {request.age}
+                                </h3>
+                                <p className="text-gray-600 dark:text-gray-300">{request.occupation}</p>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">Sent {request.requestDate}</p>
+                              </div>
+                              <div className="flex space-x-2">
+                                <Button
+                                  size="sm"
+                                  className="bg-[#B22222] hover:bg-[#8B0000] text-white"
+                                  onClick={() => handleAcceptConnection(request)}
+                                >
+                                  <CheckCircle className="mr-2 h-4 w-4" />
+                                  Accept
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="border-red-600 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                                  onClick={() => handleRejectConnection(request)}
+                                >
+                                  <X className="mr-2 h-4 w-4" />
+                                  Decline
+                                </Button>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            {activeTab === "notifications" && (
+              <Card className="shadow-md dark:bg-gray-800 dark:border-gray-700">
+                <CardHeader>
+                  <CardTitle className="text-xl sm:text-2xl text-[#B22222] dark:text-red-400">Notifications</CardTitle>
+                  <CardDescription className="text-sm sm:text-base dark:text-gray-400">
+                    Your recent activity and updates
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {notifications.map((notification) => (
+                      <div
+                        key={notification.id}
+                        className={`p-4 rounded-lg border transition-all duration-200 ${
+                          !notification.read
+                            ? "bg-[#FF69B4]/5 border-[#FF69B4]/20 dark:bg-pink-900/20 dark:border-pink-700/30"
+                            : "bg-gray-50 border-gray-200 dark:bg-gray-700 dark:border-gray-600"
+                        }`}
+                      >
+                        <div className="flex items-start">
+                          <div className="flex-1">
+                            <p className="text-sm text-gray-800 dark:text-gray-200">{notification.content}</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{notification.time}</p>
+                          </div>
+                          {!notification.read && <div className="w-2 h-2 bg-[#FF69B4] rounded-full ml-2 mt-2"></div>}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {activeTab === "profile" && (
+              <Card className="shadow-md dark:bg-gray-800 dark:border-gray-700">
+                <CardHeader>
+                  <CardTitle className="text-xl sm:text-2xl text-[#B22222] dark:text-red-400">My Profile</CardTitle>
+                  <CardDescription className="text-sm sm:text-base dark:text-gray-400">
+                    View and edit your profile information
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="text-center py-8">
+                  <p className="text-gray-500 dark:text-gray-400 mb-4">Profile editing coming soon...</p>
+                  <Button className="bg-[#B22222] hover:bg-[#8B0000] text-white">Edit Profile</Button>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
       </div>

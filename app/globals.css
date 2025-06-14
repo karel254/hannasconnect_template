@@ -58,9 +58,37 @@
   }
 }
 
-/* Custom scrollbar for dark mode */
-.dark ::-webkit-scrollbar {
+/* Performance optimizations */
+* {
+  box-sizing: border-box;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
   width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
 }
 
 .dark ::-webkit-scrollbar-track {
@@ -69,21 +97,21 @@
 
 .dark ::-webkit-scrollbar-thumb {
   background: #6b7280;
-  border-radius: 4px;
 }
 
 .dark ::-webkit-scrollbar-thumb:hover {
   background: #9ca3af;
 }
 
-/* Smooth transitions */
+/* Optimized transitions */
 * {
-  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow,
+    transform, filter, backdrop-filter;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
+  transition-duration: 200ms;
 }
 
-/* Custom animations */
+/* Performance-optimized animations */
 @keyframes float {
   0%,
   100% {
@@ -104,61 +132,6 @@
   }
 }
 
-.animate-float {
-  animation: float 3s ease-in-out infinite;
-}
-
-.animate-float-delayed {
-  animation: float-delayed 3s ease-in-out infinite;
-  animation-delay: 1.5s;
-}
-
-/* Delay utilities */
-.delay-500 {
-  animation-delay: 0.5s;
-}
-
-.delay-1000 {
-  animation-delay: 1s;
-}
-
-.delay-1500 {
-  animation-delay: 1.5s;
-}
-
-.delay-2000 {
-  animation-delay: 2s;
-}
-
-.delay-3000 {
-  animation-delay: 3s;
-}
-
-.delay-4000 {
-  animation-delay: 4s;
-}
-
-/* Gradient text */
-.gradient-text {
-  background: linear-gradient(135deg, #b22222, #ff69b4);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Glass morphism effect */
-.glass {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.dark .glass {
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-/* Enhanced animations */
 @keyframes pulse {
   0%,
   100% {
@@ -187,34 +160,143 @@
   }
 }
 
-/* Custom hover effects */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Utility classes for performance */
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-float-delayed {
+  animation: float-delayed 3s ease-in-out infinite;
+  animation-delay: 1.5s;
+  will-change: transform;
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  will-change: opacity;
+}
+
+.animate-bounce {
+  animation: bounce 1s infinite;
+  will-change: transform;
+}
+
+.animate-ping {
+  animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+  will-change: transform, opacity;
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+  will-change: transform;
+}
+
+/* Delay utilities */
+.delay-500 {
+  animation-delay: 0.5s;
+}
+.delay-1000 {
+  animation-delay: 1s;
+}
+.delay-1500 {
+  animation-delay: 1.5s;
+}
+.delay-2000 {
+  animation-delay: 2s;
+}
+.delay-3000 {
+  animation-delay: 3s;
+}
+.delay-4000 {
+  animation-delay: 4s;
+}
+
+/* Line clamp utility */
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.line-clamp-3 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+/* Custom hover effects with GPU acceleration */
 .group:hover .group-hover\:rotate-180 {
   transform: rotate(180deg);
+  will-change: transform;
 }
 
 .group:hover .group-hover\:rotate-12 {
   transform: rotate(12deg);
+  will-change: transform;
 }
 
 .group:hover .group-hover\:bounce {
   animation: bounce 0.5s ease-in-out;
+  will-change: transform;
 }
 
-/* Responsive grid improvements */
-@media (max-width: 768px) {
-  .grid-cols-2 > * {
-    min-height: 140px;
+.group:hover .group-hover\:scale-110 {
+  transform: scale(1.1);
+  will-change: transform;
+}
+
+/* Responsive optimizations */
+@media (max-width: 640px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 }
 
-@media (min-width: 768px) {
-  .grid-cols-2 > * {
-    min-height: 180px;
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
-@media (min-width: 1024px) {
-  .grid-cols-2 > * {
-    min-height: 200px;
+/* Focus styles for accessibility */
+:focus-visible {
+  outline: 2px solid #b22222;
+  outline-offset: 2px;
+}
+
+/* Loading skeleton animation */
+@keyframes skeleton {
+  0% {
+    background-position: -200px 0;
   }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200px 100%;
+  animation: skeleton 1.5s infinite;
+}
+
+.dark .skeleton {
+  background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+  background-size: 200px 100%;
 }

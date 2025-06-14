@@ -5,35 +5,95 @@ import { createContext, useContext, useEffect, useState } from "react"
 const ThemeContext = createContext()
 
 export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState("light")
+  const [theme, setTheme] = useState("system")
+  const [resolvedTheme, setResolvedTheme] = useState("light")
+
+  // Function to get system theme
+  const getSystemTheme = () => {
+    if (typeof window !== "undefined") {
+      return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+    }
+    return "light"
+  }
+
+  // Function to apply theme
+  const applyTheme = (themeToApply) => {
+    const root = document.documentElement
+    if (themeToApply === "dark") {
+      root.classList.add("dark")
+      setResolvedTheme("dark")
+    } else {
+      root.classList.remove("dark")
+      setResolvedTheme("light")
+    }
+  }
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") || "light"
+    // Get saved theme or default to system
+    const savedTheme = localStorage.getItem("theme") || "system"
     setTheme(savedTheme)
-    document.documentElement.classList.toggle("dark", savedTheme === "dark")
-  }, [])
 
-  const toggleTheme = () => {
-    const newTheme = theme === "light" ? "dark" : "light"
+    // Apply initial theme
+    if (savedTheme === "system") {
+      const systemTheme = getSystemTheme()
+      applyTheme(systemTheme)
+    } else {
+      applyTheme(savedTheme)
+    }
+
+    // Listen for system theme changes
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)")
+    const handleSystemThemeChange = (e) => {
+      if (theme === "system") {
+        applyTheme(e.matches ? "dark" : "light")
+      }
+    }
+
+    mediaQuery.addEventListener("change", handleSystemThemeChange)
+
+    return () => {
+      mediaQuery.removeEventListener("change", handleSystemThemeChange)
+    }
+  }, [theme])
+
+  const setThemeMode = (newTheme) => {
     setTheme(newTheme)
     localStorage.setItem("theme", newTheme)
-    document.documentElement.classList.toggle("dark", newTheme === "dark")
+
+    if (newTheme === "system") {
+      const systemTheme = getSystemTheme()
+      applyTheme(systemTheme)
+    } else {
+      applyTheme(newTheme)
+    }
   }
 
-  const setLightTheme = () => {
-    setTheme("light")
-    localStorage.setItem("theme", "light")
-    document.documentElement.classList.remove("dark")
+  const toggleTheme = () => {
+    if (theme === "light") {
+      setThemeMode("dark")
+    } else if (theme === "dark") {
+      setThemeMode("system")
+    } else {
+      setThemeMode("light")
+    }
   }
 
-  const setDarkTheme = () => {
-    setTheme("dark")
-    localStorage.setItem("theme", "dark")
-    document.documentElement.classList.add("dark")
-  }
+  const setLightTheme = () => setThemeMode("light")
+  const setDarkTheme = () => setThemeMode("dark")
+  const setSystemTheme = () => setThemeMode("system")
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme, setLightTheme, setDarkTheme }}>
+    <ThemeContext.Provider
+      value={{
+        theme,
+        resolvedTheme,
+        toggleTheme,
+        setLightTheme,
+        setDarkTheme,
+        setSystemTheme,
+        setTheme: setThemeMode,
+      }}
+    >
       {children}
     </ThemeContext.Provider>
   )
