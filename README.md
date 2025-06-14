@@ -1,1 +1,2 @@
 #virtual_university_cyberdecks
+I built this front end mock up while refining it with AI to produce greater output with quality code at a faster rate. While some are worried about AI taking Developer jobs, they really should be worried about humans who know how to use AI taking their jobs. Honestly, AI without a trace of coding knowledge (and UI, HCI, visual design principles) wouldn't have produced this output, not saying it is the best, but it is something!
