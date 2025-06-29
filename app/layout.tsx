@@ -2,13 +2,32 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
-import ClientThemeWrapper from "@/components/client-theme-wrapper"
+import { ClientThemeWrapper } from "@/components/client-theme-wrapper"
+import { ConditionalFooter } from "@/components/conditional-footer"
+import Navbar from "@/components/navbar"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "Hanna's Connect - Clarity Before Chemistry",
   description: "Where meaningful connections begin. Privacy-first dating for intentional singles.",
+  keywords: ["dating", "relationships", "connections", "singles", "love"],
+  authors: [{ name: "Hanna's Connect" }],
+  creator: "Hanna's Connect",
+  publisher: "Hanna's Connect",
+  robots: "index, follow",
+  openGraph: {
+    title: "Hanna's Connect - Clarity Before Chemistry",
+    description: "Where meaningful connections begin. Privacy-first dating for intentional singles.",
+    type: "website",
+    locale: "en_US",
+    siteName: "Hanna's Connect",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Hanna's Connect - Clarity Before Chemistry",
+    description: "Where meaningful connections begin. Privacy-first dating for intentional singles.",
+  },
     generator: 'v0.dev'
 }
 
@@ -20,7 +39,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <ClientThemeWrapper>{children}</ClientThemeWrapper>
+        <ClientThemeWrapper>
+          <Navbar />
+          <main>{children}</main>
+          <ConditionalFooter />
+        </ClientThemeWrapper>
       </body>
     </html>
   )

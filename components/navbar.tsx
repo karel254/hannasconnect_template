@@ -1,6 +1,6 @@
 "use client"
 
-import * as React from "react"
+import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Heart, Menu } from "lucide-react"
@@ -8,20 +8,20 @@ import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 
 export default function Navbar() {
+  const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
-  const [isOpen, setIsOpen] = React.useState(false)
 
   // Don't show navbar on home page
   if (pathname === "/") {
     return null
   }
 
-  const navigation = [
-    { name: "About", href: "/about" },
-    { name: "How It Works", href: "/how-it-works" },
-    { name: "Success Stories", href: "/success-stories" },
-    { name: "FAQ", href: "/faq" },
-    { name: "Contact", href: "/contact" },
+  const navItems = [
+    { href: "/about", label: "About" },
+    { href: "/how-it-works", label: "How It Works" },
+    { href: "/success-stories", label: "Success Stories" },
+    { href: "/faq", label: "FAQ" },
+    { href: "/contact", label: "Contact" },
   ]
 
   return (
@@ -29,11 +29,11 @@ export default function Navbar() {
       <div className="container flex h-16 items-center">
         <div className="mr-4 hidden md:flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
-            <Heart className="h-6 w-6 text-primary" />
+            <Heart className="h-6 w-6 text-red-500" />
             <span className="hidden font-bold sm:inline-block">Hanna&apos;s Connect</span>
           </Link>
           <nav className="flex items-center space-x-6 text-sm font-medium">
-            {navigation.map((item) => (
+            {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
@@ -41,7 +41,7 @@ export default function Navbar() {
                   pathname === item.href ? "text-foreground" : "text-foreground/60"
                 }`}
               >
-                {item.name}
+                {item.label}
               </Link>
             ))}
           </nav>
@@ -63,7 +63,7 @@ export default function Navbar() {
             </Link>
             <div className="my-4 h-[calc(100vh-8rem)] pb-10 pl-6">
               <div className="flex flex-col space-y-3">
-                {navigation.map((item) => (
+                {navItems.map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}
@@ -72,7 +72,7 @@ export default function Navbar() {
                       pathname === item.href ? "text-foreground" : "text-foreground/60"
                     }`}
                   >
-                    {item.name}
+                    {item.label}
                   </Link>
                 ))}
               </div>
@@ -82,18 +82,10 @@ export default function Navbar() {
         <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
           <div className="w-full flex-1 md:w-auto md:flex-none">
             <Link href="/" className="flex items-center space-x-2 md:hidden">
-              <Heart className="h-6 w-6 text-primary" />
+              <Heart className="h-6 w-6 text-red-500" />
               <span className="font-bold">Hanna&apos;s Connect</span>
             </Link>
           </div>
-          <nav className="flex items-center space-x-2">
-            <Button asChild variant="ghost" size="sm">
-              <Link href="/login">Login</Link>
-            </Button>
-            <Button asChild size="sm">
-              <Link href="/register">Sign Up</Link>
-            </Button>
-          </nav>
         </div>
       </div>
     </nav>

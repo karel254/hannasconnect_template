@@ -3,25 +3,24 @@ import { Heart } from "lucide-react"
 
 export default function Home() {
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      {/* Background Image - Full screen coverage without blur */}
+    <div className="h-screen w-screen fixed inset-0 overflow-hidden">
+      {/* Background Image - Fixed, no scroll, no resize */}
       <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-fixed"
         style={{
           backgroundImage: "url('/images/hero-couple.jpg')",
           backgroundSize: "cover",
           backgroundPosition: "center center",
-          backgroundAttachment: "fixed",
         }}
       >
-        {/* Subtle overlay for text readability */}
-        <div className="absolute inset-0 bg-black/40 dark:bg-black/50"></div>
+        {/* Lighter overlay for brighter background */}
+        <div className="absolute inset-0 bg-black/25 dark:bg-black/35"></div>
       </div>
 
-      {/* Content - Full viewport height */}
-      <div className="relative z-10 min-h-screen flex flex-col">
+      {/* Content - Fixed height, no scroll */}
+      <div className="relative z-10 h-full w-full flex flex-col">
         {/* Header */}
-        <header className="pt-8 sm:pt-12 md:pt-16 pb-6 sm:pb-8 md:pb-10 text-center px-4">
+        <header className="pt-8 sm:pt-12 md:pt-16 pb-6 sm:pb-8 md:pb-10 text-center px-4 flex-shrink-0">
           <div className="flex items-center justify-center gap-2 md:gap-3 mb-3 md:mb-4">
             <Heart className="w-7 h-7 md:w-10 md:h-10 lg:w-12 lg:h-12 text-white fill-white animate-pulse" />
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white tracking-wide drop-shadow-lg">
@@ -36,8 +35,8 @@ export default function Home() {
         {/* Spacer to push buttons to lower section */}
         <div className="flex-1"></div>
 
-        {/* Login and Sign Up Buttons - Compact side-by-side translucent layout */}
-        <div className="pb-16 sm:pb-20 md:pb-24 lg:pb-28 px-4">
+        {/* Login and Sign Up Buttons - Fixed position, no scroll */}
+        <div className="pb-16 sm:pb-20 md:pb-24 lg:pb-28 px-4 flex-shrink-0">
           <div className="flex gap-4 justify-center items-center max-w-lg mx-auto">
             {/* Login Button - Translucent Dark Style */}
             <Link href="/login" className="flex-1">
@@ -56,7 +55,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Floating Animation Elements - Responsive sizing with warm colors */}
+      {/* Floating Animation Elements - Contained within viewport */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-16 sm:top-20 md:top-24 left-6 sm:left-10 md:left-12 w-2 sm:w-3 md:w-4 h-2 sm:h-3 md:h-4 bg-yellow-300/50 rounded-full animate-ping delay-1000"></div>
         <div className="absolute top-1/4 right-10 sm:right-16 md:right-20 lg:right-24 w-1.5 sm:w-2 md:w-3 h-1.5 sm:h-2 md:h-3 bg-orange-300/40 rounded-full animate-pulse delay-2000"></div>

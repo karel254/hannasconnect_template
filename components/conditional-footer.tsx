@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation"
 import Footer from "@/components/footer"
 
-export default function ConditionalFooter() {
+export function ConditionalFooter() {
   const pathname = usePathname()
 
   // Don't show footer on home page

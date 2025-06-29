@@ -3,10 +3,9 @@ import type { Config } from "tailwindcss"
 const config: Config = {
   darkMode: ["class"],
   content: [
-    "./pages/**/*.{ts,tsx}",
-    "./components/**/*.{ts,tsx}",
-    "./app/**/*.{ts,tsx}",
-    "./src/**/*.{ts,tsx}",
+    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "*.{js,ts,jsx,tsx,mdx}",
   ],
   prefix: "",
@@ -26,20 +25,12 @@ const config: Config = {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#B22222", // Deep Red
+          DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
-          DEFAULT: "#DAA520", // Rich Gold
+          DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
-        },
-        accent: {
-          DEFAULT: "#A9A9A9", // Soft Green
-          foreground: "hsl(var(--accent-foreground))",
-        },
-        highlight: {
-          DEFAULT: "#FFD700", // Warm Yellow
-          foreground: "hsl(var(--highlight-foreground))",
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
@@ -48,6 +39,10 @@ const config: Config = {
         muted: {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
         },
         popover: {
           DEFAULT: "hsl(var(--popover))",
@@ -80,6 +75,6 @@ const config: Config = {
     },
   },
   plugins: [require("tailwindcss-animate")],
-}
+} satisfies Config
 
 export default config
