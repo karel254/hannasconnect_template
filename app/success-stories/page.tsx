@@ -1,202 +1,177 @@
 import Link from "next/link"
+import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Quote } from "lucide-react"
+import { Heart, Calendar, MapPin, Quote, ArrowRight } from "lucide-react"
 
-export default function SuccessStories() {
+export default function SuccessStoriesPage() {
+  const stories = [
+    {
+      names: "Sarah & Michael",
+      location: "New York, NY",
+      duration: "Together 2 years",
+      image: "/images/hero-couple.jpg",
+      story:
+        "We matched on Hanna's Connect after both being disappointed with other dating apps. What drew us together was our shared love of hiking and similar life goals. Our first date was a coffee that turned into a 6-hour conversation. We're now engaged and planning our wedding!",
+      quote: "Hanna's Connect helped us find each other when we had almost given up on online dating.",
+    },
+    {
+      names: "Jessica & David",
+      location: "Los Angeles, CA",
+      duration: "Together 18 months",
+      image: "/images/avatar1.png",
+      story:
+        "As busy professionals, we appreciated how Hanna's Connect focused on quality matches rather than endless swiping. The compatibility assessment really worked - we aligned on values, career ambitions, and family goals. We just moved in together!",
+      quote: "The algorithm really understood what we were both looking for in a partner.",
+    },
+    {
+      names: "Emma & James",
+      location: "Chicago, IL",
+      duration: "Together 3 years",
+      image: "/images/avatar2.png",
+      story:
+        "We were both skeptical about online dating, but Hanna's Connect felt different. The detailed profiles and personality matching helped us connect on a deeper level before even meeting. We have so much in common and complement each other perfectly.",
+      quote: "We knew we were meant for each other from our very first conversation.",
+    },
+    {
+      names: "Maria & Alex",
+      location: "Austin, TX",
+      duration: "Together 1 year",
+      image: "/images/avatar3.png",
+      story:
+        "After several failed relationships, we were both looking for something real. Hanna's Connect's focus on long-term compatibility over superficial attraction was exactly what we needed. We're now planning our future together.",
+      quote: "Finally, a dating app that cares about finding lasting love, not just hookups.",
+    },
+    {
+      names: "Rachel & Tom",
+      location: "Seattle, WA",
+      duration: "Together 2.5 years",
+      image: "/images/avatar4.png",
+      story:
+        "We lived in the same city for years but never met until Hanna's Connect brought us together. The platform's safety features made us both feel comfortable, and the conversation starters helped break the ice. We're now married!",
+      quote: "Hanna's Connect didn't just find us a date - it found us our soulmate.",
+    },
+    {
+      names: "Lisa & Kevin",
+      location: "Miami, FL",
+      duration: "Together 14 months",
+      image: "/placeholder-user.jpg",
+      story:
+        "As single parents, dating was complicated for both of us. Hanna's Connect's detailed profiles helped us find someone who understood our situation and shared our family values. Our kids get along great too!",
+      quote: "We found love and created a beautiful blended family.",
+    },
+  ]
+
+  const stats = [
+    { number: "1,200+", label: "Success Stories" },
+    { number: "85%", label: "Match Success Rate" },
+    { number: "6 months", label: "Average Time to Relationship" },
+    { number: "92%", label: "User Satisfaction" },
+  ]
+
   return (
-    <div className="min-h-screen bg-[#F5F5F5]">
-      {/* Hero Section */}
-      <section className="bg-gradient-to-b from-[#FF69B4] to-[#FF9CC0] text-white py-16 px-4 md:px-6 lg:px-8">
-        <div className="container mx-auto max-w-6xl">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">Success Stories</h1>
-          <p className="text-xl max-w-3xl">
-            Real people, real connections. Discover how Hanna's Connect has helped intentional singles find meaningful
-            relationships.
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50">
+      <div className="container mx-auto px-4 py-8">
+        {/* Hero Section */}
+        <section className="text-center mb-16">
+          <h1 className="text-5xl font-bold text-gray-900 mb-6">Success Stories</h1>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+            Real couples who found lasting love through Hanna's Connect. Their stories inspire us to keep helping people
+            find meaningful relationships.
           </p>
-        </div>
-      </section>
-
-      {/* Featured Stories */}
-      <section className="py-16 px-4 md:px-6 lg:px-8 bg-white">
-        <div className="container mx-auto max-w-6xl">
-          <h2 className="text-3xl font-bold mb-12 text-[#B22222] text-center">Featured Success Stories</h2>
-
-          <div className="space-y-12">
-            {/* Story 1 */}
-            <div className="bg-[#F5F5F5] p-8 rounded-lg shadow-md">
-              <div className="flex flex-col md:flex-row gap-8">
-                <div className="md:w-1/3 flex flex-col items-center">
-                  <div className="bg-[#DAA520]/20 p-4 rounded-full mb-4">
-                    <img src="/images/avatar1.png" alt="Profile icon" className="w-32 h-32 rounded-full" />
-                  </div>
-                  <h3 className="text-xl font-bold text-[#B22222] text-center">Michael & Sarah</h3>
-                  <p className="text-gray-600 text-center">Connected January 2023</p>
-                </div>
-                <div className="md:w-2/3">
-                  <div className="flex mb-4">
-                    <Quote className="h-8 w-8 text-[#DAA520] mr-2 flex-shrink-0" />
-                    <p className="text-gray-700 italic">
-                      I was skeptical about a dating platform that didn't focus on profile pictures, but Hanna's Connect
-                      completely changed my perspective. By focusing on values and life goals, I connected with Sarah in
-                      a way that felt genuine from the start. We discovered we shared the same vision for our future,
-                      and our relationship has been built on a solid foundation of mutual understanding and respect.
-                    </p>
-                  </div>
-                  <p className="text-gray-700 mt-4">
-                    Michael and Sarah got engaged in December 2023 after meeting on Hanna's Connect. They credit the
-                    platform's focus on intentionality and values for helping them find a compatible partner.
-                  </p>
-                </div>
+          <div className="grid md:grid-cols-4 gap-8 max-w-4xl mx-auto">
+            {stats.map((stat, index) => (
+              <div key={index} className="text-center">
+                <div className="text-3xl font-bold text-pink-600 mb-2">{stat.number}</div>
+                <div className="text-gray-600">{stat.label}</div>
               </div>
-            </div>
+            ))}
+          </div>
+        </section>
 
-            {/* Story 2 */}
-            <div className="bg-[#F5F5F5] p-8 rounded-lg shadow-md">
-              <div className="flex flex-col md:flex-row gap-8">
-                <div className="md:w-1/3 flex flex-col items-center">
-                  <div className="bg-[#DAA520]/20 p-4 rounded-full mb-4">
-                    <img src="/images/avatar2.png" alt="Profile icon" className="w-32 h-32 rounded-full" />
-                  </div>
-                  <h3 className="text-xl font-bold text-[#B22222] text-center">Amina & David</h3>
-                  <p className="text-gray-600 text-center">Connected March 2023</p>
-                </div>
-                <div className="md:w-2/3">
-                  <div className="flex mb-4">
-                    <Quote className="h-8 w-8 text-[#DAA520] mr-2 flex-shrink-0" />
-                    <p className="text-gray-700 italic">
-                      As a professional in the public eye, privacy was my biggest concern with online dating. Hanna's
-                      Connect provided the discretion I needed while still allowing me to connect with like-minded
-                      individuals. David and I matched based on our shared values and life goals, and we've built a
-                      relationship that's rooted in mutual respect and understanding.
-                    </p>
-                  </div>
-                  <p className="text-gray-700 mt-4">
-                    Amina, a corporate lawyer, and David, a doctor, found that their busy professional lives aligned
-                    perfectly. They appreciate how Hanna's Connect helped them find someone who understands their career
-                    commitments.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Story 3 */}
-            <div className="bg-[#F5F5F5] p-8 rounded-lg shadow-md">
-              <div className="flex flex-col md:flex-row gap-8">
-                <div className="md:w-1/3 flex flex-col items-center">
-                  <div className="bg-[#DAA520]/20 p-4 rounded-full mb-4">
-                    <img src="/images/avatar4.png" alt="Profile icon" className="w-32 h-32 rounded-full" />
-                  </div>
-                  <h3 className="text-xl font-bold text-[#B22222] text-center">Jennifer & Robert</h3>
-                  <p className="text-gray-600 text-center">Connected May 2023</p>
-                </div>
-                <div className="md:w-2/3">
-                  <div className="flex mb-4">
-                    <Quote className="h-8 w-8 text-[#DAA520] mr-2 flex-shrink-0" />
-                    <p className="text-gray-700 italic">
-                      After trying several dating apps without success, I was drawn to Hanna's Connect's unique
-                      approach. The platform's focus on values and intentionality helped me connect with Robert in a
-                      meaningful way. We discovered we shared similar life goals and values, which has been the
-                      foundation of our relationship.
-                    </p>
-                  </div>
-                  <p className="text-gray-700 mt-4">
-                    Jennifer and Robert are now planning their future together after meeting on Hanna's Connect. They
-                    appreciate how the platform encouraged them to be clear about their relationship goals from the
-                    start.
-                  </p>
-                </div>
-              </div>
+        {/* Stories Grid */}
+        <section className="mb-16">
+          <div className="max-w-6xl mx-auto">
+            <div className="grid lg:grid-cols-2 gap-8">
+              {stories.map((story, index) => (
+                <Card key={index} className="hover:shadow-lg transition-shadow">
+                  <CardContent className="p-6">
+                    <div className="flex items-center mb-4">
+                      <img
+                        src={story.image || "/placeholder.svg"}
+                        alt={story.names}
+                        className="w-16 h-16 rounded-full object-cover mr-4"
+                      />
+                      <div>
+                        <h3 className="text-xl font-semibold text-gray-900">{story.names}</h3>
+                        <div className="flex items-center text-sm text-gray-500 mt-1">
+                          <MapPin className="h-4 w-4 mr-1" />
+                          {story.location}
+                          <Calendar className="h-4 w-4 ml-3 mr-1" />
+                          {story.duration}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="relative mb-4">
+                      <Quote className="h-6 w-6 text-pink-300 absolute -top-2 -left-2" />
+                      <p className="text-gray-600 italic pl-4">{story.quote}</p>
+                    </div>
+                    <p className="text-gray-700 leading-relaxed">{story.story}</p>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Testimonials */}
-      <section className="py-16 px-4 md:px-6 lg:px-8 bg-[#F5F5F5]">
-        <div className="container mx-auto max-w-6xl">
-          <h2 className="text-3xl font-bold mb-12 text-[#B22222] text-center">What Our Users Say</h2>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <div className="flex items-center mb-4">
-                <div className="bg-[#DAA520]/20 p-2 rounded-full mr-3">
-                  <img src="/images/avatar3.png" alt="Profile icon" className="w-12 h-12 rounded-full" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-[#B22222]">Thomas K.</h3>
-                  <p className="text-sm text-gray-600">Member since 2023</p>
-                </div>
-              </div>
-              <p className="text-gray-700 italic">
-                "The focus on values rather than appearances was refreshing. I've had more meaningful conversations here
-                than on any other dating platform."
+        {/* Share Your Story */}
+        <section className="mb-16">
+          <Card className="max-w-4xl mx-auto bg-gradient-to-r from-pink-100 to-purple-100">
+            <CardContent className="p-8 text-center">
+              <Heart className="h-12 w-12 text-pink-500 mx-auto mb-4" />
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">Share Your Success Story</h2>
+              <p className="text-xl text-gray-600 mb-6">
+                Found love through Hanna's Connect? We'd love to feature your story and inspire others on their journey
+                to finding meaningful relationships.
               </p>
-            </div>
+              <Link href="/contact/feedback">
+                <Button size="lg" className="bg-pink-500 hover:bg-pink-600">
+                  Share Your Story
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+        </section>
 
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <div className="flex items-center mb-4">
-                <div className="bg-[#DAA520]/20 p-2 rounded-full mr-3">
-                  <img src="/images/avatar2.png" alt="Profile icon" className="w-12 h-12 rounded-full" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-[#B22222]">Rebecca L.</h3>
-                  <p className="text-sm text-gray-600">Member since 2022</p>
-                </div>
-              </div>
-              <p className="text-gray-700 italic">
-                "As someone in the public eye, privacy was my main concern. Hanna's Connect provided the discretion I
-                needed while still allowing me to meet compatible partners."
+        {/* CTA Section */}
+        <section className="text-center">
+          <Card className="max-w-4xl mx-auto bg-gradient-to-r from-pink-500 to-purple-600 text-white">
+            <CardContent className="p-12">
+              <h2 className="text-3xl font-bold mb-4">Your Love Story Starts Here</h2>
+              <p className="text-xl mb-8 opacity-90">
+                Join thousands of people who have found their perfect match through Hanna's Connect.
               </p>
-            </div>
-
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <div className="flex items-center mb-4">
-                <div className="bg-[#DAA520]/20 p-2 rounded-full mr-3">
-                  <img src="/images/avatar1.png" alt="Profile icon" className="w-12 h-12 rounded-full" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-[#B22222]">James M.</h3>
-                  <p className="text-sm text-gray-600">Member since 2023</p>
-                </div>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link href="/register">
+                  <Button size="lg" className="bg-white text-pink-600 hover:bg-gray-100">
+                    Start Your Journey
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </Link>
+                <Link href="/how-it-works">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="border-white text-white hover:bg-white hover:text-pink-600 bg-transparent"
+                  >
+                    How It Works
+                  </Button>
+                </Link>
               </div>
-              <p className="text-gray-700 italic">
-                "The advanced filtering options helped me find someone who shares my values and life goals. I've never
-                felt more compatible with someone I met online."
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Share Your Story */}
-      <section className="py-16 px-4 md:px-6 lg:px-8 bg-white">
-        <div className="container mx-auto max-w-4xl text-center">
-          <h2 className="text-3xl font-bold mb-6 text-[#B22222]">Share Your Success Story</h2>
-          <p className="text-gray-700 mb-8 max-w-2xl mx-auto">
-            Have you found a meaningful connection through Hanna's Connect? We'd love to hear about your experience and
-            share your story with our community.
-          </p>
-          <Button className="bg-[#B22222] hover:bg-[#8B0000] text-white px-6 py-2 rounded-md shadow-md" asChild>
-            <Link href="/contact">Share Your Story</Link>
-          </Button>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-16 px-4 md:px-6 lg:px-8 bg-gradient-to-r from-[#FF69B4] to-[#FF9CC0] text-white">
-        <div className="container mx-auto max-w-4xl text-center">
-          <h2 className="text-3xl font-bold mb-6">Ready to Write Your Own Success Story?</h2>
-          <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Join Hanna's Connect today and start your journey toward finding a meaningful connection.
-          </p>
-          <Button
-            className="bg-[#B22222] hover:bg-[#8B0000] text-white px-8 py-6 text-lg rounded-md shadow-lg font-medium"
-            asChild
-          >
-            <Link href="/register">Create Your Profile</Link>
-          </Button>
-        </div>
-      </section>
+            </CardContent>
+          </Card>
+        </section>
+      </div>
     </div>
   )
 }

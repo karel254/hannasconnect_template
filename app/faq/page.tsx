@@ -1,236 +1,178 @@
 import Link from "next/link"
+import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { Input } from "@/components/ui/input"
+import { HelpCircle, User, Heart, CreditCard, MessageCircle, ArrowRight, Search } from "lucide-react"
 
-export default function FAQ() {
+export default function FAQPage() {
+  const faqCategories = [
+    {
+      icon: HelpCircle,
+      title: "General Questions",
+      description: "Basic information about Hanna's Connect and how to get started",
+      link: "/faq/general",
+      color: "text-blue-500",
+      bgColor: "bg-blue-100",
+    },
+    {
+      icon: User,
+      title: "Account & Profile",
+      description: "Managing your account, profile setup, and verification process",
+      link: "/faq/account",
+      color: "text-green-500",
+      bgColor: "bg-green-100",
+    },
+    {
+      icon: Heart,
+      title: "Matching & Dating",
+      description: "How matching works, conversation tips, and dating advice",
+      link: "/faq/matching",
+      color: "text-pink-500",
+      bgColor: "bg-pink-100",
+    },
+    {
+      icon: CreditCard,
+      title: "Billing & Subscription",
+      description: "Pricing, payments, subscriptions, and refund information",
+      link: "/faq/billing",
+      color: "text-purple-500",
+      bgColor: "bg-purple-100",
+    },
+  ]
+
+  const popularQuestions = [
+    {
+      question: "How does the matching algorithm work?",
+      answer:
+        "Our algorithm analyzes compatibility across 50+ factors including personality traits, values, lifestyle preferences, and relationship goals to find your most compatible matches.",
+      category: "Matching",
+    },
+    {
+      question: "Is Hanna's Connect free to use?",
+      answer:
+        "Yes! You can create a profile, receive matches, and send messages for free. Premium subscriptions unlock additional features like unlimited likes and advanced filters.",
+      category: "Billing",
+    },
+    {
+      question: "How do I verify my profile?",
+      answer:
+        "Profile verification involves uploading a photo of yourself holding a piece of paper with a verification code. This helps ensure authentic profiles and builds trust.",
+      category: "Account",
+    },
+    {
+      question: "What safety measures do you have in place?",
+      answer:
+        "We use photo verification, AI content monitoring, background checks for premium users, and provide safety tips and reporting tools to ensure a secure dating environment.",
+      category: "Safety",
+    },
+    {
+      question: "How many matches will I get?",
+      answer:
+        "Free users receive 3-5 curated matches daily, while premium users get 10-15 matches. We focus on quality over quantity to help you find meaningful connections.",
+      category: "Matching",
+    },
+    {
+      question: "Can I cancel my subscription anytime?",
+      answer:
+        "Yes, you can cancel your subscription at any time. Your premium features will remain active until the end of your current billing period.",
+      category: "Billing",
+    },
+  ]
+
   return (
-    <div className="min-h-screen bg-[#F5F5F5]">
-      {/* Hero Section */}
-      <section className="bg-gradient-to-b from-[#FF69B4] to-[#FF9CC0] text-white py-16 px-4 md:px-6 lg:px-8">
-        <div className="container mx-auto max-w-6xl">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">Frequently Asked Questions</h1>
-          <p className="text-xl max-w-3xl">
-            Find answers to common questions about Hanna's Connect and how our platform works.
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50">
+      <div className="container mx-auto px-4 py-8">
+        {/* Hero Section */}
+        <section className="text-center mb-16">
+          <h1 className="text-5xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h1>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+            Find answers to common questions about Hanna's Connect. Can't find what you're looking for? Contact our
+            support team.
           </p>
-        </div>
-      </section>
-
-      {/* FAQ Content */}
-      <section className="py-16 px-4 md:px-6 lg:px-8 bg-white">
-        <div className="container mx-auto max-w-4xl">
-          <div className="bg-white rounded-lg shadow-md p-8">
-            <h2 className="text-2xl font-bold mb-8 text-[#B22222]">General Questions</h2>
-
-            <Accordion type="single" collapsible className="space-y-4">
-              <AccordionItem value="item-1" className="border rounded-lg p-2">
-                <AccordionTrigger className="text-lg font-medium text-[#B22222] hover:no-underline">
-                  What is Hanna's Connect?
-                </AccordionTrigger>
-                <AccordionContent className="text-gray-700 pt-2 px-2">
-                  Hanna's Connect is a dating platform that prioritizes privacy, intentionality, and meaningful
-                  connections. Unlike traditional dating apps that focus on appearances, we emphasize values, goals, and
-                  compatibility to help intentional singles form genuine, aligned relationships.
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-2" className="border rounded-lg p-2">
-                <AccordionTrigger className="text-lg font-medium text-[#B22222] hover:no-underline">
-                  How is Hanna's Connect different from other dating apps?
-                </AccordionTrigger>
-                <AccordionContent className="text-gray-700 pt-2 px-2">
-                  Hanna's Connect differs from traditional dating apps in several key ways:
-                  <ul className="list-disc pl-5 mt-2 space-y-1">
-                    <li>We don't require profile pictures, using custom icons instead</li>
-                    <li>We focus on matching based on values, goals, and life circumstances</li>
-                    <li>We prioritize privacy and security in all aspects of our platform</li>
-                    <li>We encourage users to be clear about their relationship goals from the start</li>
-                    <li>
-                      We create an environment that attracts intentional singles looking for meaningful connections
-                    </li>
-                  </ul>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-3" className="border rounded-lg p-2">
-                <AccordionTrigger className="text-lg font-medium text-[#B22222] hover:no-underline">
-                  Is Hanna's Connect free to use?
-                </AccordionTrigger>
-                <AccordionContent className="text-gray-700 pt-2 px-2">
-                  We offer both free and premium membership options. Free members can create profiles, browse matches,
-                  and receive a limited number of messages. Premium members enjoy additional features like advanced
-                  filtering, unlimited messaging, and priority matching. Visit our pricing page for more details on our
-                  subscription plans.
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-4" className="border rounded-lg p-2">
-                <AccordionTrigger className="text-lg font-medium text-[#B22222] hover:no-underline">
-                  Who is Hanna's Connect for?
-                </AccordionTrigger>
-                <AccordionContent className="text-gray-700 pt-2 px-2">
-                  Hanna's Connect is designed for intentional singles who value depth over superficiality in
-                  relationships. Our platform is particularly popular among:
-                  <ul className="list-disc pl-5 mt-2 space-y-1">
-                    <li>Professionals and career-focused individuals</li>
-                    <li>People who value privacy and discretion</li>
-                    <li>Those looking for serious, long-term relationships</li>
-                    <li>Individuals who want to connect based on shared values and goals</li>
-                    <li>People who are tired of the superficial nature of traditional dating apps</li>
-                  </ul>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-
-            <h2 className="text-2xl font-bold my-8 text-[#B22222]">Profile & Privacy</h2>
-
-            <Accordion type="single" collapsible className="space-y-4">
-              <AccordionItem value="item-5" className="border rounded-lg p-2">
-                <AccordionTrigger className="text-lg font-medium text-[#B22222] hover:no-underline">
-                  Can I use a profile picture instead of an icon?
-                </AccordionTrigger>
-                <AccordionContent className="text-gray-700 pt-2 px-2">
-                  Our platform is designed to prioritize privacy and meaningful connections over appearances. While we
-                  encourage using our icon system, you can share photos privately with matches once you've established a
-                  connection and feel comfortable doing so. This approach helps ensure that connections are formed based
-                  on compatibility rather than initial physical attraction.
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-6" className="border rounded-lg p-2">
-                <AccordionTrigger className="text-lg font-medium text-[#B22222] hover:no-underline">
-                  How does Hanna's Connect protect my privacy?
-                </AccordionTrigger>
-                <AccordionContent className="text-gray-700 pt-2 px-2">
-                  We take privacy seriously and have implemented several measures to protect your information:
-                  <ul className="list-disc pl-5 mt-2 space-y-1">
-                    <li>We use industry-standard encryption to secure your data</li>
-                    <li>We don't require profile pictures, using custom icons instead</li>
-                    <li>You control who sees your profile and information</li>
-                    <li>
-                      Our messaging system only allows communication between users who have expressed mutual interest
-                    </li>
-                    <li>We never sell your personal information to third parties</li>
-                    <li>You can control your privacy settings and visibility preferences</li>
-                  </ul>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-7" className="border rounded-lg p-2">
-                <AccordionTrigger className="text-lg font-medium text-[#B22222] hover:no-underline">
-                  Can I control who sees my profile?
-                </AccordionTrigger>
-                <AccordionContent className="text-gray-700 pt-2 px-2">
-                  Yes, you have full control over your profile visibility. You can choose to make your profile visible
-                  to all users, only to users who match certain criteria, or you can browse in "private mode" where you
-                  decide who can see your profile on a case-by-case basis.
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-
-            <h2 className="text-2xl font-bold my-8 text-[#B22222]">Matching & Communication</h2>
-
-            <Accordion type="single" collapsible className="space-y-4">
-              <AccordionItem value="item-8" className="border rounded-lg p-2">
-                <AccordionTrigger className="text-lg font-medium text-[#B22222] hover:no-underline">
-                  How does the matching system work?
-                </AccordionTrigger>
-                <AccordionContent className="text-gray-700 pt-2 px-2">
-                  Our matching system uses a sophisticated algorithm that considers your values, goals, and preferences
-                  to suggest compatible matches. You can also use our advanced filtering options to search for specific
-                  criteria that matter to you. Unlike traditional apps, our system prioritizes depth-based compatibility
-                  over superficial metrics.
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-9" className="border rounded-lg p-2">
-                <AccordionTrigger className="text-lg font-medium text-[#B22222] hover:no-underline">
-                  How do I know if someone is interested in me?
-                </AccordionTrigger>
-                <AccordionContent className="text-gray-700 pt-2 px-2">
-                  You'll receive a notification when someone expresses interest in your profile. If you're also
-                  interested, you can then begin messaging each other through our secure platform. This mutual interest
-                  approach ensures that conversations only begin when both parties are genuinely interested.
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-10" className="border rounded-lg p-2">
-                <AccordionTrigger className="text-lg font-medium text-[#B22222] hover:no-underline">
-                  Can I message anyone on the platform?
-                </AccordionTrigger>
-                <AccordionContent className="text-gray-700 pt-2 px-2">
-                  To protect our users' privacy and ensure a respectful environment, our messaging system only allows
-                  communication between users who have expressed mutual interest. This approach prevents unwanted
-                  messages and creates a more intentional communication experience.
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-
-            <h2 className="text-2xl font-bold my-8 text-[#B22222]">Account & Technical</h2>
-
-            <Accordion type="single" collapsible className="space-y-4">
-              <AccordionItem value="item-11" className="border rounded-lg p-2">
-                <AccordionTrigger className="text-lg font-medium text-[#B22222] hover:no-underline">
-                  How do I create an account?
-                </AccordionTrigger>
-                <AccordionContent className="text-gray-700 pt-2 px-2">
-                  Creating an account is simple. Click the "Sign Up" button, provide your email address, create a
-                  password, and follow the guided profile creation process. We'll ask you questions about your values,
-                  goals, and preferences to help match you with compatible partners.
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-12" className="border rounded-lg p-2">
-                <AccordionTrigger className="text-lg font-medium text-[#B22222] hover:no-underline">
-                  How can I delete my account?
-                </AccordionTrigger>
-                <AccordionContent className="text-gray-700 pt-2 px-2">
-                  You can delete your account at any time by going to your account settings and selecting "Delete
-                  Account." This will permanently remove your profile and all associated data from our platform. If you
-                  need assistance, our support team is available to help.
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-13" className="border rounded-lg p-2">
-                <AccordionTrigger className="text-lg font-medium text-[#B22222] hover:no-underline">
-                  Is there a mobile app available?
-                </AccordionTrigger>
-                <AccordionContent className="text-gray-700 pt-2 px-2">
-                  Yes, Hanna's Connect is available as a mobile app for both iOS and Android devices. You can download
-                  the app from the App Store or Google Play Store. Our mobile app offers all the features of the web
-                  platform with the convenience of on-the-go access.
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
+          <div className="max-w-md mx-auto relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+            <Input placeholder="Search FAQ..." className="pl-10" />
           </div>
+        </section>
 
-          <div className="mt-12 text-center">
-            <h3 className="text-xl font-bold mb-4 text-[#B22222]">Still Have Questions?</h3>
-            <p className="text-gray-700 mb-6">
-              If you couldn't find the answer to your question, feel free to contact our support team.
-            </p>
-            <Button className="bg-[#B22222] hover:bg-[#8B0000] text-white shadow-md" asChild>
-              <Link href="/contact">Contact Support</Link>
-            </Button>
+        {/* FAQ Categories */}
+        <section className="mb-16">
+          <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Browse by Category</h2>
+          <div className="max-w-6xl mx-auto grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {faqCategories.map((category, index) => (
+              <Link key={index} href={category.link}>
+                <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
+                  <CardContent className="p-6 text-center">
+                    <div
+                      className={`${category.bgColor} rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4`}
+                    >
+                      <category.icon className={`h-8 w-8 ${category.color}`} />
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-3">{category.title}</h3>
+                    <p className="text-gray-600 mb-4">{category.description}</p>
+                    <Button variant="outline" className="w-full bg-transparent">
+                      View Questions
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* CTA Section */}
-      <section className="py-16 px-4 md:px-6 lg:px-8 bg-gradient-to-r from-[#FF69B4] to-[#FF9CC0] text-white">
-        <div className="container mx-auto max-w-4xl text-center">
-          <h2 className="text-3xl font-bold mb-6">Ready to Get Started?</h2>
-          <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Join Hanna's Connect today and experience a dating platform that values privacy, intentionality, and
-            meaningful connections.
-          </p>
-          <Button
-            className="bg-[#B22222] hover:bg-[#8B0000] text-white px-8 py-6 text-lg rounded-md shadow-lg font-medium"
-            asChild
-          >
-            <Link href="/register">Create Your Profile</Link>
-          </Button>
-        </div>
-      </section>
+        {/* Popular Questions */}
+        <section className="mb-16">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Popular Questions</h2>
+            <div className="space-y-6">
+              {popularQuestions.map((faq, index) => (
+                <Card key={index} className="hover:shadow-md transition-shadow">
+                  <CardContent className="p-6">
+                    <div className="flex items-start justify-between mb-3">
+                      <h3 className="text-lg font-semibold text-gray-900 flex-1">{faq.question}</h3>
+                      <span className="text-xs bg-pink-100 text-pink-600 px-2 py-1 rounded-full ml-4">
+                        {faq.category}
+                      </span>
+                    </div>
+                    <p className="text-gray-700 leading-relaxed">{faq.answer}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Contact Support */}
+        <section className="text-center">
+          <Card className="max-w-4xl mx-auto bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+            <CardContent className="p-12">
+              <MessageCircle className="h-16 w-16 mx-auto mb-6 opacity-90" />
+              <h2 className="text-3xl font-bold mb-4">Still Need Help?</h2>
+              <p className="text-xl mb-8 opacity-90">
+                Can't find the answer you're looking for? Our support team is here to help 24/7.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link href="/contact/support">
+                  <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100">
+                    Contact Support
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </Link>
+                <Link href="/contact/feedback">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="border-white text-white hover:bg-white hover:text-blue-600 bg-transparent"
+                  >
+                    Send Feedback
+                  </Button>
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
+        </section>
+      </div>
     </div>
   )
 }

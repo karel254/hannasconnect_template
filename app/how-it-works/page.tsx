@@ -1,286 +1,200 @@
 import Link from "next/link"
+import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { CheckCircle } from "lucide-react"
+import { UserPlus, Heart, MessageCircle, Calendar, ArrowRight, CheckCircle } from "lucide-react"
 
-export default function HowItWorks() {
+export default function HowItWorksPage() {
+  const steps = [
+    {
+      icon: UserPlus,
+      title: "Create Your Profile",
+      description: "Build a comprehensive profile with photos, interests, and relationship goals.",
+      details: ["Upload 3-6 high-quality photos", "Complete personality assessment", "Set your preferences"],
+    },
+    {
+      icon: Heart,
+      title: "Get Matched",
+      description: "Our AI algorithm finds compatible matches based on deep compatibility factors.",
+      details: ["Advanced compatibility scoring", "Quality over quantity approach", "Daily curated matches"],
+    },
+    {
+      icon: MessageCircle,
+      title: "Start Conversations",
+      description: "Connect with your matches through meaningful conversations.",
+      details: ["Icebreaker suggestions", "Safe messaging environment", "Video chat options"],
+    },
+    {
+      icon: Calendar,
+      title: "Meet in Person",
+      description: "Take your connection offline with safe, public first dates.",
+      details: ["Date planning assistance", "Safety tips and guidelines", "Success tracking"],
+    },
+  ]
+
+  const features = [
+    "Advanced AI matching algorithm",
+    "Comprehensive personality assessment",
+    "Photo verification system",
+    "24/7 safety monitoring",
+    "Expert dating advice",
+    "Success rate tracking",
+  ]
+
   return (
-    <div className="min-h-screen bg-[#F5F5F5]">
-      {/* Hero Section */}
-      <section className="bg-gradient-to-b from-[#FF69B4] to-[#FF9CC0] text-white py-16 px-4 md:px-6 lg:px-8">
-        <div className="container mx-auto max-w-6xl">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">How Hanna's Connect Works</h1>
-          <p className="text-xl max-w-3xl">
-            Discover our unique approach to dating that prioritizes privacy, intentionality, and meaningful connections.
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50">
+      <div className="container mx-auto px-4 py-8">
+        {/* Hero Section */}
+        <section className="text-center mb-16">
+          <h1 className="text-5xl font-bold text-gray-900 mb-6">How Hanna's Connect Works</h1>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+            Our proven 4-step process helps you find meaningful relationships through compatibility-based matching and
+            authentic connections.
           </p>
-        </div>
-      </section>
+        </section>
 
-      {/* Step by Step Process */}
-      <section className="py-16 px-4 md:px-6 lg:px-8 bg-white">
-        <div className="container mx-auto max-w-6xl">
-          <h2 className="text-3xl font-bold mb-12 text-[#B22222] text-center">Our Simple Process</h2>
-
-          <div className="space-y-16">
-            {/* Step 1 */}
-            <div className="grid md:grid-cols-2 gap-8 items-center">
-              <div className="order-2 md:order-1">
-                <div className="bg-[#F5F5F5] p-6 rounded-lg shadow-md">
-                  <h3 className="text-2xl font-bold mb-4 text-[#B22222]">1. Create Your Profile</h3>
-                  <p className="text-gray-700 mb-4">
-                    Start by creating a detailed profile that focuses on what truly matters. Unlike traditional dating
-                    apps, we don't require profile pictures. Instead, we ask about your:
-                  </p>
-                  <ul className="space-y-2">
-                    <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-[#DAA520] mr-2 mt-0.5" />
-                      <span className="text-gray-700">Values and beliefs</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-[#DAA520] mr-2 mt-0.5" />
-                      <span className="text-gray-700">Life goals and aspirations</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-[#DAA520] mr-2 mt-0.5" />
-                      <span className="text-gray-700">Education and career</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-[#DAA520] mr-2 mt-0.5" />
-                      <span className="text-gray-700">Family background and plans</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-[#DAA520] mr-2 mt-0.5" />
-                      <span className="text-gray-700">Relationship expectations</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              <div className="order-1 md:order-2 flex justify-center">
-                <div className="bg-[#DAA520]/20 p-4 rounded-full">
-                  <div className="w-24 h-24 bg-[#B22222] rounded-full flex items-center justify-center text-white text-4xl font-bold shadow-lg">
-                    1
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Step 2 */}
-            <div className="grid md:grid-cols-2 gap-8 items-center">
-              <div className="flex justify-center">
-                <div className="bg-[#DAA520]/20 p-4 rounded-full">
-                  <div className="w-24 h-24 bg-[#B22222] rounded-full flex items-center justify-center text-white text-4xl font-bold shadow-lg">
-                    2
-                  </div>
-                </div>
-              </div>
-              <div>
-                <div className="bg-[#F5F5F5] p-6 rounded-lg shadow-md">
-                  <h3 className="text-2xl font-bold mb-4 text-[#B22222]">2. Choose Your Icon</h3>
-                  <p className="text-gray-700 mb-4">
-                    Instead of a profile picture, select or upload a custom icon that represents your personality and
-                    values. This approach:
-                  </p>
-                  <ul className="space-y-2">
-                    <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-[#DAA520] mr-2 mt-0.5" />
-                      <span className="text-gray-700">Protects your privacy</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-[#DAA520] mr-2 mt-0.5" />
-                      <span className="text-gray-700">Reduces bias based on appearance</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-[#DAA520] mr-2 mt-0.5" />
-                      <span className="text-gray-700">Encourages connections based on compatibility</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-[#DAA520] mr-2 mt-0.5" />
-                      <span className="text-gray-700">Creates a unique visual identity</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            {/* Step 3 */}
-            <div className="grid md:grid-cols-2 gap-8 items-center">
-              <div className="order-2 md:order-1">
-                <div className="bg-[#F5F5F5] p-6 rounded-lg shadow-md">
-                  <h3 className="text-2xl font-bold mb-4 text-[#B22222]">3. Find Matches</h3>
-                  <p className="text-gray-700 mb-4">
-                    Use our advanced filtering system to find potential matches based on what truly matters to you:
-                  </p>
-                  <ul className="space-y-2">
-                    <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-[#DAA520] mr-2 mt-0.5" />
-                      <span className="text-gray-700">Filter by values and life goals</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-[#DAA520] mr-2 mt-0.5" />
-                      <span className="text-gray-700">Search by relationship expectations</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-[#DAA520] mr-2 mt-0.5" />
-                      <span className="text-gray-700">Find people with compatible backgrounds</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-[#DAA520] mr-2 mt-0.5" />
-                      <span className="text-gray-700">Discover connections based on shared interests</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              <div className="order-1 md:order-2 flex justify-center">
-                <div className="bg-[#DAA520]/20 p-4 rounded-full">
-                  <div className="w-24 h-24 bg-[#B22222] rounded-full flex items-center justify-center text-white text-4xl font-bold shadow-lg">
-                    3
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Step 4 */}
-            <div className="grid md:grid-cols-2 gap-8 items-center">
-              <div className="flex justify-center">
-                <div className="bg-[#DAA520]/20 p-4 rounded-full">
-                  <div className="w-24 h-24 bg-[#B22222] rounded-full flex items-center justify-center text-white text-4xl font-bold shadow-lg">
-                    4
-                  </div>
-                </div>
-              </div>
-              <div>
-                <div className="bg-[#F5F5F5] p-6 rounded-lg shadow-md">
-                  <h3 className="text-2xl font-bold mb-4 text-[#B22222]">4. Connect Securely</h3>
-                  <p className="text-gray-700 mb-4">
-                    When you find someone you're interested in, our secure communication system allows you to:
-                  </p>
-                  <ul className="space-y-2">
-                    <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-[#DAA520] mr-2 mt-0.5" />
-                      <span className="text-gray-700">Express interest privately</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-[#DAA520] mr-2 mt-0.5" />
-                      <span className="text-gray-700">Message only when there's mutual interest</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-[#DAA520] mr-2 mt-0.5" />
-                      <span className="text-gray-700">Communicate in a respectful environment</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-[#DAA520] mr-2 mt-0.5" />
-                      <span className="text-gray-700">Build meaningful connections at your own pace</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
+        {/* Steps Section */}
+        <section className="mb-16">
+          <div className="max-w-6xl mx-auto">
+            <div className="grid lg:grid-cols-4 gap-8">
+              {steps.map((step, index) => (
+                <Card key={index} className="text-center hover:shadow-lg transition-shadow relative">
+                  <CardContent className="p-6">
+                    <div className="bg-pink-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                      <step.icon className="h-8 w-8 text-pink-600" />
+                    </div>
+                    <div className="absolute -top-3 -right-3 bg-pink-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold">
+                      {index + 1}
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-3">{step.title}</h3>
+                    <p className="text-gray-600 mb-4">{step.description}</p>
+                    <ul className="text-sm text-gray-500 space-y-1">
+                      {step.details.map((detail, detailIndex) => (
+                        <li key={detailIndex} className="flex items-center justify-center">
+                          <CheckCircle className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
+                          {detail}
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Privacy & Security */}
-      <section className="py-16 px-4 md:px-6 lg:px-8 bg-[#F5F5F5]">
-        <div className="container mx-auto max-w-6xl">
-          <h2 className="text-3xl font-bold mb-8 text-[#B22222] text-center">Privacy & Security</h2>
-          <p className="text-center text-gray-700 mb-12 max-w-3xl mx-auto">
-            At Hanna's Connect, we take your privacy and security seriously. Here's how we protect your information:
-          </p>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-xl font-bold mb-4 text-[#B22222]">Data Protection</h3>
-              <p className="text-gray-700">
-                We use industry-standard encryption to protect your personal information. Your data is never sold to
-                third parties, and we only collect what's necessary to provide our service.
-              </p>
-            </div>
-
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-xl font-bold mb-4 text-[#B22222]">Profile Privacy</h3>
-              <p className="text-gray-700">
-                You control who sees your profile. Our platform allows you to remain discreet until you feel comfortable
-                engaging with potential matches.
-              </p>
-            </div>
-
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-xl font-bold mb-4 text-[#B22222]">Secure Messaging</h3>
-              <p className="text-gray-700">
-                Our messaging system is encrypted and only allows communication between users who have expressed mutual
-                interest, protecting you from unwanted contact.
-              </p>
+        {/* Features Grid */}
+        <section className="mb-16">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">What Makes Us Different</h2>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {features.map((feature, index) => (
+                <div key={index} className="flex items-center p-4 bg-white rounded-lg shadow-sm">
+                  <CheckCircle className="h-6 w-6 text-green-500 mr-3 flex-shrink-0" />
+                  <span className="text-gray-700">{feature}</span>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* FAQ */}
-      <section className="py-16 px-4 md:px-6 lg:px-8 bg-white">
-        <div className="container mx-auto max-w-6xl">
-          <h2 className="text-3xl font-bold mb-12 text-[#B22222] text-center">Frequently Asked Questions</h2>
+        {/* Detailed Sections */}
+        <section className="mb-16">
+          <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12">
+            <Card>
+              <CardContent className="p-8">
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">Getting Started</h3>
+                <p className="text-gray-600 mb-6">
+                  Creating your profile is the foundation of finding great matches. Our guided setup process helps you
+                  showcase your authentic self.
+                </p>
+                <Link href="/how-it-works/getting-started">
+                  <Button className="bg-pink-500 hover:bg-pink-600">
+                    Learn More
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
 
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="bg-[#F5F5F5] p-6 rounded-lg shadow-md">
-              <h3 className="text-xl font-bold mb-3 text-[#B22222]">Can I use a profile picture instead of an icon?</h3>
-              <p className="text-gray-700">
-                Our platform is designed to prioritize privacy and meaningful connections over appearances. While we
-                encourage using our icon system, you can share photos privately with matches once you've established a
-                connection.
-              </p>
-            </div>
+            <Card>
+              <CardContent className="p-8">
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">Matching Process</h3>
+                <p className="text-gray-600 mb-6">
+                  Our advanced algorithm analyzes 50+ compatibility factors to find your most compatible matches based
+                  on personality, values, and goals.
+                </p>
+                <Link href="/how-it-works/matching">
+                  <Button className="bg-pink-500 hover:bg-pink-600">
+                    Learn More
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
 
-            <div className="bg-[#F5F5F5] p-6 rounded-lg shadow-md">
-              <h3 className="text-xl font-bold mb-3 text-[#B22222]">How do I know if someone is interested in me?</h3>
-              <p className="text-gray-700">
-                You'll receive a notification when someone expresses interest in your profile. If you're also
-                interested, you can then begin messaging each other through our secure platform.
-              </p>
-            </div>
+            <Card>
+              <CardContent className="p-8">
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">Safety Features</h3>
+                <p className="text-gray-600 mb-6">
+                  Your safety is our priority. We use advanced verification, AI monitoring, and safety tools to create a
+                  secure dating environment.
+                </p>
+                <Link href="/how-it-works/safety">
+                  <Button className="bg-pink-500 hover:bg-pink-600">
+                    Learn More
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
 
-            <div className="bg-[#F5F5F5] p-6 rounded-lg shadow-md">
-              <h3 className="text-xl font-bold mb-3 text-[#B22222]">Is Hanna's Connect free to use?</h3>
-              <p className="text-gray-700">
-                We offer both free and premium membership options. Free members can create profiles and browse matches,
-                while premium members enjoy additional features like advanced filtering and priority matching.
-              </p>
-            </div>
-
-            <div className="bg-[#F5F5F5] p-6 rounded-lg shadow-md">
-              <h3 className="text-xl font-bold mb-3 text-[#B22222]">
-                How is Hanna's Connect different from other dating apps?
-              </h3>
-              <p className="text-gray-700">
-                Unlike traditional dating apps that focus on appearances, we prioritize values, goals, and
-                compatibility. Our unique approach to privacy and intentionality creates an environment where meaningful
-                connections can flourish.
-              </p>
-            </div>
+            <Card>
+              <CardContent className="p-8">
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">Premium Features</h3>
+                <p className="text-gray-600 mb-6">
+                  Unlock advanced features like unlimited likes, priority matching, and personal dating coaching to
+                  maximize your success.
+                </p>
+                <Link href="/how-it-works/premium">
+                  <Button className="bg-pink-500 hover:bg-pink-600">
+                    Learn More
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
           </div>
+        </section>
 
-          <div className="text-center mt-12">
-            <Link href="/faq" className="text-[#B22222] font-semibold hover:underline">
-              View all FAQs →
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-16 px-4 md:px-6 lg:px-8 bg-gradient-to-r from-[#FF69B4] to-[#FF9CC0] text-white">
-        <div className="container mx-auto max-w-4xl text-center">
-          <h2 className="text-3xl font-bold mb-6">Ready to Start Your Journey?</h2>
-          <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Join Hanna's Connect today and experience a dating platform that values privacy, intentionality, and
-            meaningful connections.
-          </p>
-          <Button
-            className="bg-[#B22222] hover:bg-[#8B0000] text-white px-8 py-6 text-lg rounded-md shadow-lg font-medium"
-            asChild
-          >
-            <Link href="/register">Create Your Profile</Link>
-          </Button>
-        </div>
-      </section>
+        {/* CTA Section */}
+        <section className="text-center">
+          <Card className="max-w-4xl mx-auto bg-gradient-to-r from-pink-500 to-purple-600 text-white">
+            <CardContent className="p-12">
+              <h2 className="text-3xl font-bold mb-4">Ready to Start Your Journey?</h2>
+              <p className="text-xl mb-8 opacity-90">
+                Join thousands of people who have found love through our proven matching process.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link href="/register">
+                  <Button size="lg" className="bg-white text-pink-600 hover:bg-gray-100">
+                    Create Free Profile
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </Link>
+                <Link href="/success-stories">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="border-white text-white hover:bg-white hover:text-pink-600 bg-transparent"
+                  >
+                    Read Success Stories
+                  </Button>
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
+        </section>
+      </div>
     </div>
   )
 }

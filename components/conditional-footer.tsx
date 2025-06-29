@@ -13,3 +13,5 @@ export function ConditionalFooter() {
 
   return <Footer />
 }
+
+export default ConditionalFooter
