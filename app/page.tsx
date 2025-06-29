@@ -1,5 +1,4 @@
 import Link from "next/link"
-import { Heart } from "lucide-react"
 
 export default function Home() {
   return (
@@ -22,9 +21,8 @@ export default function Home() {
         {/* Header */}
         <header className="pt-8 sm:pt-12 md:pt-16 pb-6 sm:pb-8 md:pb-10 text-center px-4 flex-shrink-0">
           <div className="flex items-center justify-center gap-2 md:gap-3 mb-3 md:mb-4">
-            <Heart className="w-7 h-7 md:w-10 md:h-10 lg:w-12 lg:h-12 text-white fill-white animate-pulse" />
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white tracking-wide drop-shadow-lg">
-              HANNA&apos;S CONNECT
+              Welcome to Hanna&apos;s Connect
             </h1>
           </div>
           <p className="text-white/95 text-base sm:text-lg md:text-xl lg:text-2xl font-light tracking-wider drop-shadow-md">
@@ -55,14 +53,14 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Floating Animation Elements - Contained within viewport */}
+      {/* Floating Animation Elements - Contained within viewport - NO PINK */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-16 sm:top-20 md:top-24 left-6 sm:left-10 md:left-12 w-2 sm:w-3 md:w-4 h-2 sm:h-3 md:h-4 bg-yellow-300/50 rounded-full animate-ping delay-1000"></div>
+        <div className="absolute top-16 sm:top-20 md:top-24 left-6 sm:left-10 md:left-12 w-2 sm:w-3 md:w-4 h-2 sm:h-3 md:h-4 bg-amber-300/50 rounded-full animate-ping delay-1000"></div>
         <div className="absolute top-1/4 right-10 sm:right-16 md:right-20 lg:right-24 w-1.5 sm:w-2 md:w-3 h-1.5 sm:h-2 md:h-3 bg-orange-300/40 rounded-full animate-pulse delay-2000"></div>
         <div className="absolute bottom-1/3 left-10 sm:left-16 md:left-20 lg:left-24 w-3 sm:w-4 md:w-5 h-3 sm:h-4 md:h-5 bg-yellow-400/40 rounded-full animate-bounce delay-3000"></div>
-        <div className="absolute bottom-16 sm:bottom-20 md:bottom-24 right-6 sm:right-10 md:right-12 w-2 sm:w-3 md:w-4 h-2 sm:h-3 md:h-4 bg-pink-400/50 rounded-full animate-ping delay-500"></div>
+        <div className="absolute bottom-16 sm:bottom-20 md:bottom-24 right-6 sm:right-10 md:right-12 w-2 sm:w-3 md:w-4 h-2 sm:h-3 md:h-4 bg-red-400/50 rounded-full animate-ping delay-500"></div>
         <div className="absolute top-1/2 left-1/4 w-1.5 sm:w-2 md:w-3 h-1.5 sm:h-2 md:h-3 bg-white/30 rounded-full animate-pulse delay-4000"></div>
-        <div className="absolute top-2/3 right-1/3 w-2 sm:w-3 md:w-4 h-2 sm:h-3 md:h-4 bg-yellow-300/30 rounded-full animate-bounce delay-1500"></div>
+        <div className="absolute top-2/3 right-1/3 w-2 sm:w-3 md:w-4 h-2 sm:h-3 md:h-4 bg-amber-300/30 rounded-full animate-bounce delay-1500"></div>
       </div>
     </div>
   )

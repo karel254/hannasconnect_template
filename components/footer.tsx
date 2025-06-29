@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Heart, Facebook, Instagram, Twitter } from "lucide-react"
+import { Facebook, Instagram, Twitter } from "lucide-react"
 
 export default function Footer() {
   return (
@@ -9,13 +9,12 @@ export default function Footer() {
           {/* Brand Section */}
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center gap-2 mb-4">
-              <Heart className="h-8 w-8 text-red-500 fill-red-500" />
-              <span className="text-2xl font-bold">Hanna&apos;s Connect</span>
+              <span className="text-2xl font-bold">Hanna&apos;s Connect™</span>
             </div>
             <p className="text-gray-300 mb-4 max-w-md">
               Where meaningful connections begin. Privacy-first dating for intentional singles.
             </p>
-            <p className="text-yellow-400 italic text-lg">&quot;Clarity Before Chemistry&quot;</p>
+            <p className="text-amber-400 italic text-lg">&quot;Clarity Before Chemistry&quot;</p>
           </div>
 
           {/* Quick Links */}
@@ -33,8 +32,8 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/success-stories" className="text-gray-300 hover:text-white transition-colors">
-                  Success Stories
+                <Link href="/blog" className="text-gray-300 hover:text-white transition-colors">
+                  Blog
                 </Link>
               </li>
               <li>
@@ -81,7 +80,7 @@ export default function Footer() {
               <Twitter className="h-6 w-6" />
             </Link>
           </div>
-          <p className="text-gray-400 text-sm">© 2024 Hanna&apos;s Connect. All rights reserved.</p>
+          <p className="text-gray-400 text-sm">© 2024 Hanna&apos;s Connect™. All rights reserved.</p>
         </div>
       </div>
     </footer>

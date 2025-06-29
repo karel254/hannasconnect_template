@@ -1,199 +1,261 @@
 import Link from "next/link"
-import { Card, CardContent } from "@/components/ui/card"
+import { ArrowLeft, UserPlus, Search, MessageCircle, Heart, Shield, CheckCircle, Star } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { UserPlus, Heart, MessageCircle, Calendar, ArrowRight, CheckCircle } from "lucide-react"
+import { Card, CardContent } from "@/components/ui/card"
 
 export default function HowItWorksPage() {
-  const steps = [
-    {
-      icon: UserPlus,
-      title: "Create Your Profile",
-      description: "Build a comprehensive profile with photos, interests, and relationship goals.",
-      details: ["Upload 3-6 high-quality photos", "Complete personality assessment", "Set your preferences"],
-    },
-    {
-      icon: Heart,
-      title: "Get Matched",
-      description: "Our AI algorithm finds compatible matches based on deep compatibility factors.",
-      details: ["Advanced compatibility scoring", "Quality over quantity approach", "Daily curated matches"],
-    },
-    {
-      icon: MessageCircle,
-      title: "Start Conversations",
-      description: "Connect with your matches through meaningful conversations.",
-      details: ["Icebreaker suggestions", "Safe messaging environment", "Video chat options"],
-    },
-    {
-      icon: Calendar,
-      title: "Meet in Person",
-      description: "Take your connection offline with safe, public first dates.",
-      details: ["Date planning assistance", "Safety tips and guidelines", "Success tracking"],
-    },
-  ]
-
-  const features = [
-    "Advanced AI matching algorithm",
-    "Comprehensive personality assessment",
-    "Photo verification system",
-    "24/7 safety monitoring",
-    "Expert dating advice",
-    "Success rate tracking",
-  ]
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50">
-      <div className="container mx-auto px-4 py-8">
-        {/* Hero Section */}
-        <section className="text-center mb-16">
-          <h1 className="text-5xl font-bold text-gray-900 mb-6">How Hanna's Connect Works</h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-            Our proven 4-step process helps you find meaningful relationships through compatibility-based matching and
-            authentic connections.
-          </p>
-        </section>
-
-        {/* Steps Section */}
-        <section className="mb-16">
-          <div className="max-w-6xl mx-auto">
-            <div className="grid lg:grid-cols-4 gap-8">
-              {steps.map((step, index) => (
-                <Card key={index} className="text-center hover:shadow-lg transition-shadow relative">
-                  <CardContent className="p-6">
-                    <div className="bg-pink-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                      <step.icon className="h-8 w-8 text-pink-600" />
-                    </div>
-                    <div className="absolute -top-3 -right-3 bg-pink-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold">
-                      {index + 1}
-                    </div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-3">{step.title}</h3>
-                    <p className="text-gray-600 mb-4">{step.description}</p>
-                    <ul className="text-sm text-gray-500 space-y-1">
-                      {step.details.map((detail, detailIndex) => (
-                        <li key={detailIndex} className="flex items-center justify-center">
-                          <CheckCircle className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
-                          {detail}
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-50">
+      {/* Header */}
+      <div className="bg-white border-b">
+        <div className="container mx-auto px-4 py-6">
+          <div className="flex items-center gap-4 mb-4">
+            <Link href="/">
+              <Button variant="ghost" size="sm" className="gap-2">
+                <ArrowLeft className="h-4 w-4" />
+                Back to Home
+              </Button>
+            </Link>
           </div>
-        </section>
+          <div className="text-center">
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">How Hanna&apos;s Connect™ Works</h1>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Our simple 4-step process helps you find meaningful connections based on compatibility and shared values.
+            </p>
+          </div>
+        </div>
+      </div>
 
-        {/* Features Grid */}
-        <section className="mb-16">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">What Makes Us Different</h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {features.map((feature, index) => (
-                <div key={index} className="flex items-center p-4 bg-white rounded-lg shadow-sm">
-                  <CheckCircle className="h-6 w-6 text-green-500 mr-3 flex-shrink-0" />
-                  <span className="text-gray-700">{feature}</span>
+      <div className="container mx-auto px-4 py-12">
+        {/* Main Process Steps */}
+        <div className="max-w-6xl mx-auto mb-16">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {/* Step 1 */}
+            <Card className="text-center hover:shadow-lg transition-shadow border-2 border-amber-100">
+              <CardContent className="p-8">
+                <div className="bg-amber-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
+                  <UserPlus className="h-8 w-8 text-amber-700" />
                 </div>
-              ))}
+                <div className="bg-amber-700 text-white rounded-full w-8 h-8 flex items-center justify-center mx-auto mb-4 text-sm font-bold">
+                  1
+                </div>
+                <h3 className="text-xl font-semibold mb-4">Create Your Profile</h3>
+                <p className="text-gray-600 mb-4">
+                  Build a comprehensive profile that showcases your personality, values, and what you're looking for in
+                  a partner.
+                </p>
+                <ul className="text-sm text-gray-500 space-y-1">
+                  <li>• Upload verified photos</li>
+                  <li>• Complete personality assessment</li>
+                  <li>• Set your preferences</li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            {/* Step 2 */}
+            <Card className="text-center hover:shadow-lg transition-shadow border-2 border-red-100">
+              <CardContent className="p-8">
+                <div className="bg-red-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
+                  <Search className="h-8 w-8 text-red-700" />
+                </div>
+                <div className="bg-red-700 text-white rounded-full w-8 h-8 flex items-center justify-center mx-auto mb-4 text-sm font-bold">
+                  2
+                </div>
+                <h3 className="text-xl font-semibold mb-4">Get Matched</h3>
+                <p className="text-gray-600 mb-4">
+                  Our advanced algorithm finds compatible matches based on your values, interests, and relationship
+                  goals.
+                </p>
+                <ul className="text-sm text-gray-500 space-y-1">
+                  <li>• Compatibility scoring</li>
+                  <li>• Quality over quantity</li>
+                  <li>• Daily curated matches</li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            {/* Step 3 */}
+            <Card className="text-center hover:shadow-lg transition-shadow border-2 border-orange-100">
+              <CardContent className="p-8">
+                <div className="bg-orange-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
+                  <MessageCircle className="h-8 w-8 text-orange-700" />
+                </div>
+                <div className="bg-orange-700 text-white rounded-full w-8 h-8 flex items-center justify-center mx-auto mb-4 text-sm font-bold">
+                  3
+                </div>
+                <h3 className="text-xl font-semibold mb-4">Start Conversations</h3>
+                <p className="text-gray-600 mb-4">
+                  Break the ice with our conversation starters and get to know each other through meaningful dialogue.
+                </p>
+                <ul className="text-sm text-gray-500 space-y-1">
+                  <li>• Guided conversation prompts</li>
+                  <li>• Safe messaging environment</li>
+                  <li>• Video chat options</li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            {/* Step 4 */}
+            <Card className="text-center hover:shadow-lg transition-shadow border-2 border-red-100">
+              <CardContent className="p-8">
+                <div className="bg-red-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
+                  <Heart className="h-8 w-8 text-red-700" />
+                </div>
+                <div className="bg-red-700 text-white rounded-full w-8 h-8 flex items-center justify-center mx-auto mb-4 text-sm font-bold">
+                  4
+                </div>
+                <h3 className="text-xl font-semibold mb-4">Build Connection</h3>
+                <p className="text-gray-600 mb-4">
+                  Take your connection offline when you're ready and build a meaningful relationship in the real world.
+                </p>
+                <ul className="text-sm text-gray-500 space-y-1">
+                  <li>• Date planning assistance</li>
+                  <li>• Safety tips & guidelines</li>
+                  <li>• Ongoing relationship support</li>
+                </ul>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* Detailed Features */}
+        <div className="max-w-4xl mx-auto mb-16">
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">What Makes Our Process Special</h2>
+
+          <div className="space-y-8">
+            {/* Privacy & Security */}
+            <div className="bg-white rounded-lg shadow-lg p-8 border-l-4 border-amber-600">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="bg-amber-100 p-3 rounded-lg">
+                  <Shield className="h-8 w-8 text-amber-700" />
+                </div>
+                <h3 className="text-2xl font-semibold">Privacy & Security First</h3>
+              </div>
+              <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <h4 className="font-semibold mb-3">Your Data is Protected</h4>
+                  <ul className="space-y-2 text-gray-600">
+                    <li className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-amber-600" />
+                      End-to-end encrypted messaging
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-amber-600" />
+                      No data selling to third parties
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-amber-600" />
+                      Bank-level security protocols
+                    </li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="font-semibold mb-3">Verified Community</h4>
+                  <ul className="space-y-2 text-gray-600">
+                    <li className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-red-600" />
+                      Photo verification required
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-red-600" />
+                      Identity confirmation process
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-red-600" />
+                      24/7 moderation and support
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Matching Algorithm */}
+            <div className="bg-white rounded-lg shadow-lg p-8 border-l-4 border-red-600">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="bg-red-100 p-3 rounded-lg">
+                  <Star className="h-8 w-8 text-red-700" />
+                </div>
+                <h3 className="text-2xl font-semibold">Smart Matching Algorithm</h3>
+              </div>
+              <div className="grid md:grid-cols-3 gap-6">
+                <div className="text-center">
+                  <div className="bg-red-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4">
+                    <span className="text-red-700 font-bold">1</span>
+                  </div>
+                  <h4 className="font-semibold mb-2">Values Assessment</h4>
+                  <p className="text-sm text-gray-600">
+                    We analyze your core values and life goals to find compatible partners.
+                  </p>
+                </div>
+                <div className="text-center">
+                  <div className="bg-orange-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4">
+                    <span className="text-orange-700 font-bold">2</span>
+                  </div>
+                  <h4 className="font-semibold mb-2">Compatibility Scoring</h4>
+                  <p className="text-sm text-gray-600">
+                    Advanced algorithms calculate compatibility across multiple dimensions.
+                  </p>
+                </div>
+                <div className="text-center">
+                  <div className="bg-amber-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4">
+                    <span className="text-amber-700 font-bold">3</span>
+                  </div>
+                  <h4 className="font-semibold mb-2">Curated Matches</h4>
+                  <p className="text-sm text-gray-600">
+                    Receive a small number of high-quality matches daily, not hundreds.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
-        </section>
+        </div>
 
-        {/* Detailed Sections */}
-        <section className="mb-16">
-          <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12">
-            <Card>
-              <CardContent className="p-8">
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">Getting Started</h3>
-                <p className="text-gray-600 mb-6">
-                  Creating your profile is the foundation of finding great matches. Our guided setup process helps you
-                  showcase your authentic self.
-                </p>
-                <Link href="/how-it-works/getting-started">
-                  <Button className="bg-pink-500 hover:bg-pink-600">
-                    Learn More
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-8">
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">Matching Process</h3>
-                <p className="text-gray-600 mb-6">
-                  Our advanced algorithm analyzes 50+ compatibility factors to find your most compatible matches based
-                  on personality, values, and goals.
-                </p>
-                <Link href="/how-it-works/matching">
-                  <Button className="bg-pink-500 hover:bg-pink-600">
-                    Learn More
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-8">
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">Safety Features</h3>
-                <p className="text-gray-600 mb-6">
-                  Your safety is our priority. We use advanced verification, AI monitoring, and safety tools to create a
-                  secure dating environment.
-                </p>
-                <Link href="/how-it-works/safety">
-                  <Button className="bg-pink-500 hover:bg-pink-600">
-                    Learn More
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-8">
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">Premium Features</h3>
-                <p className="text-gray-600 mb-6">
-                  Unlock advanced features like unlimited likes, priority matching, and personal dating coaching to
-                  maximize your success.
-                </p>
-                <Link href="/how-it-works/premium">
-                  <Button className="bg-pink-500 hover:bg-pink-600">
-                    Learn More
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
+        {/* Success Statistics */}
+        <div className="bg-gradient-to-r from-red-800 to-amber-700 text-white rounded-lg p-12 mb-16">
+          <h2 className="text-3xl font-bold text-center mb-8">Our Success Speaks for Itself</h2>
+          <div className="grid md:grid-cols-4 gap-8 text-center">
+            <div>
+              <div className="text-4xl font-bold mb-2">87%</div>
+              <div className="opacity-90">Match Success Rate</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold mb-2">3.2</div>
+              <div className="opacity-90">Average Months to Relationship</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold mb-2">95%</div>
+              <div className="opacity-90">User Satisfaction</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold mb-2">500+</div>
+              <div className="opacity-90">Successful Relationships</div>
+            </div>
           </div>
-        </section>
+        </div>
 
-        {/* CTA Section */}
-        <section className="text-center">
-          <Card className="max-w-4xl mx-auto bg-gradient-to-r from-pink-500 to-purple-600 text-white">
-            <CardContent className="p-12">
-              <h2 className="text-3xl font-bold mb-4">Ready to Start Your Journey?</h2>
-              <p className="text-xl mb-8 opacity-90">
-                Join thousands of people who have found love through our proven matching process.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="/register">
-                  <Button size="lg" className="bg-white text-pink-600 hover:bg-gray-100">
-                    Create Free Profile
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </Link>
-                <Link href="/success-stories">
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="border-white text-white hover:bg-white hover:text-pink-600 bg-transparent"
-                  >
-                    Read Success Stories
-                  </Button>
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
-        </section>
+        {/* Call to Action */}
+        <div className="text-center bg-white rounded-lg shadow-lg p-12">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">Ready to Start Your Journey?</h2>
+          <p className="text-xl text-gray-600 mb-8">
+            Join thousands of singles who've found meaningful connections through our platform.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/register">
+              <Button size="lg" className="bg-red-700 hover:bg-red-800">
+                Create Your Profile
+              </Button>
+            </Link>
+            <Link href="/faq">
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-red-700 text-red-700 hover:bg-red-50 bg-transparent"
+              >
+                Have Questions?
+              </Button>
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   )

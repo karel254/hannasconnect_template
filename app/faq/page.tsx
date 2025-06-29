@@ -1,177 +1,227 @@
 import Link from "next/link"
-import { Card, CardContent } from "@/components/ui/card"
+import { ArrowLeft, Search, HelpCircle, Users, CreditCard, Shield, MessageCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Input } from "@/components/ui/input"
-import { HelpCircle, User, Heart, CreditCard, MessageCircle, ArrowRight, Search } from "lucide-react"
 
 export default function FAQPage() {
   const faqCategories = [
     {
-      icon: HelpCircle,
       title: "General Questions",
-      description: "Basic information about Hanna's Connect and how to get started",
-      link: "/faq/general",
-      color: "text-blue-500",
-      bgColor: "bg-blue-100",
+      icon: HelpCircle,
+      color: "amber",
+      questions: [
+        {
+          question: "What makes Hanna's Connect™ different from other dating apps?",
+          answer:
+            "Hanna's Connect™ focuses on privacy-first dating with meaningful connections. We don't sell your data, use advanced compatibility matching, and prioritize quality over quantity. Our 'Clarity Before Chemistry' approach helps you understand compatibility before physical attraction takes over.",
+        },
+        {
+          question: "How does the matching algorithm work?",
+          answer:
+            "Our algorithm analyzes your values, interests, lifestyle preferences, and relationship goals to find compatible matches. We use a multi-dimensional compatibility scoring system that goes beyond surface-level preferences to identify potential long-term partners.",
+        },
+        {
+          question: "Is Hanna's Connect™ free to use?",
+          answer:
+            "We offer both free and premium memberships. Free members can create profiles, receive daily matches, and send limited messages. Premium members get unlimited messaging, advanced filters, read receipts, and priority customer support.",
+        },
+      ],
     },
     {
-      icon: User,
       title: "Account & Profile",
-      description: "Managing your account, profile setup, and verification process",
-      link: "/faq/account",
-      color: "text-green-500",
-      bgColor: "bg-green-100",
+      icon: Users,
+      color: "red",
+      questions: [
+        {
+          question: "How do I create an effective profile?",
+          answer:
+            "Upload 3-6 high-quality photos that show your face clearly and represent your lifestyle. Write an authentic bio that reflects your personality and values. Complete our compatibility questionnaire thoroughly, and be specific about what you're looking for in a partner.",
+        },
+        {
+          question: "Can I change my location or age range preferences?",
+          answer:
+            "Yes, you can update your location and age range preferences anytime in your settings. Premium members can also set multiple locations and use advanced filters for more specific preferences.",
+        },
+        {
+          question: "How do I verify my profile?",
+          answer:
+            "Profile verification involves uploading a government-issued ID and taking a real-time selfie. This process typically takes 24-48 hours. Verified profiles get a checkmark and are prioritized in matching.",
+        },
+      ],
     },
     {
-      icon: Heart,
       title: "Matching & Dating",
-      description: "How matching works, conversation tips, and dating advice",
-      link: "/faq/matching",
-      color: "text-pink-500",
-      bgColor: "bg-pink-100",
+      icon: MessageCircle,
+      color: "orange",
+      questions: [
+        {
+          question: "How many matches will I receive per day?",
+          answer:
+            "We send 3-5 high-quality matches daily based on your compatibility score and preferences. This approach focuses on meaningful connections rather than overwhelming you with options.",
+        },
+        {
+          question: "What should I do if I'm not getting matches?",
+          answer:
+            "Try updating your photos, expanding your age or distance range, or completing more sections of your profile. Our customer support team can also provide personalized profile feedback to improve your matching potential.",
+        },
+        {
+          question: "Can I see who liked my profile?",
+          answer:
+            "Premium members can see who liked their profile and get priority placement in potential matches' queues. Free members will know when they have likes but can only see specific profiles through mutual matching.",
+        },
+      ],
     },
     {
-      icon: CreditCard,
       title: "Billing & Subscription",
-      description: "Pricing, payments, subscriptions, and refund information",
-      link: "/faq/billing",
-      color: "text-purple-500",
-      bgColor: "bg-purple-100",
+      icon: CreditCard,
+      color: "red",
+      questions: [
+        {
+          question: "What payment methods do you accept?",
+          answer:
+            "We accept all major credit cards (Visa, MasterCard, American Express), PayPal, and Apple Pay/Google Pay for mobile purchases. All payments are processed securely through encrypted channels.",
+        },
+        {
+          question: "Can I cancel my subscription anytime?",
+          answer:
+            "Yes, you can cancel your subscription anytime from your account settings. Your premium features will remain active until the end of your current billing period, and you won't be charged again.",
+        },
+        {
+          question: "Do you offer refunds?",
+          answer:
+            "We offer a 7-day money-back guarantee for new premium subscriptions. Refunds are processed within 5-7 business days. Contact our support team if you're not satisfied with your premium experience.",
+        },
+      ],
     },
   ]
 
   const popularQuestions = [
-    {
-      question: "How does the matching algorithm work?",
-      answer:
-        "Our algorithm analyzes compatibility across 50+ factors including personality traits, values, lifestyle preferences, and relationship goals to find your most compatible matches.",
-      category: "Matching",
-    },
-    {
-      question: "Is Hanna's Connect free to use?",
-      answer:
-        "Yes! You can create a profile, receive matches, and send messages for free. Premium subscriptions unlock additional features like unlimited likes and advanced filters.",
-      category: "Billing",
-    },
-    {
-      question: "How do I verify my profile?",
-      answer:
-        "Profile verification involves uploading a photo of yourself holding a piece of paper with a verification code. This helps ensure authentic profiles and builds trust.",
-      category: "Account",
-    },
-    {
-      question: "What safety measures do you have in place?",
-      answer:
-        "We use photo verification, AI content monitoring, background checks for premium users, and provide safety tips and reporting tools to ensure a secure dating environment.",
-      category: "Safety",
-    },
-    {
-      question: "How many matches will I get?",
-      answer:
-        "Free users receive 3-5 curated matches daily, while premium users get 10-15 matches. We focus on quality over quantity to help you find meaningful connections.",
-      category: "Matching",
-    },
-    {
-      question: "Can I cancel my subscription anytime?",
-      answer:
-        "Yes, you can cancel your subscription at any time. Your premium features will remain active until the end of your current billing period.",
-      category: "Billing",
-    },
+    "How do I delete my account?",
+    "Why can't I see my matches?",
+    "How do I report inappropriate behavior?",
+    "Can I pause my account temporarily?",
+    "How do I change my email address?",
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50">
-      <div className="container mx-auto px-4 py-8">
-        {/* Hero Section */}
-        <section className="text-center mb-16">
-          <h1 className="text-5xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-            Find answers to common questions about Hanna's Connect. Can't find what you're looking for? Contact our
-            support team.
-          </p>
-          <div className="max-w-md mx-auto relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-            <Input placeholder="Search FAQ..." className="pl-10" />
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-50">
+      {/* Header */}
+      <div className="bg-white border-b">
+        <div className="container mx-auto px-4 py-6">
+          <div className="flex items-center gap-4 mb-4">
+            <Link href="/">
+              <Button variant="ghost" size="sm" className="gap-2">
+                <ArrowLeft className="h-4 w-4" />
+                Back to Home
+              </Button>
+            </Link>
           </div>
-        </section>
+          <div className="text-center">
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h1>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Find answers to common questions about Hanna&apos;s Connect™. Can't find what you're looking for? Contact
+              our support team.
+            </p>
+          </div>
+        </div>
+      </div>
 
-        {/* FAQ Categories */}
-        <section className="mb-16">
-          <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Browse by Category</h2>
-          <div className="max-w-6xl mx-auto grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {faqCategories.map((category, index) => (
-              <Link key={index} href={category.link}>
-                <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
-                  <CardContent className="p-6 text-center">
-                    <div
-                      className={`${category.bgColor} rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4`}
-                    >
-                      <category.icon className={`h-8 w-8 ${category.color}`} />
-                    </div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-3">{category.title}</h3>
-                    <p className="text-gray-600 mb-4">{category.description}</p>
-                    <Button variant="outline" className="w-full bg-transparent">
-                      View Questions
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
+      <div className="container mx-auto px-4 py-12">
+        {/* Search Bar */}
+        <div className="max-w-2xl mx-auto mb-12">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+            <Input placeholder="Search for answers..." className="pl-10 py-3 text-lg" />
           </div>
-        </section>
+        </div>
 
         {/* Popular Questions */}
-        <section className="mb-16">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Popular Questions</h2>
-            <div className="space-y-6">
-              {popularQuestions.map((faq, index) => (
-                <Card key={index} className="hover:shadow-md transition-shadow">
+        <div className="max-w-4xl mx-auto mb-16">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Popular Questions</h2>
+          <div className="flex flex-wrap gap-3">
+            {popularQuestions.map((question, index) => (
+              <Button
+                key={index}
+                variant="outline"
+                className="text-sm bg-transparent border-amber-600 text-amber-700 hover:bg-amber-50"
+              >
+                {question}
+              </Button>
+            ))}
+          </div>
+        </div>
+
+        {/* FAQ Categories */}
+        <div className="max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-8">
+            {faqCategories.map((category, categoryIndex) => {
+              const IconComponent = category.icon
+              const colorClasses = {
+                amber: "bg-amber-100 text-amber-700 border-amber-200",
+                red: "bg-red-100 text-red-700 border-red-200",
+                orange: "bg-orange-100 text-orange-700 border-orange-200",
+              }
+
+              return (
+                <Card
+                  key={categoryIndex}
+                  className={`border-2 ${colorClasses[category.color as keyof typeof colorClasses]}`}
+                >
                   <CardContent className="p-6">
-                    <div className="flex items-start justify-between mb-3">
-                      <h3 className="text-lg font-semibold text-gray-900 flex-1">{faq.question}</h3>
-                      <span className="text-xs bg-pink-100 text-pink-600 px-2 py-1 rounded-full ml-4">
-                        {faq.category}
-                      </span>
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className={`p-2 rounded-lg ${colorClasses[category.color as keyof typeof colorClasses]}`}>
+                        <IconComponent className="h-6 w-6" />
+                      </div>
+                      <h3 className="text-xl font-semibold text-gray-900">{category.title}</h3>
                     </div>
-                    <p className="text-gray-700 leading-relaxed">{faq.answer}</p>
+
+                    <Accordion type="single" collapsible className="space-y-2">
+                      {category.questions.map((faq, faqIndex) => (
+                        <AccordionItem
+                          key={faqIndex}
+                          value={`${categoryIndex}-${faqIndex}`}
+                          className="border rounded-lg px-4"
+                        >
+                          <AccordionTrigger className="text-left hover:no-underline py-4">
+                            <span className="font-medium">{faq.question}</span>
+                          </AccordionTrigger>
+                          <AccordionContent className="pb-4 text-gray-600">{faq.answer}</AccordionContent>
+                        </AccordionItem>
+                      ))}
+                    </Accordion>
                   </CardContent>
                 </Card>
-              ))}
-            </div>
+              )
+            })}
           </div>
-        </section>
+        </div>
 
         {/* Contact Support */}
-        <section className="text-center">
-          <Card className="max-w-4xl mx-auto bg-gradient-to-r from-blue-500 to-purple-600 text-white">
-            <CardContent className="p-12">
-              <MessageCircle className="h-16 w-16 mx-auto mb-6 opacity-90" />
-              <h2 className="text-3xl font-bold mb-4">Still Need Help?</h2>
-              <p className="text-xl mb-8 opacity-90">
-                Can't find the answer you're looking for? Our support team is here to help 24/7.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="/contact/support">
-                  <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100">
-                    Contact Support
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </Link>
-                <Link href="/contact/feedback">
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="border-white text-white hover:bg-white hover:text-blue-600 bg-transparent"
-                  >
-                    Send Feedback
-                  </Button>
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
-        </section>
+        <div className="max-w-4xl mx-auto mt-16">
+          <div className="bg-gradient-to-r from-red-800 to-amber-700 text-white rounded-lg p-12 text-center">
+            <Shield className="h-12 w-12 mx-auto mb-6 opacity-90" />
+            <h2 className="text-3xl font-bold mb-4">Still Need Help?</h2>
+            <p className="text-xl mb-8 opacity-90">
+              Our support team is available 24/7 to help you with any questions or concerns.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link href="/contact">
+                <Button size="lg" className="bg-white text-red-800 hover:bg-gray-100">
+                  Contact Support
+                </Button>
+              </Link>
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-white text-white hover:bg-white hover:text-red-800 bg-transparent"
+              >
+                Live Chat
+              </Button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )

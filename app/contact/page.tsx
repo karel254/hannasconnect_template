@@ -1,201 +1,253 @@
 import Link from "next/link"
-import { Card, CardContent } from "@/components/ui/card"
+import { ArrowLeft, Mail, Phone, MessageCircle, Users, Briefcase, Camera, Clock, MapPin } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { MessageCircle, Phone, Mail, Users, Handshake, Camera, ArrowRight } from "lucide-react"
+import { Card, CardContent } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 export default function ContactPage() {
   const contactOptions = [
     {
-      icon: MessageCircle,
       title: "Customer Support",
       description: "Get help with your account, technical issues, or general questions",
-      link: "/contact/support",
-      color: "text-blue-500",
-      bgColor: "bg-blue-100",
+      icon: MessageCircle,
+      color: "amber",
+      response: "Within 2 hours",
+      available: "24/7",
     },
     {
-      icon: Mail,
       title: "Feedback & Suggestions",
-      description: "Share your thoughts, ideas, or report bugs to help us improve",
-      link: "/contact/feedback",
-      color: "text-green-500",
-      bgColor: "bg-green-100",
+      description: "Share your ideas to help us improve Hanna's Connect™",
+      icon: Users,
+      color: "red",
+      response: "Within 1 business day",
+      available: "Always welcome",
     },
     {
-      icon: Handshake,
-      title: "Business Partnerships",
-      description: "Explore partnership opportunities and business collaborations",
-      link: "/contact/partnerships",
-      color: "text-purple-500",
-      bgColor: "bg-purple-100",
+      title: "Partnership Opportunities",
+      description: "Explore business partnerships and collaboration opportunities",
+      icon: Briefcase,
+      color: "orange",
+      response: "Within 3 business days",
+      available: "Business hours",
     },
     {
-      icon: Camera,
       title: "Media Inquiries",
-      description: "Press resources, interviews, and media kit for journalists",
-      link: "/contact/media",
-      color: "text-pink-500",
-      bgColor: "bg-pink-100",
-    },
-  ]
-
-  const quickContacts = [
-    {
-      type: "General Support",
-      email: "support@hannasconnect.com",
-      phone: "1-800-HANNA-CONNECT",
-      hours: "24/7 Available",
-    },
-    {
-      type: "Business Inquiries",
-      email: "business@hannasconnect.com",
-      phone: "1-800-HANNA-BIZ",
-      hours: "Mon-Fri 9AM-6PM EST",
-    },
-    {
-      type: "Media Relations",
-      email: "media@hannasconnect.com",
-      phone: "1-800-HANNA-MEDIA",
-      hours: "Mon-Fri 9AM-5PM EST",
+      description: "Press releases, interviews, and media-related questions",
+      icon: Camera,
+      color: "red",
+      response: "Within 1 business day",
+      available: "Business hours",
     },
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50">
-      <div className="container mx-auto px-4 py-8">
-        {/* Hero Section */}
-        <section className="text-center mb-16">
-          <h1 className="text-5xl font-bold text-gray-900 mb-6">Contact Us</h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-            We're here to help! Choose the best way to get in touch with our team based on your needs.
-          </p>
-        </section>
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-50">
+      {/* Header */}
+      <div className="bg-white border-b">
+        <div className="container mx-auto px-4 py-6">
+          <div className="flex items-center gap-4 mb-4">
+            <Link href="/">
+              <Button variant="ghost" size="sm" className="gap-2">
+                <ArrowLeft className="h-4 w-4" />
+                Back to Home
+              </Button>
+            </Link>
+          </div>
+          <div className="text-center">
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">Contact Us</h1>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              We're here to help! Choose the best way to reach us based on your needs.
+            </p>
+          </div>
+        </div>
+      </div>
 
+      <div className="container mx-auto px-4 py-12">
         {/* Contact Options */}
-        <section className="mb-16">
-          <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">How Can We Help?</h2>
-          <div className="max-w-6xl mx-auto grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {contactOptions.map((option, index) => (
-              <Link key={index} href={option.link}>
-                <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
+        <div className="max-w-6xl mx-auto mb-16">
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">How Can We Help You?</h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {contactOptions.map((option, index) => {
+              const IconComponent = option.icon
+              const colorClasses = {
+                amber: "bg-amber-100 text-amber-700 border-amber-200 hover:border-amber-300",
+                red: "bg-red-100 text-red-700 border-red-200 hover:border-red-300",
+                orange: "bg-orange-100 text-orange-700 border-orange-200 hover:border-orange-300",
+              }
+
+              return (
+                <Card
+                  key={index}
+                  className={`border-2 hover:shadow-lg transition-all cursor-pointer ${colorClasses[option.color as keyof typeof colorClasses]}`}
+                >
                   <CardContent className="p-6 text-center">
                     <div
-                      className={`${option.bgColor} rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4`}
+                      className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${colorClasses[option.color as keyof typeof colorClasses]}`}
                     >
-                      <option.icon className={`h-8 w-8 ${option.color}`} />
+                      <IconComponent className="h-8 w-8" />
                     </div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-3">{option.title}</h3>
-                    <p className="text-gray-600 mb-4">{option.description}</p>
-                    <Button variant="outline" className="w-full bg-transparent">
-                      Get Started
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
-          </div>
-        </section>
-
-        {/* Quick Contact Info */}
-        <section className="mb-16">
-          <div className="max-w-6xl mx-auto">
-            <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Quick Contact Information</h2>
-            <div className="grid lg:grid-cols-3 gap-8">
-              {quickContacts.map((contact, index) => (
-                <Card key={index} className="hover:shadow-md transition-shadow">
-                  <CardContent className="p-6">
-                    <h3 className="text-xl font-semibold text-gray-900 mb-4">{contact.type}</h3>
-                    <div className="space-y-3">
-                      <div className="flex items-center">
-                        <Mail className="h-5 w-5 text-gray-400 mr-3" />
-                        <a href={`mailto:${contact.email}`} className="text-pink-600 hover:text-pink-700">
-                          {contact.email}
-                        </a>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-3">{option.title}</h3>
+                    <p className="text-sm text-gray-600 mb-4">{option.description}</p>
+                    <div className="space-y-2 text-xs text-gray-500">
+                      <div className="flex items-center justify-center gap-1">
+                        <Clock className="h-3 w-3" />
+                        <span>Response: {option.response}</span>
                       </div>
-                      <div className="flex items-center">
-                        <Phone className="h-5 w-5 text-gray-400 mr-3" />
-                        <a href={`tel:${contact.phone}`} className="text-pink-600 hover:text-pink-700">
-                          {contact.phone}
-                        </a>
-                      </div>
-                      <div className="flex items-center">
-                        <MessageCircle className="h-5 w-5 text-gray-400 mr-3" />
-                        <span className="text-gray-600">{contact.hours}</span>
+                      <div className="flex items-center justify-center gap-1">
+                        <span>Available: {option.available}</span>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
-              ))}
-            </div>
+              )
+            })}
           </div>
-        </section>
+        </div>
 
-        {/* Office Information */}
-        <section className="mb-16">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Our Office</h2>
-            <Card>
-              <CardContent className="p-8">
-                <div className="grid lg:grid-cols-2 gap-8">
+        {/* Contact Form */}
+        <div className="max-w-4xl mx-auto mb-16">
+          <div className="grid md:grid-cols-2 gap-12">
+            {/* Form */}
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Send Us a Message</h2>
+              <form className="space-y-6">
+                <div className="grid md:grid-cols-2 gap-4">
                   <div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-4">Headquarters</h3>
-                    <div className="space-y-2 text-gray-600">
-                      <p>Hanna's Connect Inc.</p>
+                    <Label htmlFor="firstName">First Name</Label>
+                    <Input id="firstName" placeholder="Your first name" />
+                  </div>
+                  <div>
+                    <Label htmlFor="lastName">Last Name</Label>
+                    <Input id="lastName" placeholder="Your last name" />
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="email">Email Address</Label>
+                  <Input id="email" type="email" placeholder="your.email@example.com" />
+                </div>
+
+                <div>
+                  <Label htmlFor="subject">Subject</Label>
+                  <Select>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a topic" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="support">Customer Support</SelectItem>
+                      <SelectItem value="feedback">Feedback & Suggestions</SelectItem>
+                      <SelectItem value="partnership">Partnership Inquiry</SelectItem>
+                      <SelectItem value="media">Media Inquiry</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label htmlFor="message">Message</Label>
+                  <Textarea id="message" placeholder="Please describe your question or concern in detail..." rows={6} />
+                </div>
+
+                <Button type="submit" className="w-full bg-red-700 hover:bg-red-800">
+                  Send Message
+                </Button>
+              </form>
+            </div>
+
+            {/* Contact Information */}
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Other Ways to Reach Us</h2>
+
+              <div className="space-y-6">
+                <Card className="border-2 border-amber-100">
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="bg-amber-100 p-3 rounded-lg">
+                        <Mail className="h-6 w-6 text-amber-700" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold">Email Support</h3>
+                        <p className="text-sm text-gray-600">For general inquiries</p>
+                      </div>
+                    </div>
+                    <p className="text-amber-700 font-medium">support@hannasconnect.com</p>
+                    <p className="text-sm text-gray-500 mt-1">Response within 2 hours</p>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-2 border-red-100">
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="bg-red-100 p-3 rounded-lg">
+                        <Phone className="h-6 w-6 text-red-700" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold">Phone Support</h3>
+                        <p className="text-sm text-gray-600">For urgent matters</p>
+                      </div>
+                    </div>
+                    <p className="text-red-700 font-medium">1-800-HANNA-CONNECT</p>
+                    <p className="text-sm text-gray-500 mt-1">Available 24/7</p>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-2 border-orange-100">
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="bg-orange-100 p-3 rounded-lg">
+                        <MessageCircle className="h-6 w-6 text-orange-700" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold">Live Chat</h3>
+                        <p className="text-sm text-gray-600">Instant support</p>
+                      </div>
+                    </div>
+                    <Button className="w-full bg-orange-700 hover:bg-orange-800">Start Live Chat</Button>
+                    <p className="text-sm text-gray-500 mt-2">Available 24/7</p>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-2 border-gray-200">
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="bg-gray-100 p-3 rounded-lg">
+                        <MapPin className="h-6 w-6 text-gray-600" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold">Office Address</h3>
+                        <p className="text-sm text-gray-600">For business inquiries</p>
+                      </div>
+                    </div>
+                    <div className="text-gray-700">
+                      <p>Hanna&apos;s Connect™ Inc.</p>
                       <p>123 Love Street, Suite 456</p>
                       <p>San Francisco, CA 94102</p>
                       <p>United States</p>
                     </div>
-                    <div className="mt-6">
-                      <h4 className="font-semibold text-gray-900 mb-2">Office Hours</h4>
-                      <div className="text-gray-600 space-y-1">
-                        <p>Monday - Friday: 9:00 AM - 6:00 PM PST</p>
-                        <p>Saturday: 10:00 AM - 4:00 PM PST</p>
-                        <p>Sunday: Closed</p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="bg-gray-100 rounded-lg p-6 flex items-center justify-center">
-                    <div className="text-center text-gray-500">
-                      <Users className="h-16 w-16 mx-auto mb-4" />
-                      <p>Interactive Map</p>
-                      <p className="text-sm">Coming Soon</p>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </section>
-
-        {/* CTA Section */}
-        <section className="text-center">
-          <Card className="max-w-4xl mx-auto bg-gradient-to-r from-pink-500 to-purple-600 text-white">
-            <CardContent className="p-12">
-              <h2 className="text-3xl font-bold mb-4">Need Immediate Help?</h2>
-              <p className="text-xl mb-8 opacity-90">
-                Our support team is available 24/7 to help you with any questions or concerns.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="/contact/support">
-                  <Button size="lg" className="bg-white text-pink-600 hover:bg-gray-100">
-                    Start Live Chat
-                    <MessageCircle className="ml-2 h-5 w-5" />
-                  </Button>
-                </Link>
-                <Link href="/faq">
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="border-white text-white hover:bg-white hover:text-pink-600 bg-transparent"
-                  >
-                    Browse FAQ
-                  </Button>
-                </Link>
+                  </CardContent>
+                </Card>
               </div>
-            </CardContent>
-          </Card>
-        </section>
+            </div>
+          </div>
+        </div>
+
+        {/* FAQ Link */}
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-gradient-to-r from-red-800 to-amber-700 text-white rounded-lg p-12 text-center">
+            <h2 className="text-3xl font-bold mb-4">Looking for Quick Answers?</h2>
+            <p className="text-xl mb-8 opacity-90">
+              Check out our comprehensive FAQ section for instant answers to common questions.
+            </p>
+            <Link href="/faq">
+              <Button size="lg" className="bg-white text-red-800 hover:bg-gray-100">
+                Visit FAQ Section
+              </Button>
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   )

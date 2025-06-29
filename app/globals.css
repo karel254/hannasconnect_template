@@ -286,7 +286,7 @@ html {
 
 /* Focus styles for accessibility */
 :focus-visible {
-  outline: 2px solid #b22222;
+  outline: 2px solid #b91c1c;
   outline-offset: 2px;
 }
 
@@ -387,12 +387,12 @@ html {
 
 /* Better focus states for accessibility */
 .chat-input:focus {
-  outline: 2px solid #b22222;
+  outline: 2px solid #b91c1c;
   outline-offset: 2px;
 }
 
 .dark .chat-input:focus {
-  outline-color: #ef4444;
+  outline-color: #dc2626;
 }
 
 /* Responsive avatar sizes */

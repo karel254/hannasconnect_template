@@ -583,7 +583,7 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
       <div className="container mx-auto py-6 px-4">
         {/* Welcome Banner */}
-        <div className="bg-gradient-to-r from-[#FF69B4] to-[#FF9CC0] dark:from-gray-800 dark:to-gray-700 text-white p-4 rounded-lg mb-6 shadow-md">
+        <div className="bg-gradient-to-r from-[#B22222] to-[#8B0000] dark:from-gray-800 dark:to-gray-700 text-white p-4 rounded-lg mb-6 shadow-md">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
             <div className="flex-1">
               <h1 className="text-xl sm:text-2xl font-bold">Welcome, @{userProfile.username}!</h1>
@@ -600,7 +600,7 @@ export default function Dashboard() {
           <div className="lg:hidden mb-4">
             <Button
               variant="outline"
-              className="w-full justify-center dark:border-gray-600 transition-all duration-200"
+              className="w-full justify-center dark:border-gray-600 transition-all duration-200 bg-transparent"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
               <Menu className="mr-2 h-4 w-4" />
@@ -627,7 +627,9 @@ export default function Dashboard() {
                   <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base text-center">
                     {userProfile.occupation}
                   </p>
-                  <Badge className="mt-2 bg-[#FF69B4] hover:bg-[#FF69B4] text-xs sm:text-sm">Premium Member</Badge>
+                  <Badge className="mt-2 bg-[#DAA520] hover:bg-[#B8860B] text-white text-xs sm:text-sm">
+                    Premium Member
+                  </Badge>
                 </div>
 
                 <div className="space-y-1">
@@ -669,7 +671,7 @@ export default function Dashboard() {
                       <Icon className="mr-3 h-4 w-4 flex-shrink-0" />
                       <span className="truncate">{label}</span>
                       {badge > 0 && (
-                        <Badge className="ml-auto bg-[#FF69B4] hover:bg-[#FF69B4] text-xs min-w-[20px] h-5 flex items-center justify-center">
+                        <Badge className="ml-auto bg-[#DAA520] hover:bg-[#B8860B] text-white text-xs min-w-[20px] h-5 flex items-center justify-center">
                           {badge}
                         </Badge>
                       )}
@@ -734,7 +736,7 @@ export default function Dashboard() {
                           <div className="flex gap-2">
                             <Button
                               variant="outline"
-                              className="flex-1 border-[#B22222] text-[#B22222] hover:bg-[#B22222] hover:text-white"
+                              className="flex-1 border-[#B22222] text-[#B22222] hover:bg-[#B22222] hover:text-white bg-transparent"
                               size="sm"
                             >
                               View Profile
@@ -789,7 +791,7 @@ export default function Dashboard() {
                         <Card
                           key={user.id}
                           className={`hover:shadow-md transition-all duration-200 cursor-pointer dark:bg-gray-700 dark:border-gray-600 ${
-                            user.unread ? "border-l-4 border-l-[#FF69B4] bg-[#FF69B4]/5" : ""
+                            user.unread ? "border-l-4 border-l-[#DAA520] bg-[#DAA520]/5" : ""
                           }`}
                           onClick={() => openChat(user)}
                         >
@@ -809,7 +811,7 @@ export default function Dashboard() {
                                   <div className="flex-1 min-w-0">
                                     <h3 className="font-semibold text-[#B22222] dark:text-red-400 truncate flex items-center text-base sm:text-lg">
                                       {user.name}
-                                      {user.unread && <div className="ml-2 w-2 h-2 bg-[#FF69B4] rounded-full"></div>}
+                                      {user.unread && <div className="ml-2 w-2 h-2 bg-[#DAA520] rounded-full"></div>}
                                     </h3>
                                     <p className="text-sm text-gray-600 dark:text-gray-300 truncate">
                                       {user.lastMessage}
@@ -1199,7 +1201,7 @@ export default function Dashboard() {
                                 <Button
                                   variant="outline"
                                   size="sm"
-                                  className="border-red-600 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                                  className="border-red-600 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 bg-transparent"
                                   onClick={() => handleRejectConnection(request)}
                                 >
                                   <X className="mr-2 h-4 w-4" />
@@ -1231,7 +1233,7 @@ export default function Dashboard() {
                         key={notification.id}
                         className={`p-4 rounded-lg border transition-all duration-200 ${
                           !notification.read
-                            ? "bg-[#FF69B4]/5 border-[#FF69B4]/20 dark:bg-pink-900/20 dark:border-pink-700/30"
+                            ? "bg-[#DAA520]/5 border-[#DAA520]/20 dark:bg-yellow-900/20 dark:border-yellow-700/30"
                             : "bg-gray-50 border-gray-200 dark:bg-gray-700 dark:border-gray-600"
                         }`}
                       >
@@ -1240,7 +1242,7 @@ export default function Dashboard() {
                             <p className="text-sm text-gray-800 dark:text-gray-200">{notification.content}</p>
                             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{notification.time}</p>
                           </div>
-                          {!notification.read && <div className="w-2 h-2 bg-[#FF69B4] rounded-full ml-2 mt-2"></div>}
+                          {!notification.read && <div className="w-2 h-2 bg-[#DAA520] rounded-full ml-2 mt-2"></div>}
                         </div>
                       </div>
                     ))}
