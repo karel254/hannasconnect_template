@@ -1,190 +1,101 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import * as React from "react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { Heart, Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import {
-  Menu,
-  X,
-  Heart,
-  User,
-  MessageCircle,
-  Settings,
-  LogOut,
-  Home,
-  Info,
-  HelpCircle,
-  Trophy,
-  FileText,
-} from "lucide-react"
-import { usePathname, useRouter } from "next/navigation"
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 
 export default function Navbar() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [username, setUsername] = useState("")
   const pathname = usePathname()
-  const router = useRouter()
+  const [isOpen, setIsOpen] = React.useState(false)
 
-  useEffect(() => {
-    // Check if user is logged in by checking localStorage or session
-    if (typeof window !== "undefined") {
-      const storedUsername = localStorage.getItem("username")
-      if (storedUsername) {
-        setIsLoggedIn(true)
-        setUsername(storedUsername)
-      }
-    }
-  }, [])
-
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen)
-  }
-
-  const closeMenu = () => {
-    setIsMenuOpen(false)
-  }
-
-  const handleLogout = () => {
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("username")
-      localStorage.removeItem("name")
-      localStorage.removeItem("occupation")
-    }
-    setIsLoggedIn(false)
-    setUsername("")
-    closeMenu()
-    router.push("/")
-  }
-
-  // Don't show navbar on home page for clean look
+  // Don't show navbar on home page
   if (pathname === "/") {
     return null
   }
 
-  const publicNavLinks = [
-    { name: "Home", href: "/", icon: Home },
-    { name: "About", href: "/about", icon: Info },
-    { name: "How It Works", href: "/how-it-works", icon: HelpCircle },
-    { name: "Success Stories", href: "/success-stories", icon: Trophy },
-    { name: "FAQ", href: "/faq", icon: FileText },
-  ]
-
-  const memberNavLinks = [
-    { name: "Dashboard", href: "/dashboard", icon: User },
-    { name: "Messages", href: "/messages", icon: MessageCircle },
-    { name: "Profile", href: "/profile", icon: Settings },
+  const navigation = [
+    { name: "About", href: "/about" },
+    { name: "How It Works", href: "/how-it-works" },
+    { name: "Success Stories", href: "/success-stories" },
+    { name: "FAQ", href: "/faq" },
+    { name: "Contact", href: "/contact" },
   ]
 
   return (
-    <header className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50 shadow-sm">
-      <div className="container mx-auto px-4 md:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link href={isLoggedIn ? "/dashboard" : "/"} className="flex items-center gap-2" onClick={closeMenu}>
-            <Heart className="w-6 h-6 text-[#B22222] dark:text-red-400 fill-current" />
-            <span className="text-xl font-bold text-[#B22222] dark:text-red-400">Hanna's Connect</span>
+    <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-16 items-center">
+        <div className="mr-4 hidden md:flex">
+          <Link href="/" className="mr-6 flex items-center space-x-2">
+            <Heart className="h-6 w-6 text-primary" />
+            <span className="hidden font-bold sm:inline-block">Hanna&apos;s Connect</span>
           </Link>
-
-          {/* User info and Menu Button - Show for all users on all devices */}
-          <div className="flex items-center gap-4">
-            {isLoggedIn && (
-              <div className="hidden sm:flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-                <span>Welcome, {username}</span>
-              </div>
-            )}
-            <button className="text-gray-600 dark:text-gray-300 focus:outline-none" onClick={toggleMenu}>
-              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Open Menu - For all users */}
-      {isMenuOpen && (
-        <div className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm border-t border-gray-200 dark:border-gray-700 py-4 px-4 shadow-lg">
-          <nav className="flex flex-col space-y-4">
-            {isLoggedIn ? (
-              <>
-                {/* Logged in user menu */}
-                <div className="pb-4 border-b border-gray-200 dark:border-gray-700">
-                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">Welcome, {username}</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Member Dashboard</p>
-                </div>
-
-                {memberNavLinks.map((link) => {
-                  const IconComponent = link.icon
-                  return (
-                    <Link
-                      key={link.name}
-                      href={link.href}
-                      className={`flex items-center gap-3 text-sm font-medium transition-colors py-3 px-3 rounded-md ${
-                        pathname === link.href
-                          ? "text-[#B22222] dark:text-red-400 bg-[#B22222]/10 dark:bg-red-400/10"
-                          : "text-gray-600 dark:text-gray-300 hover:text-[#B22222] dark:hover:text-red-400 hover:bg-gray-50 dark:hover:bg-gray-800"
-                      }`}
-                      onClick={closeMenu}
-                    >
-                      <IconComponent className="w-5 h-5" />
-                      {link.name}
-                    </Link>
-                  )
-                })}
-
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center gap-3 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 py-3 px-3 rounded-md transition-colors mt-4 border-t border-gray-200 dark:border-gray-700 pt-6"
-                >
-                  <LogOut className="w-5 h-5" />
-                  Log Out
-                </button>
-              </>
-            ) : (
-              <>
-                {/* Public navigation for non-logged in users */}
-                {publicNavLinks.map((link) => {
-                  const IconComponent = link.icon
-                  return (
-                    <Link
-                      key={link.name}
-                      href={link.href}
-                      className={`flex items-center gap-3 text-sm font-medium transition-colors py-3 px-3 rounded-md ${
-                        pathname === link.href
-                          ? "text-[#B22222] dark:text-red-400 bg-[#B22222]/10 dark:bg-red-400/10"
-                          : "text-gray-600 dark:text-gray-300 hover:text-[#B22222] dark:hover:text-red-400 hover:bg-gray-50 dark:hover:bg-gray-800"
-                      }`}
-                      onClick={closeMenu}
-                    >
-                      <IconComponent className="w-5 h-5" />
-                      {link.name}
-                    </Link>
-                  )
-                })}
-
-                <div className="flex flex-col space-y-3 pt-4 border-t border-gray-200 dark:border-gray-700">
-                  <Button
-                    variant="outline"
-                    className="border-[#B22222] text-[#B22222] hover:bg-[#B22222] hover:text-white dark:border-red-400 dark:text-red-400 dark:hover:bg-red-400 dark:hover:text-white w-full shadow-sm font-medium"
-                    asChild
-                  >
-                    <Link href="/login" onClick={closeMenu}>
-                      Log In
-                    </Link>
-                  </Button>
-                  <Button
-                    className="bg-[#B22222] hover:bg-[#8B0000] dark:bg-red-600 dark:hover:bg-red-700 text-white w-full shadow-sm font-medium"
-                    asChild
-                  >
-                    <Link href="/register" onClick={closeMenu}>
-                      Sign Up
-                    </Link>
-                  </Button>
-                </div>
-              </>
-            )}
+          <nav className="flex items-center space-x-6 text-sm font-medium">
+            {navigation.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`transition-colors hover:text-foreground/80 ${
+                  pathname === item.href ? "text-foreground" : "text-foreground/60"
+                }`}
+              >
+                {item.name}
+              </Link>
+            ))}
           </nav>
         </div>
-      )}
-    </header>
+        <Sheet open={isOpen} onOpenChange={setIsOpen}>
+          <SheetTrigger asChild>
+            <Button
+              variant="ghost"
+              className="mr-2 px-0 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 md:hidden"
+            >
+              <Menu className="h-5 w-5" />
+              <span className="sr-only">Toggle Menu</span>
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="pr-0">
+            <Link href="/" className="flex items-center" onClick={() => setIsOpen(false)}>
+              <Heart className="mr-2 h-4 w-4" />
+              <span className="font-bold">Hanna&apos;s Connect</span>
+            </Link>
+            <div className="my-4 h-[calc(100vh-8rem)] pb-10 pl-6">
+              <div className="flex flex-col space-y-3">
+                {navigation.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setIsOpen(false)}
+                    className={`transition-colors hover:text-foreground/80 ${
+                      pathname === item.href ? "text-foreground" : "text-foreground/60"
+                    }`}
+                  >
+                    {item.name}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </SheetContent>
+        </Sheet>
+        <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
+          <div className="w-full flex-1 md:w-auto md:flex-none">
+            <Link href="/" className="flex items-center space-x-2 md:hidden">
+              <Heart className="h-6 w-6 text-primary" />
+              <span className="font-bold">Hanna&apos;s Connect</span>
+            </Link>
+          </div>
+          <nav className="flex items-center space-x-2">
+            <Button asChild variant="ghost" size="sm">
+              <Link href="/login">Login</Link>
+            </Button>
+            <Button asChild size="sm">
+              <Link href="/register">Sign Up</Link>
+            </Button>
+          </nav>
+        </div>
+      </div>
+    </nav>
   )
 }
