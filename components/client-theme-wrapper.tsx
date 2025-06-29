@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { ThemeProvider } from "@/components/theme-provider"
+import { ThemeProvider } from "@/contexts/theme-context"
 import { Toaster } from "@/components/ui/toaster"
 import Navbar from "@/components/navbar"
 import ConditionalFooter from "@/components/conditional-footer"
@@ -12,7 +12,7 @@ export default function ClientThemeWrapper({
   children: React.ReactNode
 }) {
   return (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+    <ThemeProvider>
       <div className="flex flex-col min-h-screen">
         <Navbar />
         <main className="flex-1">{children}</main>
