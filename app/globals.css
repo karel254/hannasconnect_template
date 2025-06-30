@@ -68,167 +68,73 @@
   }
 }
 
-/* Performance optimizations */
+/* Mobile-first optimizations */
 * {
   box-sizing: border-box;
 }
 
-img {
-  max-width: 100%;
-  height: auto;
-}
-
-/* Smooth scrolling */
 html {
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
 }
 
-/* Custom scrollbar */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  touch-action: manipulation;
+}
+
+/* Safe area for mobile devices */
+.safe-area-pb {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.safe-area-pt {
+  padding-top: env(safe-area-inset-top);
+}
+
+/* Touch-friendly interactions */
+.touch-manipulation {
+  touch-action: manipulation;
+}
+
+/* Improved scrolling */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Custom scrollbar for mobile */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 4px;
+  height: 4px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
+  background: rgba(0, 0, 0, 0.3);
 }
 
-.dark ::-webkit-scrollbar-track {
-  background: #374151;
+/* Line clamp utilities */
+.line-clamp-1 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
 }
 
-.dark ::-webkit-scrollbar-thumb {
-  background: #6b7280;
-}
-
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
-}
-
-/* Optimized transitions */
-* {
-  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow,
-    transform, filter, backdrop-filter;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 200ms;
-}
-
-/* Performance-optimized animations */
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-@keyframes float-delayed {
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-15px);
-  }
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.7;
-  }
-}
-
-@keyframes bounce {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-@keyframes ping {
-  75%,
-  100% {
-    transform: scale(2);
-    opacity: 0;
-  }
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Utility classes for performance */
-.animate-float {
-  animation: float 3s ease-in-out infinite;
-  will-change: transform;
-}
-
-.animate-float-delayed {
-  animation: float-delayed 3s ease-in-out infinite;
-  animation-delay: 1.5s;
-  will-change: transform;
-}
-
-.animate-pulse {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  will-change: opacity;
-}
-
-.animate-bounce {
-  animation: bounce 1s infinite;
-  will-change: transform;
-}
-
-.animate-ping {
-  animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
-  will-change: transform, opacity;
-}
-
-.animate-spin {
-  animation: spin 1s linear infinite;
-  will-change: transform;
-}
-
-/* Delay utilities */
-.delay-500 {
-  animation-delay: 0.5s;
-}
-.delay-1000 {
-  animation-delay: 1s;
-}
-.delay-1500 {
-  animation-delay: 1.5s;
-}
-.delay-2000 {
-  animation-delay: 2s;
-}
-.delay-3000 {
-  animation-delay: 3s;
-}
-.delay-4000 {
-  animation-delay: 4s;
-}
-
-/* Line clamp utility */
 .line-clamp-2 {
   overflow: hidden;
   display: -webkit-box;
@@ -243,33 +149,39 @@ html {
   -webkit-line-clamp: 3;
 }
 
-/* Custom hover effects with GPU acceleration */
-.group:hover .group-hover\:rotate-180 {
-  transform: rotate(180deg);
-  will-change: transform;
-}
-
-.group:hover .group-hover\:rotate-12 {
-  transform: rotate(12deg);
-  will-change: transform;
-}
-
-.group:hover .group-hover\:bounce {
-  animation: bounce 0.5s ease-in-out;
-  will-change: transform;
-}
-
-.group:hover .group-hover\:scale-110 {
-  transform: scale(1.1);
-  will-change: transform;
-}
-
-/* Responsive optimizations */
-@media (max-width: 640px) {
-  .container {
-    padding-left: 1rem;
-    padding-right: 1rem;
+/* Mobile-optimized animations */
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
   }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* Focus styles for accessibility */
+:focus-visible {
+  outline: 2px solid #b22222;
+  outline-offset: 2px;
 }
 
 /* Reduce motion for accessibility */
@@ -284,14 +196,80 @@ html {
   }
 }
 
-/* Focus styles for accessibility */
-:focus-visible {
-  outline: 2px solid #b91c1c;
-  outline-offset: 2px;
+/* Mobile-specific optimizations */
+@media (max-width: 640px) {
+  /* Ensure full viewport usage */
+  .min-h-screen {
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* Better touch targets */
+  button,
+  [role="button"],
+  input,
+  select,
+  textarea {
+    min-height: 44px;
+  }
+
+  /* Optimize text for mobile */
+  body {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  /* Prevent zoom on input focus */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="search"],
+  textarea,
+  select {
+    font-size: 16px;
+  }
 }
 
-/* Loading skeleton animation */
-@keyframes skeleton {
+/* WhatsApp-style bottom navigation */
+.bottom-nav-shadow {
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Chat bubble styles */
+.chat-bubble-sent {
+  background: #b22222;
+  color: white;
+  border-radius: 18px 18px 4px 18px;
+}
+
+.chat-bubble-received {
+  background: white;
+  color: #374151;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px 18px 18px 4px;
+}
+
+/* Card hover effects for mobile */
+@media (hover: hover) {
+  .card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* Active states for mobile */
+.card-active:active {
+  transform: scale(0.98);
+}
+
+/* Loading states */
+.loading-skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200px 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
   0% {
     background-position: -200px 0;
   }
@@ -300,122 +278,86 @@ html {
   }
 }
 
-.skeleton {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-  background-size: 200px 100%;
-  animation: skeleton 1.5s infinite;
+/* Status indicators */
+.status-online {
+  background: #10b981;
+  box-shadow: 0 0 0 2px white;
 }
 
-.dark .skeleton {
-  background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
-  background-size: 200px 100%;
+.status-offline {
+  background: #6b7280;
+  box-shadow: 0 0 0 2px white;
 }
 
-/* Enhanced mobile chat optimizations */
-@media (max-width: 640px) {
-  /* Ensure chat takes full available height on mobile */
-  .chat-container {
-    height: calc(100vh - 120px);
-  }
-
-  /* Optimize message bubbles for mobile */
-  .message-bubble {
-    max-width: 85%;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-  }
-
-  /* Better touch targets for mobile */
-  .mobile-touch-target {
-    min-height: 44px;
-    min-width: 44px;
-  }
-
-  /* Smooth keyboard handling */
-  .chat-input-container {
-    padding-bottom: env(safe-area-inset-bottom);
-  }
+/* Message status indicators */
+.message-sent {
+  color: #6b7280;
 }
 
-/* Smooth transitions for chat interface */
-.chat-transition {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+.message-delivered {
+  color: #6b7280;
 }
 
-/* Better message spacing */
-.message-spacing {
-  margin-bottom: 0.75rem;
+.message-read {
+  color: #3b82f6;
 }
 
-.message-spacing:last-child {
-  margin-bottom: 0;
+/* Notification badge */
+.notification-badge {
+  background: #b22222;
+  color: white;
+  border-radius: 50%;
+  min-width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  border: 2px solid white;
 }
 
-/* Improved scrollbar for chat */
-.chat-scroll::-webkit-scrollbar {
-  width: 4px;
+/* Pull to refresh indicator */
+.pull-to-refresh {
+  transform: translateY(-100%);
+  transition: transform 0.3s ease;
 }
 
-.chat-scroll::-webkit-scrollbar-track {
-  background: transparent;
+.pull-to-refresh.active {
+  transform: translateY(0);
 }
 
-.chat-scroll::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 2px;
+/* Swipe gestures */
+.swipe-action {
+  transform: translateX(0);
+  transition: transform 0.3s ease;
 }
 
-.dark .chat-scroll::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
+.swipe-action.swiped {
+  transform: translateX(-80px);
 }
 
-/* Message bubble animations */
-@keyframes messageSlideIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+/* Mobile keyboard adjustments */
+@media (max-height: 600px) {
+  .keyboard-adjust {
+    padding-bottom: 0;
   }
 }
 
-.message-animate {
-  animation: messageSlideIn 0.3s ease-out;
-}
-
-/* Better focus states for accessibility */
-.chat-input:focus {
-  outline: 2px solid #b91c1c;
-  outline-offset: 2px;
-}
-
-.dark .chat-input:focus {
-  outline-color: #dc2626;
-}
-
-/* Responsive avatar sizes */
-@media (max-width: 640px) {
-  .avatar-sm {
-    width: 1.5rem;
-    height: 1.5rem;
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .border-gray-200 {
+    border-color: #000;
   }
 
-  .avatar-md {
-    width: 2.5rem;
-    height: 2.5rem;
-  }
-}
-
-@media (min-width: 641px) {
-  .avatar-sm {
-    width: 2rem;
-    height: 2rem;
+  .text-gray-600 {
+    color: #000;
   }
 
-  .avatar-md {
-    width: 3rem;
-    height: 3rem;
+  .bg-gray-50 {
+    background-color: #fff;
   }
 }

@@ -3,6 +3,8 @@
 import type React from "react"
 
 import { useState, useEffect, useRef } from "react"
+import { useRouter } from "next/navigation"
+
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -28,12 +30,23 @@ import {
   Monitor,
   UserMinus,
   Users,
+  Crown,
 } from "lucide-react"
 import { sendConnectionRequest, acceptConnection, rejectConnection } from "../actions"
 import { useToast } from "@/components/ui/use-toast"
 import { useTheme } from "@/contexts/theme-context"
 
+// User profile information
+const initialUserProfile = {
+  username: "johndoe",
+  name: "John Doe",
+  occupation: "Software Engineer",
+  avatar: "/images/avatar1.png",
+  selectedIcon: 1,
+}
+
 export default function Dashboard() {
+  const router = useRouter()
   const { toast } = useToast()
   const { theme, resolvedTheme, setLightTheme, setDarkTheme, setSystemTheme } = useTheme()
   const [activeTab, setActiveTab] = useState("matches")
@@ -46,35 +59,28 @@ export default function Dashboard() {
   const [otherUserTyping, setOtherUserTyping] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const typingTimeoutRef = useRef<NodeJS.Timeout>()
-
-  // Real-time timestamp function - updated to work properly
-  const getCurrentTime = () => {
-    const now = new Date()
-    return now.toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    })
-  }
-
-  // Add a function to get full timestamp for message storage
-  const getFullTimestamp = () => {
-    return new Date().toISOString()
-  }
-
-  // Remove automatic scrolling - let it be natural
-  // useEffect(() => {
-  //   scrollToBottom()
-  // }, [messages])
-
-  // User profile information
-  const [userProfile, setUserProfile] = useState({
-    username: "johndoe",
-    name: "John Doe",
-    occupation: "Software Engineer",
-    avatar: "/images/avatar1.png",
-    selectedIcon: 1,
-  })
+  const [user, setUser] = useState<any>(null)
+  const [userProfile, setUserProfile] = useState(initialUserProfile)
+  const [connectionRequests, setConnectionRequests] = useState([
+    {
+      id: 1,
+      name: "Michael Chen",
+      age: 33,
+      occupation: "Marketing Manager",
+      icon: "/images/avatar1.png",
+      requestDate: "2 days ago",
+      email: "michael@example.com",
+    },
+    {
+      id: 2,
+      name: "Priya Sharma",
+      age: 29,
+      occupation: "UX Designer",
+      icon: "/images/avatar2.png",
+      requestDate: "1 day ago",
+      email: "priya@example.com",
+    },
+  ])
 
   // Blocked and unfriended users
   const [blockedUsers, setBlockedUsers] = useState([])
@@ -101,6 +107,63 @@ export default function Dashboard() {
       phoneVerified: false,
     },
   })
+
+  const [chatUsers, setChatUsers] = useState([
+    {
+      id: 1,
+      name: "Alex Johnson",
+      icon: "/images/avatar1.png",
+      lastMessage: "I'd love to hear more about your hiking experiences!",
+      time: "2 hours ago",
+      unread: true,
+      email: "alex@example.com",
+      isOnline: true,
+    },
+    {
+      id: 2,
+      name: "Amina Okafor",
+      icon: "/images/avatar2.png",
+      lastMessage: "That sounds like a great plan for the weekend.",
+      time: "Yesterday",
+      unread: false,
+      email: "amina@example.com",
+      isOnline: false,
+    },
+  ])
+
+  const [notifications, setNotifications] = useState([
+    {
+      id: 1,
+      type: "match",
+      content: "You have a new match with Sarah Osei!",
+      time: "1 hour ago",
+      read: false,
+    },
+    {
+      id: 2,
+      type: "message",
+      content: "Alex Johnson sent you a new message.",
+      time: "3 hours ago",
+      read: true,
+    },
+    {
+      id: 3,
+      type: "system",
+      content: "Your profile has been viewed by 5 new people today.",
+      time: "5 hours ago",
+      read: true,
+    },
+  ])
+
+  useEffect(() => {
+    // Check if user is logged in
+    const userData = localStorage.getItem("demoUser")
+    if (!userData) {
+      router.push("/login")
+      return
+    }
+    setUser(JSON.parse(userData))
+  }, [router])
 
   // Simulate loading user data
   useEffect(() => {
@@ -168,73 +231,51 @@ export default function Dashboard() {
     },
   ]
 
-  const [connectionRequests, setConnectionRequests] = useState([
-    {
-      id: 1,
-      name: "Michael Chen",
-      age: 33,
-      occupation: "Marketing Manager",
-      icon: "/images/avatar1.png",
-      requestDate: "2 days ago",
-      email: "michael@example.com",
-    },
-    {
-      id: 2,
-      name: "Priya Sharma",
-      age: 29,
-      occupation: "UX Designer",
-      icon: "/images/avatar2.png",
-      requestDate: "1 day ago",
-      email: "priya@example.com",
-    },
-  ])
+  const stats = [
+    { label: "Profile Views", value: "24", icon: Users, color: "text-blue-600" },
+    { label: "Matches", value: "8", icon: Heart, color: "text-red-600" },
+    { label: "Messages", value: "12", icon: MessageCircle, color: "text-green-600" },
+    { label: "Likes", value: "31", icon: Bell, color: "text-yellow-600" },
+  ]
 
-  const [chatUsers, setChatUsers] = useState([
-    {
-      id: 1,
-      name: "Alex Johnson",
-      icon: "/images/avatar1.png",
-      lastMessage: "I'd love to hear more about your hiking experiences!",
-      time: "2 hours ago",
-      unread: true,
-      email: "alex@example.com",
-      isOnline: true,
-    },
-    {
-      id: 2,
-      name: "Amina Okafor",
-      icon: "/images/avatar2.png",
-      lastMessage: "That sounds like a great plan for the weekend.",
-      time: "Yesterday",
-      unread: false,
-      email: "amina@example.com",
-      isOnline: false,
-    },
-  ])
-
-  const notifications = [
+  const recentActivity = [
     {
       id: 1,
       type: "match",
-      content: "You have a new match with Sarah Osei!",
-      time: "1 hour ago",
-      read: false,
+      message: "You matched with Sarah Johnson",
+      time: "2 hours ago",
+      avatar: "/images/avatar1.png",
     },
     {
       id: 2,
       type: "message",
-      content: "Alex Johnson sent you a new message.",
-      time: "3 hours ago",
-      read: true,
+      message: "New message from Alex Johnson",
+      time: "4 hours ago",
+      avatar: "/images/avatar2.png",
     },
     {
       id: 3,
-      type: "system",
-      content: "Your profile has been viewed by 5 new people today.",
-      time: "5 hours ago",
-      read: true,
+      type: "view",
+      message: "Emily Chen viewed your profile",
+      time: "1 day ago",
+      avatar: "/images/avatar3.png",
     },
   ]
+
+  // Real-time timestamp function - updated to work properly
+  const getCurrentTime = () => {
+    const now = new Date()
+    return now.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    })
+  }
+
+  // Add a function to get full timestamp for message storage
+  const getFullTimestamp = () => {
+    return new Date().toISOString()
+  }
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab)
@@ -579,22 +620,79 @@ export default function Dashboard() {
     </div>
   )
 
+  // Show loading state while checking authentication
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#B22222] mx-auto"></div>
+          <p className="mt-2 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-      <div className="container mx-auto py-6 px-4">
-        {/* Welcome Banner */}
-        <div className="bg-gradient-to-r from-[#B22222] to-[#8B0000] dark:from-gray-800 dark:to-gray-700 text-white p-4 rounded-lg mb-6 shadow-md">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            <div className="flex-1">
-              <h1 className="text-xl sm:text-2xl font-bold">Welcome, @{userProfile.username}!</h1>
-              <p className="opacity-90 text-sm sm:text-base">{userProfile.occupation}</p>
+      {/* Header */}
+      <div className="bg-gradient-to-r from-[#B22222] to-[#8B0000] text-white">
+        <div className="px-4 py-6">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <Avatar className="w-12 h-12 border-2 border-white/20">
+                <AvatarImage src="/images/avatar1.png" alt={user.name || "User"} />
+                <AvatarFallback className="bg-white/20 text-white">
+                  {(user.name || user.email || "U").charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <h1 className="text-lg font-semibold">
+                  Welcome back, {user.name || user.email?.split("@")[0] || "User"}!
+                </h1>
+                <p className="text-white/80 text-sm">Ready to make connections?</p>
+              </div>
             </div>
-            <Button className="bg-white text-[#B22222] hover:bg-gray-100 text-sm sm:text-base px-4 py-2 transition-all duration-200">
-              Complete Your Profile
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-white hover:bg-white/10"
+                onClick={() => router.push("/notifications")}
+              >
+                <Bell className="w-5 h-5" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-white hover:bg-white/10"
+                onClick={() => router.push("/profile")}
+              >
+                <Settings className="w-5 h-5" />
+              </Button>
+            </div>
           </div>
-        </div>
 
+          {/* Premium Banner */}
+          <Card className="bg-gradient-to-r from-[#DAA520] to-[#B8860B] border-0 text-white">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Crown className="w-6 h-6" />
+                  <div>
+                    <h3 className="font-semibold">Upgrade to Premium</h3>
+                    <p className="text-sm text-white/90">Unlock unlimited matches & more</p>
+                  </div>
+                </div>
+                <Button size="sm" className="bg-white text-[#DAA520] hover:bg-white/90 font-semibold">
+                  Upgrade
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      <div className="container mx-auto py-6 px-4">
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Mobile Menu Button */}
           <div className="lg:hidden mb-4">
@@ -694,6 +792,98 @@ export default function Dashboard() {
 
           {/* Main Content */}
           <div className="w-full lg:w-3/4">
+            {/* Stats Grid */}
+            <div className="px-4 py-6">
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                {stats.map((stat, index) => {
+                  const IconComponent = stat.icon
+                  return (
+                    <Card key={index} className="bg-white border-gray-200">
+                      <CardContent className="p-4 text-center">
+                        <IconComponent className={`w-6 h-6 mx-auto mb-2 ${stat.color}`} />
+                        <div className="text-2xl font-bold text-gray-900">{stat.value}</div>
+                        <div className="text-sm text-gray-600">{stat.label}</div>
+                      </CardContent>
+                    </Card>
+                  )
+                })}
+              </div>
+
+              {/* Quick Actions */}
+              <div className="mb-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
+                <div className="grid grid-cols-2 gap-4">
+                  <Button
+                    className="h-16 bg-[#B22222] hover:bg-[#8B0000] text-white flex flex-col gap-1"
+                    onClick={() => router.push("/members")}
+                  >
+                    <Users className="w-5 h-5" />
+                    <span className="text-sm">Browse Members</span>
+                  </Button>
+                  <Button
+                    className="h-16 bg-[#DAA520] hover:bg-[#B8860B] text-white flex flex-col gap-1"
+                    onClick={() => router.push("/messages")}
+                  >
+                    <MessageCircle className="w-5 h-5" />
+                    <span className="text-sm">Messages</span>
+                  </Button>
+                </div>
+              </div>
+
+              {/* Recent Activity */}
+              <div className="mb-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold text-gray-900">Recent Activity</h2>
+                  <Button variant="ghost" size="sm" className="text-[#B22222]">
+                    View All
+                  </Button>
+                </div>
+                <div className="space-y-3">
+                  {recentActivity.map((activity) => (
+                    <Card key={activity.id} className="bg-white border-gray-200">
+                      <CardContent className="p-4">
+                        <div className="flex items-center gap-3">
+                          <Avatar className="w-10 h-10">
+                            <AvatarImage src={activity.avatar || "/placeholder.svg"} alt="User" />
+                            <AvatarFallback>U</AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1">
+                            <p className="text-sm text-gray-900">{activity.message}</p>
+                            <p className="text-xs text-gray-500">{activity.time}</p>
+                          </div>
+                          {activity.type === "match" && <Heart className="w-4 h-4 text-red-500" />}
+                          {activity.type === "message" && <MessageCircle className="w-4 h-4 text-blue-500" />}
+                          {activity.type === "view" && <Users className="w-4 h-4 text-green-500" />}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+
+              {/* Profile Completion */}
+              <Card className="bg-white border-gray-200">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="font-semibold text-gray-900">Profile Completion</h3>
+                    <span className="text-sm text-[#B22222] font-medium">75%</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2 mb-3">
+                    <div className="bg-[#B22222] h-2 rounded-full" style={{ width: "75%" }}></div>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-3">Complete your profile to get better matches</p>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="w-full border-[#B22222] text-[#B22222] hover:bg-[#B22222] hover:text-white bg-transparent"
+                    onClick={() => router.push("/profile")}
+                  >
+                    Complete Profile
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+
             {/* Matches Tab */}
             {activeTab === "matches" && (
               <Card className="shadow-md dark:bg-gray-800 dark:border-gray-700">
@@ -871,7 +1061,7 @@ export default function Dashboard() {
               </Card>
             )}
 
-            {/* Active Chat - No automatic scrolling */}
+            {/* Active Chat */}
             {(activeTab === "chat" || activeTab === "messages") && activeChatUser && (
               <Card className="shadow-md flex flex-col dark:bg-gray-800 dark:border-gray-700 h-[calc(100vh-140px)] sm:h-[calc(100vh-160px)] lg:h-[calc(100vh-200px)]">
                 <CardHeader className="pb-3 border-b flex-shrink-0 dark:border-gray-600 px-4 py-3">
