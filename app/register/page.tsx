@@ -10,14 +10,12 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { CheckCircle, ArrowLeft } from "lucide-react"
+import { CheckCircle, Eye, EyeOff } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
 
 export default function Register() {
   const router = useRouter()
   const { toast } = useToast()
-  const [isLoading, setIsLoading] = useState(false)
-  const [selectedAvatar, setSelectedAvatar] = useState<number | null>(null)
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -25,35 +23,32 @@ export default function Register() {
     confirmPassword: "",
     username: "",
     occupation: "",
+    selectedIcon: 1,
   })
-
-  const avatarOptions = [
-    { id: 1, src: "/images/avatar1.png", alt: "Avatar 1" },
-    { id: 2, src: "/images/avatar2.png", alt: "Avatar 2" },
-    { id: 3, src: "/images/avatar3.png", alt: "Avatar 3" },
-    { id: 4, src: "/images/avatar4.png", alt: "Avatar 4" },
-    { id: 5, src: "/placeholder.svg?height=100&width=100", alt: "Avatar 5" },
-    { id: 6, src: "/placeholder.svg?height=100&width=100", alt: "Avatar 6" },
-    { id: 7, src: "/placeholder.svg?height=100&width=100", alt: "Avatar 7" },
-    { id: 8, src: "/placeholder.svg?height=100&width=100", alt: "Avatar 8" },
-  ]
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    })
+    const { name, value } = e.target
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }))
   }
 
-  const handleAvatarSelect = (avatarId: number) => {
-    setSelectedAvatar(avatarId)
+  const handleIconSelect = (iconNumber: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      selectedIcon: iconNumber,
+    }))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
 
-    // Validation
+    // Basic validation
     if (!formData.name || !formData.email || !formData.password || !formData.username || !formData.occupation) {
       toast({
         title: "Error",
@@ -74,10 +69,10 @@ export default function Register() {
       return
     }
 
-    if (!selectedAvatar) {
+    if (formData.password.length < 6) {
       toast({
         title: "Error",
-        description: "Please select an avatar.",
+        description: "Password must be at least 6 characters long.",
         variant: "destructive",
       })
       setIsLoading(false)
@@ -87,148 +82,70 @@ export default function Register() {
     // Simulate registration process
     await new Promise((resolve) => setTimeout(resolve, 2000))
 
-    // Store user data
+    // Store user data in localStorage (in a real app, this would be sent to a server)
     const userData = {
       name: formData.name,
       email: formData.email,
       username: formData.username,
       occupation: formData.occupation,
-      avatar: selectedAvatar,
-      registeredAt: new Date().toISOString(),
+      selectedIcon: formData.selectedIcon,
+      avatar: `/images/avatar${formData.selectedIcon}.jpg`,
     }
 
     localStorage.setItem("demoUser", JSON.stringify(userData))
     localStorage.setItem("username", formData.username)
     localStorage.setItem("name", formData.name)
     localStorage.setItem("occupation", formData.occupation)
-    localStorage.setItem("selectedIcon", selectedAvatar.toString())
+    localStorage.setItem("selectedIcon", formData.selectedIcon.toString())
 
     toast({
-      title: "Success!",
-      description: "Your account has been created successfully.",
+      title: "Registration Successful!",
+      description: "Welcome to Hanna's Connect! Your account has been created.",
     })
 
-    // Redirect to dashboard
+    setIsLoading(false)
     router.push("/dashboard")
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <div className="flex items-center gap-2 mb-2">
-            <Link href="/">
-              <Button variant="ghost" size="icon" className="h-8 w-8">
-                <ArrowLeft className="h-4 w-4" />
-              </Button>
-            </Link>
-            <div>
-              <CardTitle className="text-2xl font-bold text-[#B22222]">Create Account</CardTitle>
-              <CardDescription>Join Hanna's Connect today</CardDescription>
-            </div>
-          </div>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-4">
+      <Card className="w-full max-w-md dark:bg-gray-800 dark:border-gray-700">
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl font-bold text-[#B22222] dark:text-red-400">Join Hanna's Connect</CardTitle>
+          <CardDescription className="dark:text-gray-400">Create your account to start connecting</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Full Name *</Label>
-                <Input
-                  id="name"
-                  name="name"
-                  type="text"
-                  placeholder="John Doe"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="username">Username *</Label>
-                <Input
-                  id="username"
-                  name="username"
-                  type="text"
-                  placeholder="johndoe"
-                  value={formData.username}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="email">Email *</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="john@example.com"
-                value={formData.email}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="occupation">Occupation *</Label>
-              <Input
-                id="occupation"
-                name="occupation"
-                type="text"
-                placeholder="Software Engineer"
-                value={formData.occupation}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="password">Password *</Label>
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm Password *</Label>
-                <Input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type="password"
-                  value={formData.confirmPassword}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-            </div>
-
             {/* Avatar Selection */}
             <div className="space-y-3">
-              <Label>Choose Your Avatar *</Label>
-              <div className="grid grid-cols-4 gap-3">
-                {avatarOptions.map((avatar) => (
+              <Label className="text-sm font-medium dark:text-gray-200">Choose Your Profile Icon</Label>
+              <div className="flex justify-center mb-4">
+                <Avatar className="h-20 w-20 ring-2 ring-[#B22222]/20 dark:ring-red-400/20">
+                  <AvatarImage src={`/images/avatar${formData.selectedIcon}.jpg`} alt="Selected avatar" />
+                  <AvatarFallback className="text-lg font-bold text-[#B22222] dark:text-red-400">
+                    {formData.name.charAt(0).toUpperCase() || "U"}
+                  </AvatarFallback>
+                </Avatar>
+              </div>
+              <div className="grid grid-cols-5 gap-2">
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((iconNumber) => (
                   <div
-                    key={avatar.id}
-                    className={`relative cursor-pointer rounded-lg overflow-hidden border-2 transition-all duration-300 aspect-square ${
-                      selectedAvatar === avatar.id
-                        ? "border-[#B22222] ring-2 ring-[#B22222]/50 scale-105"
-                        : "border-gray-200 hover:border-gray-300 hover:scale-102"
+                    key={iconNumber}
+                    className={`relative cursor-pointer rounded-lg overflow-hidden border-2 transition-all aspect-square ${
+                      formData.selectedIcon === iconNumber
+                        ? "border-[#B22222] dark:border-red-400 bg-red-50 dark:bg-red-900/20"
+                        : "border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500"
                     }`}
-                    onClick={() => handleAvatarSelect(avatar.id)}
+                    onClick={() => handleIconSelect(iconNumber)}
                   >
-                    <Avatar className="w-full h-full rounded-lg">
-                      <AvatarImage src={avatar.src || "/placeholder.svg"} alt={avatar.alt} className="object-cover" />
-                      <AvatarFallback className="text-xs">A{avatar.id}</AvatarFallback>
-                    </Avatar>
-                    {selectedAvatar === avatar.id && (
-                      <div className="absolute inset-0 bg-[#B22222]/20 flex items-center justify-center">
-                        <CheckCircle className="h-6 w-6 text-[#B22222]" />
+                    <img
+                      src={`/images/avatar${iconNumber}.jpg`}
+                      alt={`Avatar ${iconNumber}`}
+                      className="w-full h-full object-cover"
+                    />
+                    {formData.selectedIcon === iconNumber && (
+                      <div className="absolute inset-0 bg-[#B22222]/10 dark:bg-red-400/10 flex items-center justify-center">
+                        <CheckCircle className="h-4 w-4 text-[#B22222] dark:text-red-400" />
                       </div>
                     )}
                   </div>
@@ -236,17 +153,146 @@ export default function Register() {
               </div>
             </div>
 
+            {/* Form Fields */}
+            <div className="space-y-2">
+              <Label htmlFor="name" className="dark:text-gray-200">
+                Full Name *
+              </Label>
+              <Input
+                id="name"
+                name="name"
+                type="text"
+                placeholder="Enter your full name"
+                value={formData.name}
+                onChange={handleInputChange}
+                required
+                className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="username" className="dark:text-gray-200">
+                Username *
+              </Label>
+              <Input
+                id="username"
+                name="username"
+                type="text"
+                placeholder="Choose a unique username"
+                value={formData.username}
+                onChange={handleInputChange}
+                required
+                className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="occupation" className="dark:text-gray-200">
+                Occupation *
+              </Label>
+              <Input
+                id="occupation"
+                name="occupation"
+                type="text"
+                placeholder="What do you do for work?"
+                value={formData.occupation}
+                onChange={handleInputChange}
+                required
+                className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="email" className="dark:text-gray-200">
+                Email Address *
+              </Label>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                placeholder="Enter your email"
+                value={formData.email}
+                onChange={handleInputChange}
+                required
+                className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="password" className="dark:text-gray-200">
+                Password *
+              </Label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Create a strong password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  required
+                  className="pr-10 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent dark:hover:bg-transparent"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4 text-gray-400" />
+                  ) : (
+                    <Eye className="h-4 w-4 text-gray-400" />
+                  )}
+                </Button>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword" className="dark:text-gray-200">
+                Confirm Password *
+              </Label>
+              <div className="relative">
+                <Input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type={showConfirmPassword ? "text" : "password"}
+                  placeholder="Confirm your password"
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
+                  required
+                  className="pr-10 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent dark:hover:bg-transparent"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                >
+                  {showConfirmPassword ? (
+                    <EyeOff className="h-4 w-4 text-gray-400" />
+                  ) : (
+                    <Eye className="h-4 w-4 text-gray-400" />
+                  )}
+                </Button>
+              </div>
+            </div>
+
             <Button type="submit" className="w-full bg-[#B22222] hover:bg-[#8B0000] text-white" disabled={isLoading}>
               {isLoading ? "Creating Account..." : "Create Account"}
             </Button>
-
-            <div className="text-center text-sm">
-              <span className="text-gray-600">Already have an account? </span>
-              <Link href="/login" className="text-[#B22222] hover:underline font-medium">
-                Sign in
-              </Link>
-            </div>
           </form>
+
+          <div className="mt-6 text-center">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Already have an account?{" "}
+              <Link href="/login" className="text-[#B22222] dark:text-red-400 hover:underline font-medium">
+                Sign in here
+              </Link>
+            </p>
+          </div>
         </CardContent>
       </Card>
     </div>

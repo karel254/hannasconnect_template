@@ -15,6 +15,7 @@
     "@radix-ui/react-dialog": "latest",
     "@radix-ui/react-dropdown-menu": "latest",
     "@radix-ui/react-label": "latest",
+    "@radix-ui/react-scroll-area": "latest",
     "@radix-ui/react-select": "latest",
     "@radix-ui/react-slider": "latest",
     "@radix-ui/react-slot": "latest",

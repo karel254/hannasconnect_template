@@ -53,7 +53,7 @@ export default function RootLayout({
       <body className={`${inter.className} antialiased`}>
         <ThemeProvider>
           <div className="min-h-screen bg-background">
-            <main className="pb-safe">{children}</main>
+            <main>{children}</main>
             <MobileBottomNav />
           </div>
           <Toaster />
