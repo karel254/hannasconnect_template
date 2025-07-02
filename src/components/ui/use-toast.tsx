@@ -1,1 +1,5 @@
-export * from "../../hooks/use-toast"
+export {
+  useToast,
+  type Toast,
+  type ToastAction,
+} from "@/hooks/use-toast"
