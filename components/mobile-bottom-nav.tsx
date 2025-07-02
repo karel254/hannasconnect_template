@@ -4,15 +4,40 @@ import { usePathname } from "next/navigation"
 import Link from "next/link"
 import { Home, Users, MessageCircle, User } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
+import { useEffect, useState } from "react"
 
 export function MobileBottomNav() {
   const pathname = usePathname()
+  const [isSignedIn, setIsSignedIn] = useState(false)
 
-  // Hide navigation on authentication pages, blog pages, and landing page
+  // Check if user is signed in by looking at localStorage or current path
+  useEffect(() => {
+    // Check if user has visited authenticated pages (simple auth simulation)
+    const hasVisitedAuthPages = localStorage.getItem("hasVisitedAuthPages") === "true"
+    const isOnAuthPage = ["/dashboard", "/messages", "/browse", "/profile", "/members", "/notifications"].includes(
+      pathname,
+    )
+
+    if (isOnAuthPage) {
+      localStorage.setItem("hasVisitedAuthPages", "true")
+      setIsSignedIn(true)
+    } else if (hasVisitedAuthPages) {
+      setIsSignedIn(true)
+    }
+  }, [pathname])
+
+  // Hide navigation on authentication pages and landing page
   const hiddenPages = ["/", "/login", "/register", "/forgot-password"]
+
+  // For blog pages, only show navigation if user is signed in
   const isBlogPage = pathname.startsWith("/blog")
 
-  if (hiddenPages.includes(pathname) || isBlogPage) {
+  if (hiddenPages.includes(pathname)) {
+    return null
+  }
+
+  // Hide blog navigation for non-signed in users
+  if (isBlogPage && !isSignedIn) {
     return null
   }
 
@@ -48,7 +73,7 @@ export function MobileBottomNav() {
   ]
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 z-50 md:hidden">
+    <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 z-50">
       <div className="flex items-center justify-around py-2">
         {navItems.map((item) => {
           const Icon = item.icon

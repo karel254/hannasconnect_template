@@ -1,73 +1,102 @@
 "use client"
 
-import { useRouter } from "next/router"
+import { usePathname } from "next/navigation"
+import Link from "next/link"
+import { Home, Users, MessageCircle, User } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
-import { cn } from "@/lib/utils"
-import { Home, Search, MessageCircle, User } from "lucide-react"
+import { useEffect, useState } from "react"
 
 export function MobileBottomNav() {
-  const router = useRouter()
-  const currentPath = router.pathname
+  const pathname = usePathname()
+  const [isSignedIn, setIsSignedIn] = useState(false)
 
-  const hideNavPaths = ["/", "/login", "/register"]
+  // Check if user is signed in by looking at localStorage or current path
+  useEffect(() => {
+    // Check if user has visited authenticated pages (simple auth simulation)
+    const hasVisitedAuthPages = localStorage.getItem("hasVisitedAuthPages") === "true"
+    const isOnAuthPage = ["/dashboard", "/messages", "/browse", "/profile", "/members", "/notifications"].includes(
+      pathname,
+    )
 
-  if (hideNavPaths.includes(currentPath)) {
+    if (isOnAuthPage) {
+      localStorage.setItem("hasVisitedAuthPages", "true")
+      setIsSignedIn(true)
+    } else if (hasVisitedAuthPages) {
+      setIsSignedIn(true)
+    }
+  }, [pathname])
+
+  // Hide navigation on authentication pages and landing page
+  const hiddenPages = ["/", "/login", "/register", "/forgot-password"]
+
+  // For blog pages, only show navigation if user is signed in
+  const isBlogPage = pathname.startsWith("/blog")
+
+  if (hiddenPages.includes(pathname)) {
     return null
   }
 
+  // Hide blog navigation for non-signed in users
+  if (isBlogPage && !isSignedIn) {
+    return null
+  }
+
+  // Sample unread messages count - in a real app, this would come from your state management
+  const unreadMessagesCount = 3
+
   const navItems = [
     {
+      href: "/dashboard",
       icon: Home,
-      label: "Dashboard",
-      path: "/dashboard",
-      badge: null,
+      label: "Home",
+      active: pathname === "/dashboard",
     },
     {
-      icon: Search,
+      href: "/browse",
+      icon: Users,
       label: "Browse",
-      path: "/browse",
-      badge: null,
+      active: pathname === "/browse",
     },
     {
+      href: "/messages",
       icon: MessageCircle,
       label: "Messages",
-      path: "/messages",
-      badge: 3,
+      active: pathname === "/messages",
+      badge: unreadMessagesCount > 0 ? unreadMessagesCount : null,
     },
     {
+      href: "/profile",
       icon: User,
       label: "Profile",
-      path: "/profile",
-      badge: null,
+      active: pathname === "/profile",
     },
   ]
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50">
+    <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 z-50 md:hidden">
       <div className="flex items-center justify-around py-2">
         {navItems.map((item) => {
           const Icon = item.icon
-          const isActive = currentPath === item.path
-
           return (
-            <button
-              key={item.path}
-              onClick={() => router.push(item.path)}
-              className={cn(
-                "flex flex-col items-center justify-center p-2 min-w-[60px] relative transition-colors",
-                isActive ? "text-[#B22222]" : "text-gray-500 hover:text-gray-700",
-              )}
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`flex flex-col items-center justify-center py-2 px-3 rounded-lg transition-colors relative ${
+                item.active
+                  ? "text-[#B22222] dark:text-red-400 bg-red-50 dark:bg-red-900/20"
+                  : "text-gray-600 dark:text-gray-400 hover:text-[#B22222] dark:hover:text-red-400"
+              }`}
             >
               <div className="relative">
-                <Icon className="w-6 h-6" />
+                <Icon className="h-5 w-5 mb-1" />
                 {item.badge && (
-                  <Badge className="absolute -top-2 -right-2 bg-[#B22222] text-white text-xs min-w-[18px] h-[18px] flex items-center justify-center rounded-full p-0">
-                    {item.badge}
+                  <Badge className="absolute -top-2 -right-2 bg-[#B22222] text-white text-xs min-w-[18px] h-[18px] flex items-center justify-center rounded-full px-1 border-2 border-white dark:border-gray-800">
+                    {item.badge > 99 ? "99+" : item.badge}
                   </Badge>
                 )}
               </div>
-              <span className="text-xs mt-1 font-medium">{item.label}</span>
-            </button>
+              <span className="text-xs font-medium">{item.label}</span>
+            </Link>
           )
         })}
       </div>
