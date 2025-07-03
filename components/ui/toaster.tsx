@@ -22,3 +22,5 @@ export function Toaster() {
     </ToastProvider>
   )
 }
+
+// Re-export for compatibility from "@/components/ui/toaster" from "@/components/ui/toaster"

@@ -1,13 +1,14 @@
 "use client"
 
-import { usePathname } from "next/navigation"
+import { useRouter } from "next/router"
 import Link from "next/link"
 import { Home, Users, MessageCircle, User } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { useEffect, useState } from "react"
 
 export function MobileBottomNav() {
-  const pathname = usePathname()
+  const router = useRouter()
+  const pathname = router.pathname
   const [isSignedIn, setIsSignedIn] = useState(false)
 
   // Check if user is signed in by looking at localStorage or current path

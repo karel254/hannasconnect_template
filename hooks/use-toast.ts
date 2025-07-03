@@ -185,22 +185,5 @@ function useToast() {
   }
 }
 
-/* -------------------------------------------------------------------------- */
-/*                               ToastProvider                                */
-/* -------------------------------------------------------------------------- */
-import { Toaster } from "@/components/ui/toaster"
-
-/**
- * Wrap your <html> or <body> with this to automatically mount the Toaster
- * and make the toast() helper available throughout the tree.
- */
-export function ToastProvider({ children }: { children: React.ReactNode }) {
-  return (
-    <>
-      {children}
-      <Toaster /> {/* renders the toast viewport */}
-    </>
-  )
-}
-
+// Re-export from the correct location
 export { useToast, toast }
