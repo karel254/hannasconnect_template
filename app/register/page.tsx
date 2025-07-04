@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useCallback, useMemo, memo } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -14,503 +14,210 @@ import { Progress } from "@/components/ui/progress"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ArrowLeft, ArrowRight, CheckCircle, Eye, EyeOff } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
+// import { useDebounce } from "@/hooks/use-debounce" // Removing the local import
+import { useDebounce } from "@/hooks/use-debounce"
 
-// Complete list of countries and their states/provinces
-const countriesAndStates = {
-  Afghanistan: [
-    "Badakhshan",
-    "Badghis",
-    "Baghlan",
-    "Balkh",
-    "Bamyan",
-    "Daykundi",
-    "Farah",
-    "Faryab",
-    "Ghazni",
-    "Ghor",
-    "Helmand",
-    "Herat",
-    "Jowzjan",
-    "Kabul",
-    "Kandahar",
-    "Kapisa",
-    "Khost",
-    "Kunar",
-    "Kunduz",
-    "Laghman",
-    "Logar",
-    "Nangarhar",
-    "Nimroz",
-    "Nuristan",
-    "Paktia",
-    "Paktika",
-    "Panjshir",
-    "Parwan",
-    "Samangan",
-    "Sar-e Pol",
-    "Takhar",
-    "Urozgan",
-    "Wardak",
-    "Zabul",
-  ],
-  Albania: [
-    "Berat",
-    "Dibër",
-    "Durrës",
-    "Elbasan",
-    "Fier",
-    "Gjirokastër",
-    "Korçë",
-    "Kukës",
-    "Lezhë",
-    "Shkodër",
-    "Tirana",
-    "Vlorë",
-  ],
-  Algeria: [
-    "Adrar",
-    "Chlef",
-    "Laghouat",
-    "Oum El Bouaghi",
-    "Batna",
-    "Béjaïa",
-    "Biskra",
-    "Béchar",
-    "Blida",
-    "Bouira",
-    "Tamanrasset",
-    "Tébessa",
-    "Tlemcen",
-    "Tiaret",
-    "Tizi Ouzou",
-    "Algiers",
-    "Djelfa",
-    "Jijel",
-    "Sétif",
-    "Saïda",
-    "Skikda",
-    "Sidi Bel Abbès",
-    "Annaba",
-    "Guelma",
-    "Constantine",
-    "Médéa",
-    "Mostaganem",
-    "M'Sila",
-    "Mascara",
-    "Ouargla",
-    "Oran",
-    "El Bayadh",
-    "Illizi",
-    "Bordj Bou Arréridj",
-    "Boumerdès",
-    "El Tarf",
-    "Tindouf",
-    "Tissemsilt",
-    "El Oued",
-    "Khenchela",
-    "Souk Ahras",
-    "Tipaza",
-    "Mila",
-    "Aïn Defla",
-    "Naama",
-    "Aïn Témouchent",
-    "Ghardaïa",
-    "Relizane",
-  ],
-  Angola: [
-    "Bengo",
-    "Benguela",
-    "Bié",
-    "Cabinda",
-    "Cuando Cubango",
-    "Cuanza Norte",
-    "Cuanza Sul",
-    "Cunene",
-    "Huambo",
-    "Huíla",
-    "Luanda",
-    "Lunda Norte",
-    "Lunda Sul",
-    "Malanje",
-    "Moxico",
-    "Namibe",
-    "Uíge",
-    "Zaire",
-  ],
-  Argentina: [
-    "Buenos Aires",
-    "Catamarca",
-    "Chaco",
-    "Chubut",
-    "Córdoba",
-    "Corrientes",
-    "Entre Ríos",
-    "Formosa",
-    "Jujuy",
-    "La Pampa",
-    "La Rioja",
-    "Mendoza",
-    "Misiones",
-    "Neuquén",
-    "Río Negro",
-    "Salta",
-    "San Juan",
-    "San Luis",
-    "Santa Cruz",
-    "Santa Fe",
-    "Santiago del Estero",
-    "Tierra del Fuego",
-    "Tucumán",
-  ],
-  Australia: [
-    "New South Wales",
-    "Victoria",
-    "Queensland",
-    "Western Australia",
-    "South Australia",
-    "Tasmania",
-    "Northern Territory",
-    "Australian Capital Territory",
-  ],
-  Austria: [
-    "Burgenland",
-    "Carinthia",
-    "Lower Austria",
-    "Upper Austria",
-    "Salzburg",
-    "Styria",
-    "Tyrol",
-    "Vorarlberg",
-    "Vienna",
-  ],
-  Bangladesh: ["Barisal", "Chittagong", "Dhaka", "Khulna", "Mymensingh", "Rajshahi", "Rangpur", "Sylhet"],
-  Belgium: [
-    "Antwerp",
-    "East Flanders",
-    "Flemish Brabant",
-    "Hainaut",
-    "Liège",
-    "Limburg",
+// Data constants moved to separate object for better performance
+const DATA_CONSTANTS = {
+  worldCountries: [
+    "Afghanistan",
+    "Albania",
+    "Algeria",
+    "Andorra",
+    "Angola",
+    "Antigua and Barbuda",
+    "Argentina",
+    "Armenia",
+    "Australia",
+    "Austria",
+    "Azerbaijan",
+    "Bahamas",
+    "Bahrain",
+    "Bangladesh",
+    "Barbados",
+    "Belarus",
+    "Belgium",
+    "Belize",
+    "Benin",
+    "Bhutan",
+    "Bolivia",
+    "Bosnia and Herzegovina",
+    "Botswana",
+    "Brazil",
+    "Brunei",
+    "Bulgaria",
+    "Burkina Faso",
+    "Burundi",
+    "Cabo Verde",
+    "Cambodia",
+    "Cameroon",
+    "Canada",
+    "Central African Republic",
+    "Chad",
+    "Chile",
+    "China",
+    "Colombia",
+    "Comoros",
+    "Congo",
+    "Costa Rica",
+    "Croatia",
+    "Cuba",
+    "Cyprus",
+    "Czech Republic",
+    "Democratic Republic of the Congo",
+    "Denmark",
+    "Djibouti",
+    "Dominica",
+    "Dominican Republic",
+    "East Timor",
+    "Ecuador",
+    "Egypt",
+    "El Salvador",
+    "Equatorial Guinea",
+    "Eritrea",
+    "Estonia",
+    "Eswatini",
+    "Ethiopia",
+    "Fiji",
+    "Finland",
+    "France",
+    "Gabon",
+    "Gambia",
+    "Georgia",
+    "Germany",
+    "Ghana",
+    "Greece",
+    "Grenada",
+    "Guatemala",
+    "Guinea",
+    "Guinea-Bissau",
+    "Guyana",
+    "Haiti",
+    "Honduras",
+    "Hungary",
+    "Iceland",
+    "India",
+    "Indonesia",
+    "Iran",
+    "Iraq",
+    "Ireland",
+    "Israel",
+    "Italy",
+    "Ivory Coast",
+    "Jamaica",
+    "Japan",
+    "Jordan",
+    "Kazakhstan",
+    "Kenya",
+    "Kiribati",
+    "Kuwait",
+    "Kyrgyzstan",
+    "Laos",
+    "Latvia",
+    "Lebanon",
+    "Lesotho",
+    "Liberia",
+    "Libya",
+    "Liechtenstein",
+    "Lithuania",
     "Luxembourg",
-    "Namur",
-    "Walloon Brabant",
-    "West Flanders",
-    "Brussels",
+    "Madagascar",
+    "Malawi",
+    "Malaysia",
+    "Maldives",
+    "Mali",
+    "Malta",
+    "Marshall Islands",
+    "Mauritania",
+    "Mauritius",
+    "Mexico",
+    "Micronesia",
+    "Moldova",
+    "Monaco",
+    "Mongolia",
+    "Montenegro",
+    "Morocco",
+    "Mozambique",
+    "Myanmar",
+    "Namibia",
+    "Nauru",
+    "Nepal",
+    "Netherlands",
+    "New Zealand",
+    "Nicaragua",
+    "Niger",
+    "Nigeria",
+    "North Korea",
+    "North Macedonia",
+    "Norway",
+    "Oman",
+    "Pakistan",
+    "Palau",
+    "Panama",
+    "Papua New Guinea",
+    "Paraguay",
+    "Peru",
+    "Philippines",
+    "Poland",
+    "Portugal",
+    "Qatar",
+    "Romania",
+    "Russia",
+    "Rwanda",
+    "Saint Kitts and Nevis",
+    "Saint Lucia",
+    "Saint Vincent and the Grenadines",
+    "Samoa",
+    "San Marino",
+    "Sao Tome and Principe",
+    "Saudi Arabia",
+    "Senegal",
+    "Serbia",
+    "Seychelles",
+    "Sierra Leone",
+    "Singapore",
+    "Slovakia",
+    "Slovenia",
+    "Solomon Islands",
+    "Somalia",
+    "South Africa",
+    "South Korea",
+    "South Sudan",
+    "Spain",
+    "Sri Lanka",
+    "Sudan",
+    "Suriname",
+    "Sweden",
+    "Switzerland",
+    "Syria",
+    "Taiwan",
+    "Tajikistan",
+    "Tanzania",
+    "Thailand",
+    "Togo",
+    "Tonga",
+    "Trinidad and Tobago",
+    "Tunisia",
+    "Turkey",
+    "Turkmenistan",
+    "Tuvalu",
+    "Uganda",
+    "Ukraine",
+    "United Arab Emirates",
+    "United Kingdom",
+    "United States",
+    "Uruguay",
+    "Uzbekistan",
+    "Vanuatu",
+    "Vatican City",
+    "Venezuela",
+    "Vietnam",
+    "Yemen",
+    "Zambia",
+    "Zimbabwe",
   ],
-  Brazil: [
-    "Acre",
-    "Alagoas",
-    "Amapá",
-    "Amazonas",
-    "Bahia",
-    "Ceará",
-    "Distrito Federal",
-    "Espírito Santo",
-    "Goiás",
-    "Maranhão",
-    "Mato Grosso",
-    "Mato Grosso do Sul",
-    "Minas Gerais",
-    "Pará",
-    "Paraíba",
-    "Paraná",
-    "Pernambuco",
-    "Piauí",
-    "Rio de Janeiro",
-    "Rio Grande do Norte",
-    "Rio Grande do Sul",
-    "Rondônia",
-    "Roraima",
-    "Santa Catarina",
-    "São Paulo",
-    "Sergipe",
-    "Tocantins",
-  ],
-  Canada: [
-    "Alberta",
-    "British Columbia",
-    "Manitoba",
-    "New Brunswick",
-    "Newfoundland and Labrador",
-    "Northwest Territories",
-    "Nova Scotia",
-    "Nunavut",
-    "Ontario",
-    "Prince Edward Island",
-    "Quebec",
-    "Saskatchewan",
-    "Yukon",
-  ],
-  China: [
-    "Anhui",
-    "Beijing",
-    "Chongqing",
-    "Fujian",
-    "Gansu",
-    "Guangdong",
-    "Guangxi",
-    "Guizhou",
-    "Hainan",
-    "Hebei",
-    "Heilongjiang",
-    "Henan",
-    "Hong Kong",
-    "Hubei",
-    "Hunan",
-    "Inner Mongolia",
-    "Jiangsu",
-    "Jiangxi",
-    "Jilin",
-    "Liaoning",
-    "Macau",
-    "Ningxia",
-    "Qinghai",
-    "Shaanxi",
-    "Shandong",
-    "Shanghai",
-    "Shanxi",
-    "Sichuan",
-    "Tianjin",
-    "Tibet",
-    "Xinjiang",
-    "Yunnan",
-    "Zhejiang",
-  ],
-  Egypt: [
-    "Alexandria",
-    "Assiut",
-    "Aswan",
-    "Beheira",
-    "Beni Suef",
-    "Cairo",
-    "Dakahlia",
-    "Damietta",
-    "Fayoum",
-    "Gharbia",
-    "Giza",
-    "Ismailia",
-    "Kafr el-Sheikh",
-    "Luxor",
-    "Matrouh",
-    "Minya",
-    "Monufia",
-    "New Valley",
-    "North Sinai",
-    "Port Said",
-    "Qalyubia",
-    "Qena",
-    "Red Sea",
-    "Sharqia",
-    "Sohag",
-    "South Sinai",
-    "Suez",
-  ],
-  Ethiopia: [
-    "Addis Ababa",
-    "Afar",
-    "Amhara",
-    "Benishangul-Gumuz",
-    "Dire Dawa",
-    "Gambela",
-    "Harari",
-    "Oromia",
-    "Sidama",
-    "Somali",
-    "Southern Nations",
-    "Tigray",
-  ],
-  France: [
-    "Auvergne-Rhône-Alpes",
-    "Bourgogne-Franche-Comté",
-    "Brittany",
-    "Centre-Val de Loire",
-    "Corsica",
-    "Grand Est",
-    "Hauts-de-France",
-    "Île-de-France",
-    "Normandy",
-    "Nouvelle-Aquitaine",
-    "Occitanie",
-    "Pays de la Loire",
-    "Provence-Alpes-Côte d'Azur",
-  ],
-  Germany: [
-    "Baden-Württemberg",
-    "Bavaria",
-    "Berlin",
-    "Brandenburg",
-    "Bremen",
-    "Hamburg",
-    "Hesse",
-    "Lower Saxony",
-    "Mecklenburg-Vorpommern",
-    "North Rhine-Westphalia",
-    "Rhineland-Palatinate",
-    "Saarland",
-    "Saxony",
-    "Saxony-Anhalt",
-    "Schleswig-Holstein",
-    "Thuringia",
-  ],
-  Ghana: [
-    "Ashanti",
-    "Brong-Ahafo",
-    "Central",
-    "Eastern",
-    "Greater Accra",
-    "Northern",
-    "Upper East",
-    "Upper West",
-    "Volta",
-    "Western",
-  ],
-  India: [
-    "Andhra Pradesh",
-    "Arunachal Pradesh",
-    "Assam",
-    "Bihar",
-    "Chhattisgarh",
-    "Goa",
-    "Gujarat",
-    "Haryana",
-    "Himachal Pradesh",
-    "Jharkhand",
-    "Karnataka",
-    "Kerala",
-    "Madhya Pradesh",
-    "Maharashtra",
-    "Manipur",
-    "Meghalaya",
-    "Mizoram",
-    "Nagaland",
-    "Odisha",
-    "Punjab",
-    "Rajasthan",
-    "Sikkim",
-    "Tamil Nadu",
-    "Telangana",
-    "Tripura",
-    "Uttar Pradesh",
-    "Uttarakhand",
-    "West Bengal",
-    "Andaman and Nicobar Islands",
-    "Chandigarh",
-    "Dadra and Nagar Haveli",
-    "Daman and Diu",
-    "Delhi",
-    "Jammu and Kashmir",
-    "Ladakh",
-    "Lakshadweep",
-    "Puducherry",
-  ],
-  Indonesia: [
-    "Aceh",
-    "North Sumatra",
-    "West Sumatra",
-    "Riau",
-    "Riau Islands",
-    "Jambi",
-    "South Sumatra",
-    "Bengkulu",
-    "Lampung",
-    "Bangka Belitung Islands",
-    "Jakarta",
-    "West Java",
-    "Central Java",
-    "East Java",
-    "Yogyakarta",
-    "Banten",
-    "Bali",
-    "West Nusa Tenggara",
-    "East Nusa Tenggara",
-    "West Kalimantan",
-    "Central Kalimantan",
-    "South Kalimantan",
-    "East Kalimantan",
-    "North Kalimantan",
-    "North Sulawesi",
-    "Central Sulawesi",
-    "South Sulawesi",
-    "Southeast Sulawesi",
-    "Gorontalo",
-    "West Sulawesi",
-    "Maluku",
-    "North Maluku",
-    "Papua",
-    "West Papua",
-  ],
-  Italy: [
-    "Abruzzo",
-    "Basilicata",
-    "Calabria",
-    "Campania",
-    "Emilia-Romagna",
-    "Friuli-Venezia Giulia",
-    "Lazio",
-    "Liguria",
-    "Lombardy",
-    "Marche",
-    "Molise",
-    "Piedmont",
-    "Puglia",
-    "Sardinia",
-    "Sicily",
-    "Trentino-Alto Adige",
-    "Tuscany",
-    "Umbria",
-    "Aosta Valley",
-    "Veneto",
-  ],
-  Japan: [
-    "Aichi",
-    "Akita",
-    "Aomori",
-    "Chiba",
-    "Ehime",
-    "Fukui",
-    "Fukuoka",
-    "Fukushima",
-    "Gifu",
-    "Gunma",
-    "Hiroshima",
-    "Hokkaido",
-    "Hyogo",
-    "Ibaraki",
-    "Ishikawa",
-    "Iwate",
-    "Kagawa",
-    "Kagoshima",
-    "Kanagawa",
-    "Kochi",
-    "Kumamoto",
-    "Kyoto",
-    "Mie",
-    "Miyagi",
-    "Miyazaki",
-    "Nagano",
-    "Nagasaki",
-    "Nara",
-    "Niigata",
-    "Oita",
-    "Okayama",
-    "Okinawa",
-    "Osaka",
-    "Saga",
-    "Saitama",
-    "Shiga",
-    "Shimane",
-    "Shizuoka",
-    "Tochigi",
-    "Tokushima",
-    "Tokyo",
-    "Tottori",
-    "Toyama",
-    "Wakayama",
-    "Yamagata",
-    "Yamaguchi",
-    "Yamanashi",
-  ],
-  Kenya: [
+
+  kenyanCounties: [
     "Baringo",
     "Bomet",
     "Bungoma",
@@ -559,791 +266,562 @@ const countriesAndStates = {
     "Wajir",
     "West Pokot",
   ],
-  Mexico: [
-    "Aguascalientes",
-    "Baja California",
-    "Baja California Sur",
-    "Campeche",
-    "Chiapas",
-    "Chihuahua",
-    "Coahuila",
-    "Colima",
-    "Durango",
-    "Guanajuato",
-    "Guerrero",
-    "Hidalgo",
-    "Jalisco",
-    "Mexico",
-    "Michoacán",
-    "Morelos",
-    "Nayarit",
-    "Nuevo León",
-    "Oaxaca",
-    "Puebla",
-    "Querétaro",
-    "Quintana Roo",
-    "San Luis Potosí",
-    "Sinaloa",
-    "Sonora",
-    "Tabasco",
-    "Tamaulipas",
-    "Tlaxcala",
-    "Veracruz",
-    "Yucatán",
-    "Zacatecas",
-    "Mexico City",
+
+  kenyanConstituencies: {
+    Nairobi: [
+      "Dagoretti North",
+      "Dagoretti South",
+      "Embakasi Central",
+      "Embakasi East",
+      "Embakasi North",
+      "Embakasi South",
+      "Embakasi West",
+      "Kamukunji",
+      "Kasarani",
+      "Kibra",
+      "Lang'ata",
+      "Makadara",
+      "Mathare",
+      "Roysambu",
+      "Ruaraka",
+      "Starehe",
+      "Westlands",
+    ],
+    Mombasa: ["Changamwe", "Jomba", "Kisauni", "Likoni", "Mvita", "Nyali"],
+    Kisumu: ["Kisumu Central", "Kisumu East", "Kisumu West", "Muhoroni", "Nyakach", "Nyando", "Seme"],
+    Nakuru: [
+      "Bahati",
+      "Gilgil",
+      "Kuresoi North",
+      "Kuresoi South",
+      "Molo",
+      "Naivasha",
+      "Nakuru Town East",
+      "Nakuru Town West",
+      "Njoro",
+      "Rongai",
+      "Subukia",
+    ],
+    Kiambu: [
+      "Gatundu North",
+      "Gatundu South",
+      "Githunguri",
+      "Juja",
+      "Kabete",
+      "Kiambaa",
+      "Kiambu",
+      "Kikuyu",
+      "Limuru",
+      "Ruiru",
+      "Thika Town",
+      "Lari",
+    ],
+  },
+
+  kenyanWards: {
+    Westlands: ["Kitisuru", "Parklands/Highridge", "Karura", "Kangemi", "Mountain View"],
+    "Lang'ata": ["Karen", "Nairobi West", "Mugumo-ini", "South C", "Nyayo Highrise"],
+    Starehe: ["Nairobi Central", "Ngara", "Pangani", "Ziwani/Kariokor", "Landimawe"],
+    Kasarani: ["Clay City", "Mwiki", "Kasarani", "Njiru", "Ruai"],
+  },
+
+  kenyanTribes: [
+    "Agikuyu",
+    "Akamba",
+    "Abaluhya",
+    "Aluo",
+    "Ameru",
+    "Abagusii",
+    "Amiji",
+    "Turkana",
+    "Aembu",
+    "Akurya",
+    "Asomali",
+    "Kalenjin",
+    "Ataita",
+    "Asuba",
+    "Agalla",
+    "Abakuria",
+    "Maasai",
+    "Samburu",
+    "Ambeere",
+    "Adakama",
+    "Apokomo",
+    "Malakote",
+    "Yaaku",
+    "Abwaidakho",
+    "Dahalo",
+    "Boni",
+    "Sanye",
+    "Sakuye",
+    "Garre",
+    "Gabra",
+    "Borana",
+    "Burji",
+    "Konso",
+    "Rendille",
+    "Ariaal",
+    "Elmolo",
+    "Munyoyaya",
+    "Ogiek",
+    "Sengwer",
+    "Endorois",
+    "Makonde",
+    "Taita",
+    "Taveta",
+    "Duruma",
+    "Digo",
+    "Rabai",
+    "Ribe",
+    "Kauma",
+    "Chonyi",
+    "Jibana",
+    "Kambe",
+    "Giriama",
   ],
-  Nigeria: [
-    "Abia",
-    "Adamawa",
-    "Akwa Ibom",
-    "Anambra",
-    "Bauchi",
-    "Bayelsa",
-    "Benue",
-    "Borno",
-    "Cross River",
-    "Delta",
-    "Ebonyi",
-    "Edo",
-    "Ekiti",
-    "Enugu",
-    "Gombe",
-    "Imo",
-    "Jigawa",
-    "Kaduna",
-    "Kano",
-    "Katsina",
-    "Kebbi",
-    "Kogi",
-    "Kwara",
-    "Lagos",
-    "Nasarawa",
-    "Niger",
-    "Ogun",
-    "Ondo",
-    "Osun",
-    "Oyo",
-    "Plateau",
-    "Rivers",
-    "Sokoto",
-    "Taraba",
-    "Yobe",
-    "Zamfara",
-    "Federal Capital Territory",
+
+  worldLanguages: [
+    "Afrikaans",
+    "Albanian",
+    "Amharic",
+    "Arabic",
+    "Armenian",
+    "Azerbaijani",
+    "Basque",
+    "Belarusian",
+    "Bengali",
+    "Bosnian",
+    "Bulgarian",
+    "Burmese",
+    "Catalan",
+    "Chinese (Mandarin)",
+    "Chinese (Cantonese)",
+    "Croatian",
+    "Czech",
+    "Danish",
+    "Dutch",
+    "English",
+    "Estonian",
+    "Finnish",
+    "French",
+    "Georgian",
+    "German",
+    "Greek",
+    "Gujarati",
+    "Hebrew",
+    "Hindi",
+    "Hungarian",
+    "Icelandic",
+    "Indonesian",
+    "Irish",
+    "Italian",
+    "Japanese",
+    "Javanese",
+    "Kannada",
+    "Kazakh",
+    "Khmer",
+    "Korean",
+    "Kurdish",
+    "Kyrgyz",
+    "Lao",
+    "Latvian",
+    "Lithuanian",
+    "Macedonian",
+    "Malay",
+    "Malayalam",
+    "Maltese",
+    "Marathi",
+    "Mongolian",
+    "Nepali",
+    "Norwegian",
+    "Oriya",
+    "Pashto",
+    "Persian",
+    "Polish",
+    "Portuguese",
+    "Punjabi",
+    "Romanian",
+    "Russian",
+    "Serbian",
+    "Sinhala",
+    "Slovak",
+    "Slovenian",
+    "Spanish",
+    "Swahili",
+    "Swedish",
+    "Tamil",
+    "Telugu",
+    "Thai",
+    "Turkish",
+    "Ukrainian",
+    "Urdu",
+    "Uzbek",
+    "Vietnamese",
+    "Welsh",
+    "Xhosa",
+    "Yoruba",
+    "Zulu",
   ],
-  Russia: [
-    "Adygea",
-    "Altai Krai",
-    "Altai Republic",
-    "Amur Oblast",
-    "Arkhangelsk Oblast",
-    "Astrakhan Oblast",
-    "Bashkortostan",
-    "Belgorod Oblast",
-    "Bryansk Oblast",
-    "Buryatia",
-    "Chelyabinsk Oblast",
-    "Chechnya",
-    "Chukotka",
-    "Chuvashia",
-    "Dagestan",
-    "Ingushetia",
-    "Irkutsk Oblast",
-    "Ivanovo Oblast",
-    "Jewish Autonomous Oblast",
-    "Kabardino-Balkaria",
-    "Kaliningrad Oblast",
-    "Kalmykia",
-    "Kaluga Oblast",
-    "Kamchatka Krai",
-    "Karachay-Cherkessia",
-    "Karelia",
-    "Kemerovo Oblast",
-    "Khabarovsk Krai",
-    "Khakassia",
-    "Khanty-Mansi",
-    "Kirov Oblast",
-    "Komi",
-    "Kostroma Oblast",
-    "Krasnodar Krai",
-    "Krasnoyarsk Krai",
-    "Kurgan Oblast",
-    "Kursk Oblast",
-    "Leningrad Oblast",
-    "Lipetsk Oblast",
-    "Magadan Oblast",
-    "Mari El",
-    "Mordovia",
-    "Moscow",
-    "Moscow Oblast",
-    "Murmansk Oblast",
-    "Nenets",
-    "Nizhny Novgorod Oblast",
-    "North Ossetia-Alania",
-    "Novgorod Oblast",
-    "Novosibirsk Oblast",
-    "Omsk Oblast",
-    "Orenburg Oblast",
-    "Oryol Oblast",
-    "Penza Oblast",
-    "Perm Krai",
-    "Primorsky Krai",
-    "Pskov Oblast",
-    "Rostov Oblast",
-    "Ryazan Oblast",
-    "Sakha",
-    "Sakhalin Oblast",
-    "Samara Oblast",
-    "Saint Petersburg",
-    "Saratov Oblast",
-    "Smolensk Oblast",
-    "Stavropol Krai",
-    "Sverdlovsk Oblast",
-    "Tambov Oblast",
-    "Tatarstan",
-    "Tomsk Oblast",
-    "Tula Oblast",
-    "Tuva",
-    "Tver Oblast",
-    "Tyumen Oblast",
-    "Udmurtia",
-    "Ulyanovsk Oblast",
-    "Vladimir Oblast",
-    "Volgograd Oblast",
-    "Vologda Oblast",
-    "Voronezh Oblast",
-    "Yamalo-Nenets",
-    "Yaroslavl Oblast",
-    "Zabaykalsky Krai",
+
+  countriesAndStates: {
+    "United States": [
+      "Alabama",
+      "Alaska",
+      "Arizona",
+      "Arkansas",
+      "California",
+      "Colorado",
+      "Connecticut",
+      "Delaware",
+      "Florida",
+      "Georgia",
+      "Hawaii",
+      "Idaho",
+      "Illinois",
+      "Indiana",
+      "Iowa",
+      "Kansas",
+      "Kentucky",
+      "Louisiana",
+      "Maine",
+      "Maryland",
+      "Massachusetts",
+      "Michigan",
+      "Minnesota",
+      "Mississippi",
+      "Missouri",
+      "Montana",
+      "Nebraska",
+      "Nevada",
+      "New Hampshire",
+      "New Jersey",
+      "New Mexico",
+      "New York",
+      "North Carolina",
+      "North Dakota",
+      "Ohio",
+      "Oklahoma",
+      "Oregon",
+      "Pennsylvania",
+      "Rhode Island",
+      "South Carolina",
+      "South Dakota",
+      "Tennessee",
+      "Texas",
+      "Utah",
+      "Vermont",
+      "Virginia",
+      "Washington",
+      "West Virginia",
+      "Wisconsin",
+      "Wyoming",
+      "District of Columbia",
+    ],
+    Canada: [
+      "Alberta",
+      "British Columbia",
+      "Manitoba",
+      "New Brunswick",
+      "Newfoundland and Labrador",
+      "Northwest Territories",
+      "Nova Scotia",
+      "Nunavut",
+      "Ontario",
+      "Prince Edward Island",
+      "Quebec",
+      "Saskatchewan",
+      "Yukon",
+    ],
+    Australia: [
+      "New South Wales",
+      "Victoria",
+      "Queensland",
+      "Western Australia",
+      "South Australia",
+      "Tasmania",
+      "Northern Territory",
+      "Australian Capital Territory",
+    ],
+    Germany: [
+      "Baden-Württemberg",
+      "Bavaria",
+      "Berlin",
+      "Brandenburg",
+      "Bremen",
+      "Hamburg",
+      "Hesse",
+      "Lower Saxony",
+      "Mecklenburg-Vorpommern",
+      "North Rhine-Westphalia",
+      "Rhineland-Palatinate",
+      "Saarland",
+      "Saxony",
+      "Saxony-Anhalt",
+      "Schleswig-Holstein",
+      "Thuringia",
+    ],
+    "United Kingdom": ["England", "Scotland", "Wales", "Northern Ireland"],
+    Kenya: [
+      "Baringo",
+      "Bomet",
+      "Bungoma",
+      "Busia",
+      "Elgeyo-Marakwet",
+      "Embu",
+      "Garissa",
+      "Homa Bay",
+      "Isiolo",
+      "Kajiado",
+      "Kakamega",
+      "Kericho",
+      "Kiambu",
+      "Kilifi",
+      "Kirinyaga",
+      "Kisii",
+      "Kisumu",
+      "Kitui",
+      "Kwale",
+      "Laikipia",
+      "Lamu",
+      "Machakos",
+      "Makueni",
+      "Mandera",
+      "Marsabit",
+      "Meru",
+      "Migori",
+      "Mombasa",
+      "Murang'a",
+      "Nairobi",
+      "Nakuru",
+      "Nandi",
+      "Narok",
+      "Nyamira",
+      "Nyandarua",
+      "Nyeri",
+      "Samburu",
+      "Siaya",
+      "Taita-Taveta",
+      "Tana River",
+      "Tharaka-Nithi",
+      "Trans Nzoia",
+      "Turkana",
+      "Uasin Gishu",
+      "Vihiga",
+      "Wajir",
+      "West Pokot",
+    ],
+  },
+
+  religions: [
+    "Christianity",
+    "Islam",
+    "Hinduism",
+    "Buddhism",
+    "Judaism",
+    "Traditional African Religion",
+    "Sikhism",
+    "Bahá'í Faith",
+    "Atheist",
+    "Agnostic",
+    "Other",
   ],
-  "South Africa": [
-    "Eastern Cape",
-    "Free State",
-    "Gauteng",
-    "KwaZulu-Natal",
-    "Limpopo",
-    "Mpumalanga",
-    "Northern Cape",
-    "North West",
-    "Western Cape",
+
+  educationLevels: [
+    "Primary School",
+    "Secondary School",
+    "College/Diploma",
+    "University (Bachelor's)",
+    "Postgraduate (Master's)",
+    "PhD/Doctorate",
+    "Trade/Vocational School",
   ],
-  Spain: [
-    "Andalusia",
-    "Aragon",
-    "Asturias",
-    "Balearic Islands",
-    "Basque Country",
-    "Canary Islands",
-    "Cantabria",
-    "Castile and León",
-    "Castile-La Mancha",
-    "Catalonia",
-    "Extremadura",
-    "Galicia",
-    "La Rioja",
-    "Madrid",
-    "Murcia",
-    "Navarre",
-    "Valencia",
-  ],
-  Tanzania: [
-    "Arusha",
-    "Dar es Salaam",
-    "Dodoma",
-    "Geita",
-    "Iringa",
-    "Kagera",
-    "Katavi",
-    "Kigoma",
-    "Kilimanjaro",
-    "Lindi",
-    "Manyara",
-    "Mara",
-    "Mbeya",
-    "Morogoro",
-    "Mtwara",
-    "Mwanza",
-    "Njombe",
-    "Pemba North",
-    "Pemba South",
-    "Pwani",
-    "Rukwa",
-    "Ruvuma",
-    "Shinyanga",
-    "Simiyu",
-    "Singida",
-    "Songwe",
-    "Tabora",
-    "Tanga",
-    "Unguja North",
-    "Unguja South",
-  ],
-  Uganda: [
-    "Abim",
-    "Adjumani",
-    "Agago",
-    "Alebtong",
-    "Amolatar",
-    "Amudat",
-    "Amuria",
-    "Amuru",
-    "Apac",
-    "Arua",
-    "Budaka",
-    "Bududa",
-    "Bugiri",
-    "Buhweju",
-    "Buikwe",
-    "Bukedea",
-    "Bukomansimbi",
-    "Bukwo",
-    "Bulambuli",
-    "Buliisa",
-    "Bundibugyo",
-    "Bushenyi",
-    "Busia",
-    "Butaleja",
-    "Butambala",
-    "Buvuma",
-    "Buyende",
-    "Central",
-    "Eastern",
-    "Kampala",
-    "Northern",
-    "Western",
-  ],
-  "United Kingdom": ["England", "Scotland", "Wales", "Northern Ireland"],
-  "United States": [
-    "Alabama",
-    "Alaska",
-    "Arizona",
-    "Arkansas",
-    "California",
-    "Colorado",
-    "Connecticut",
-    "Delaware",
-    "Florida",
-    "Georgia",
-    "Hawaii",
-    "Idaho",
-    "Illinois",
-    "Indiana",
-    "Iowa",
-    "Kansas",
-    "Kentucky",
-    "Louisiana",
-    "Maine",
-    "Maryland",
-    "Massachusetts",
-    "Michigan",
-    "Minnesota",
-    "Mississippi",
-    "Missouri",
-    "Montana",
-    "Nebraska",
-    "Nevada",
-    "New Hampshire",
-    "New Jersey",
-    "New Mexico",
-    "New York",
-    "North Carolina",
-    "North Dakota",
-    "Ohio",
-    "Oklahoma",
-    "Oregon",
-    "Pennsylvania",
-    "Rhode Island",
-    "South Carolina",
-    "South Dakota",
-    "Tennessee",
-    "Texas",
-    "Utah",
-    "Vermont",
-    "Virginia",
-    "Washington",
-    "West Virginia",
-    "Wisconsin",
-    "Wyoming",
-    "District of Columbia",
-  ],
+
+  maritalStatuses: ["Single", "Divorced", "Widowed", "Separated", "In a relationship"],
 }
 
-// Complete list of world countries
-const worldCountries = [
-  "Afghanistan",
-  "Albania",
-  "Algeria",
-  "Andorra",
-  "Angola",
-  "Antigua and Barbuda",
-  "Argentina",
-  "Armenia",
-  "Australia",
-  "Austria",
-  "Azerbaijan",
-  "Bahamas",
-  "Bahrain",
-  "Bangladesh",
-  "Barbados",
-  "Belarus",
-  "Belgium",
-  "Belize",
-  "Benin",
-  "Bhutan",
-  "Bolivia",
-  "Bosnia and Herzegovina",
-  "Botswana",
-  "Brazil",
-  "Brunei",
-  "Bulgaria",
-  "Burkina Faso",
-  "Burundi",
-  "Cabo Verde",
-  "Cambodia",
-  "Cameroon",
-  "Canada",
-  "Central African Republic",
-  "Chad",
-  "Chile",
-  "China",
-  "Colombia",
-  "Comoros",
-  "Congo",
-  "Costa Rica",
-  "Croatia",
-  "Cuba",
-  "Cyprus",
-  "Czech Republic",
-  "Democratic Republic of the Congo",
-  "Denmark",
-  "Djibouti",
-  "Dominica",
-  "Dominican Republic",
-  "East Timor",
-  "Ecuador",
-  "Egypt",
-  "El Salvador",
-  "Equatorial Guinea",
-  "Eritrea",
-  "Estonia",
-  "Eswatini",
-  "Ethiopia",
-  "Fiji",
-  "Finland",
-  "France",
-  "Gabon",
-  "Gambia",
-  "Georgia",
-  "Germany",
-  "Ghana",
-  "Greece",
-  "Grenada",
-  "Guatemala",
-  "Guinea",
-  "Guinea-Bissau",
-  "Guyana",
-  "Haiti",
-  "Honduras",
-  "Hungary",
-  "Iceland",
-  "India",
-  "Indonesia",
-  "Iran",
-  "Iraq",
-  "Ireland",
-  "Israel",
-  "Italy",
-  "Ivory Coast",
-  "Jamaica",
-  "Japan",
-  "Jordan",
-  "Kazakhstan",
-  "Kenya",
-  "Kiribati",
-  "Kuwait",
-  "Kyrgyzstan",
-  "Laos",
-  "Latvia",
-  "Lebanon",
-  "Lesotho",
-  "Liberia",
-  "Libya",
-  "Liechtenstein",
-  "Lithuania",
-  "Luxembourg",
-  "Madagascar",
-  "Malawi",
-  "Malaysia",
-  "Maldives",
-  "Mali",
-  "Malta",
-  "Marshall Islands",
-  "Mauritania",
-  "Mauritius",
-  "Mexico",
-  "Micronesia",
-  "Moldova",
-  "Monaco",
-  "Mongolia",
-  "Montenegro",
-  "Morocco",
-  "Mozambique",
-  "Myanmar",
-  "Namibia",
-  "Nauru",
-  "Nepal",
-  "Netherlands",
-  "New Zealand",
-  "Nicaragua",
-  "Niger",
-  "Nigeria",
-  "North Korea",
-  "North Macedonia",
-  "Norway",
-  "Oman",
-  "Pakistan",
-  "Palau",
-  "Panama",
-  "Papua New Guinea",
-  "Paraguay",
-  "Peru",
-  "Philippines",
-  "Poland",
-  "Portugal",
-  "Qatar",
-  "Romania",
-  "Russia",
-  "Rwanda",
-  "Saint Kitts and Nevis",
-  "Saint Lucia",
-  "Saint Vincent and the Grenadines",
-  "Samoa",
-  "San Marino",
-  "Sao Tome and Principe",
-  "Saudi Arabia",
-  "Senegal",
-  "Serbia",
-  "Seychelles",
-  "Sierra Leone",
-  "Singapore",
-  "Slovakia",
-  "Slovenia",
-  "Solomon Islands",
-  "Somalia",
-  "South Africa",
-  "South Korea",
-  "South Sudan",
-  "Spain",
-  "Sri Lanka",
-  "Sudan",
-  "Suriname",
-  "Sweden",
-  "Switzerland",
-  "Syria",
-  "Taiwan",
-  "Tajikistan",
-  "Tanzania",
-  "Thailand",
-  "Togo",
-  "Tonga",
-  "Trinidad and Tobago",
-  "Tunisia",
-  "Turkey",
-  "Turkmenistan",
-  "Tuvalu",
-  "Uganda",
-  "Ukraine",
-  "United Arab Emirates",
-  "United Kingdom",
-  "United States",
-  "Uruguay",
-  "Uzbekistan",
-  "Vanuatu",
-  "Vatican City",
-  "Venezuela",
-  "Vietnam",
-  "Yemen",
-  "Zambia",
-  "Zimbabwe",
-]
+// // Custom hook for debounced search // Removed local declaration
 
-// Kenya-specific data
-const kenyanCounties = [
-  "Baringo",
-  "Bomet",
-  "Bungoma",
-  "Busia",
-  "Elgeyo-Marakwet",
-  "Embu",
-  "Garissa",
-  "Homa Bay",
-  "Isiolo",
-  "Kajiado",
-  "Kakamega",
-  "Kericho",
-  "Kiambu",
-  "Kilifi",
-  "Kirinyaga",
-  "Kisii",
-  "Kisumu",
-  "Kitui",
-  "Kwale",
-  "Laikipia",
-  "Lamu",
-  "Machakos",
-  "Makueni",
-  "Mandera",
-  "Marsabit",
-  "Meru",
-  "Migori",
-  "Mombasa",
-  "Murang'a",
-  "Nairobi",
-  "Nakuru",
-  "Nandi",
-  "Narok",
-  "Nyamira",
-  "Nyandarua",
-  "Nyeri",
-  "Samburu",
-  "Siaya",
-  "Taita-Taveta",
-  "Tana River",
-  "Tharaka-Nithi",
-  "Trans Nzoia",
-  "Turkana",
-  "Uasin Gishu",
-  "Vihiga",
-  "Wajir",
-  "West Pokot",
-]
+// function useDebounce(value: string, delay: number) {
+//   const [debouncedValue, setDebouncedValue] = useState(value)
 
-const kenyanConstituencies = {
-  Nairobi: [
-    "Dagoretti North",
-    "Dagoretti South",
-    "Embakasi Central",
-    "Embakasi East",
-    "Embakasi North",
-    "Embakasi South",
-    "Embakasi West",
-    "Kamukunji",
-    "Kasarani",
-    "Kibra",
-    "Lang'ata",
-    "Makadara",
-    "Mathare",
-    "Roysambu",
-    "Ruaraka",
-    "Starehe",
-    "Westlands",
-  ],
-  Mombasa: ["Changamwe", "Jomba", "Kisauni", "Likoni", "Mvita", "Nyali"],
-  Kisumu: ["Kisumu Central", "Kisumu East", "Kisumu West", "Muhoroni", "Nyakach", "Nyando", "Seme"],
-  Nakuru: [
-    "Bahati",
-    "Gilgil",
-    "Kuresoi North",
-    "Kuresoi South",
-    "Molo",
-    "Naivasha",
-    "Nakuru Town East",
-    "Nakuru Town West",
-    "Njoro",
-    "Rongai",
-    "Subukia",
-  ],
-  Kiambu: [
-    "Gatundu North",
-    "Gatundu South",
-    "Githunguri",
-    "Juja",
-    "Kabete",
-    "Kiambaa",
-    "Kiambu",
-    "Kikuyu",
-    "Limuru",
-    "Ruiru",
-    "Thika Town",
-    "Lari",
-  ],
-}
+//   useState(() => {
+//     const handler = setTimeout(() => {
+//       setDebouncedValue(value)
+//     }, delay)
 
-const kenyanWards = {
-  Westlands: ["Kitisuru", "Parklands/Highridge", "Karura", "Kangemi", "Mountain View"],
-  "Lang'ata": ["Karen", "Nairobi West", "Mugumo-ini", "South C", "Nyayo Highrise"],
-  Starehe: ["Nairobi Central", "Ngara", "Pangani", "Ziwani/Kariokor", "Landimawe"],
-  Kasarani: ["Clay City", "Mwiki", "Kasarani", "Njiru", "Ruai"],
-}
+//     return () => {
+//       clearTimeout(handler)
+//     }
+//   }, [value, delay])
 
-const kenyanTribes = [
-  "Agikuyu",
-  "Akamba",
-  "Abaluhya",
-  "Aluo",
-  "Ameru",
-  "Abagusii",
-  "Amiji",
-  "Turkana",
-  "Aembu",
-  "Akurya",
-  "Asomali",
-  "Kalenjin",
-  "Ataita",
-  "Asuba",
-  "Agalla",
-  "Abakuria",
-  "Maasai",
-  "Samburu",
-  "Ambeere",
-  "Adakama",
-  "Apokomo",
-  "Malakote",
-  "Yaaku",
-  "Abwaidakho",
-  "Dahalo",
-  "Boni",
-  "Sanye",
-  "Sakuye",
-  "Garre",
-  "Gabra",
-  "Borana",
-  "Burji",
-  "Konso",
-  "Rendille",
-  "Ariaal",
-  "Elmolo",
-  "Munyoyaya",
-  "Ogiek",
-  "Sengwer",
-  "Endorois",
-  "Makonde",
-  "Taita",
-  "Taveta",
-  "Duruma",
-  "Digo",
-  "Rabai",
-  "Ribe",
-  "Kauma",
-  "Chonyi",
-  "Jibana",
-  "Kambe",
-  "Giriama",
-]
+//   return debouncedValue
+// }
 
-// World languages (International recognized languages)
-const worldLanguages = [
-  "Afrikaans",
-  "Albanian",
-  "Amharic",
-  "Arabic",
-  "Armenian",
-  "Azerbaijani",
-  "Basque",
-  "Belarusian",
-  "Bengali",
-  "Bosnian",
-  "Bulgarian",
-  "Burmese",
-  "Catalan",
-  "Chinese (Mandarin)",
-  "Chinese (Cantonese)",
-  "Croatian",
-  "Czech",
-  "Danish",
-  "Dutch",
-  "English",
-  "Estonian",
-  "Finnish",
-  "French",
-  "Georgian",
-  "German",
-  "Greek",
-  "Gujarati",
-  "Hebrew",
-  "Hindi",
-  "Hungarian",
-  "Icelandic",
-  "Indonesian",
-  "Irish",
-  "Italian",
-  "Japanese",
-  "Javanese",
-  "Kannada",
-  "Kazakh",
-  "Khmer",
-  "Korean",
-  "Kurdish",
-  "Kyrgyz",
-  "Lao",
-  "Latvian",
-  "Lithuanian",
-  "Macedonian",
-  "Malay",
-  "Malayalam",
-  "Maltese",
-  "Marathi",
-  "Mongolian",
-  "Nepali",
-  "Norwegian",
-  "Oriya",
-  "Pashto",
-  "Persian",
-  "Polish",
-  "Portuguese",
-  "Punjabi",
-  "Romanian",
-  "Russian",
-  "Serbian",
-  "Sinhala",
-  "Slovak",
-  "Slovenian",
-  "Spanish",
-  "Swahili",
-  "Swedish",
-  "Tamil",
-  "Telugu",
-  "Thai",
-  "Turkish",
-  "Ukrainian",
-  "Urdu",
-  "Uzbek",
-  "Vietnamese",
-  "Welsh",
-  "Xhosa",
-  "Yoruba",
-  "Zulu",
-]
+// Memoized Avatar Selection Component
+const AvatarSelection = memo(
+  ({
+    selectedAvatar,
+    onSelect,
+    fullName,
+  }: {
+    selectedAvatar: number
+    onSelect: (avatar: number) => void
+    fullName: string
+  }) => (
+    <div className="space-y-3">
+      <Label className="text-sm font-medium dark:text-gray-200">Choose Your Profile Avatar</Label>
+      <div className="flex justify-center mb-4">
+        <Avatar className="h-20 w-20 ring-2 ring-[#B22222]/20 dark:ring-red-400/20">
+          <AvatarImage src={`/images/avatar${selectedAvatar}.jpg`} alt="Selected avatar" />
+          <AvatarFallback className="text-lg font-bold text-[#B22222] dark:text-red-400">
+            {fullName.charAt(0).toUpperCase() || "U"}
+          </AvatarFallback>
+        </Avatar>
+      </div>
+      <div className="grid grid-cols-5 gap-2">
+        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((avatarNumber) => (
+          <div
+            key={avatarNumber}
+            className={`relative cursor-pointer rounded-lg overflow-hidden border-2 transition-all duration-200 aspect-square ${
+              selectedAvatar === avatarNumber
+                ? "border-[#B22222] dark:border-red-400 bg-red-50 dark:bg-red-900/20 scale-105"
+                : "border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 hover:scale-102"
+            }`}
+            onClick={() => onSelect(avatarNumber)}
+          >
+            <img
+              src={`/images/avatar${avatarNumber}.jpg`}
+              alt={`Avatar ${avatarNumber}`}
+              className="w-full h-full object-cover"
+            />
+            {selectedAvatar === avatarNumber && (
+              <div className="absolute inset-0 bg-[#B22222]/10 dark:bg-red-400/10 flex items-center justify-center">
+                <CheckCircle className="h-4 w-4 text-[#B22222] dark:text-red-400" />
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  ),
+)
 
-const religions = [
-  "Christianity",
-  "Islam",
-  "Hinduism",
-  "Buddhism",
-  "Judaism",
-  "Traditional African Religion",
-  "Sikhism",
-  "Bahá'í Faith",
-  "Atheist",
-  "Agnostic",
-  "Other",
-]
+// Memoized Searchable Select Component
+const SearchableSelect = memo(
+  ({
+    items,
+    value,
+    onValueChange,
+    placeholder,
+    searchPlaceholder,
+    label,
+  }: {
+    items: string[]
+    value: string
+    onValueChange: (value: string) => void
+    placeholder: string
+    searchPlaceholder: string
+    label: string
+  }) => {
+    const [search, setSearch] = useState("")
+    const debouncedSearch = useDebounce(search, 300)
 
-const educationLevels = [
-  "Primary School",
-  "Secondary School",
-  "College/Diploma",
-  "University (Bachelor's)",
-  "Postgraduate (Master's)",
-  "PhD/Doctorate",
-  "Trade/Vocational School",
-]
+    const filteredItems = useMemo(
+      () => items.filter((item) => item.toLowerCase().includes(debouncedSearch.toLowerCase())),
+      [items, debouncedSearch],
+    )
 
-const maritalStatuses = ["Single", "Divorced", "Widowed", "Separated", "In a relationship"]
+    return (
+      <div className="space-y-2">
+        <Label>{label}</Label>
+        <div className="space-y-2">
+          <Input
+            placeholder={searchPlaceholder}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="transition-all duration-200"
+          />
+          <Select
+            value={value}
+            onValueChange={(val) => {
+              onValueChange(val)
+              setSearch("")
+            }}
+          >
+            <SelectTrigger className="transition-all duration-200">
+              <SelectValue placeholder={placeholder} />
+            </SelectTrigger>
+            <SelectContent className="max-h-60 overflow-y-auto">
+              {filteredItems.map((item) => (
+                <SelectItem key={item} value={item} className="transition-colors duration-150">
+                  {item}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+    )
+  },
+)
+
+// Memoized Language Selection Component
+const LanguageSelection = memo(
+  ({
+    languages,
+    selectedLanguages,
+    onToggle,
+  }: {
+    languages: string[]
+    selectedLanguages: string[]
+    onToggle: (language: string) => void
+  }) => {
+    const [search, setSearch] = useState("")
+    const debouncedSearch = useDebounce(search, 300)
+
+    const filteredLanguages = useMemo(
+      () => languages.filter((lang) => lang.toLowerCase().includes(debouncedSearch.toLowerCase())),
+      [languages, debouncedSearch],
+    )
+
+    return (
+      <div className="space-y-2">
+        <Label>Languages Spoken (Select all that apply) *</Label>
+        <div className="space-y-2">
+          <Input
+            placeholder="Search languages..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="transition-all duration-200"
+          />
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-60 overflow-y-auto border rounded-md p-3 bg-background">
+            {filteredLanguages.map((language) => (
+              <div
+                key={language}
+                className="flex items-center space-x-2 p-1 rounded hover:bg-muted/50 transition-colors duration-150"
+              >
+                <Checkbox
+                  id={language}
+                  checked={selectedLanguages.includes(language)}
+                  onCheckedChange={() => onToggle(language)}
+                  className="transition-all duration-200"
+                />
+                <Label htmlFor={language} className="text-sm cursor-pointer">
+                  {language}
+                </Label>
+              </div>
+            ))}
+          </div>
+          <p className="text-sm text-gray-500">
+            Selected: {selectedLanguages.length > 0 ? selectedLanguages.join(", ") : "None"}
+          </p>
+        </div>
+      </div>
+    )
+  },
+)
 
 interface FormData {
-  // Profile Setup
   selectedAvatar: number
   fullName: string
   username: string
@@ -1358,12 +836,8 @@ interface FormData {
   email: string
   password: string
   confirmPassword: string
-
-  // Cultural Identity
   tribe: string
   languages: string[]
-
-  // Features & Appearance
   weight: string
   weightUnit: string
   height: string
@@ -1374,8 +848,6 @@ interface FormData {
   complexion: string
   piercings: string
   tattoos: string
-
-  // Health
   glasses: string
   hivStatus: string
   disability: string
@@ -1384,8 +856,6 @@ interface FormData {
   chronicIllnessDescription: string
   allergies: string
   bloodType: string
-
-  // Education & Work
   educationLevel: string
   employmentStatus: string
   occupation: string
@@ -1395,8 +865,6 @@ interface FormData {
   workWard: string
   workState: string
   financialStability: string
-
-  // Lifestyle
   alcohol: string
   smoking: string
   hobbies: string
@@ -1406,8 +874,6 @@ interface FormData {
   denomination: string
   churchAttendance: string
   exerciseFrequency: string
-
-  // Dating Info
   maritalStatus: string
   marriedBefore: string
   hasChildren: string
@@ -1420,8 +886,6 @@ interface FormData {
   datingPerspective: string
   dealBreakers: string
   relationshipHopes: string
-
-  // Personality & Other
   personalityType: string
   dontContactIf: string
   imperfections: string
@@ -1438,15 +902,6 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-
-  // Search states for filtering
-  const [countrySearch, setCountrySearch] = useState("")
-  const [countySearch, setCountySearch] = useState("")
-  const [constituencySearch, setConstituencySearch] = useState("")
-  const [wardSearch, setWardSearch] = useState("")
-  const [stateSearch, setStateSearch] = useState("")
-  const [tribeSearch, setTribeSearch] = useState("")
-  const [languageSearch, setLanguageSearch] = useState("")
 
   const [formData, setFormData] = useState<FormData>({
     selectedAvatar: 1,
@@ -1523,34 +978,34 @@ export default function RegisterPage() {
   })
 
   const totalSteps = 8
-  const progress = (currentStep / totalSteps) * 100
+  const progress = useMemo(() => (currentStep / totalSteps) * 100, [currentStep])
 
-  const updateFormData = (field: string, value: any) => {
+  const updateFormData = useCallback((field: string, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
-  }
+  }, [])
 
-  const toggleLanguage = (language: string) => {
+  const toggleLanguage = useCallback((language: string) => {
     setFormData((prev) => ({
       ...prev,
       languages: prev.languages.includes(language)
         ? prev.languages.filter((l) => l !== language)
         : [...prev.languages, language],
     }))
-  }
+  }, [])
 
-  const nextStep = () => {
+  const nextStep = useCallback(() => {
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1)
     }
-  }
+  }, [currentStep, totalSteps])
 
-  const prevStep = () => {
+  const prevStep = useCallback(() => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1)
     }
-  }
+  }, [currentStep])
 
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
     setIsLoading(true)
 
     // Basic validation
@@ -1597,57 +1052,44 @@ export default function RegisterPage() {
 
     setIsLoading(false)
     router.push("/login")
-  }
+  }, [formData, toast, router])
 
-  const getMinDate = () => {
+  const getMinDate = useCallback(() => {
     const today = new Date()
     const minDate = new Date(today.getFullYear() - 25, today.getMonth(), today.getDate())
     return minDate.toISOString().split("T")[0]
-  }
+  }, [])
 
-  // Filter functions
-  const filterCountries = () => {
-    return worldCountries.filter((country) => country.toLowerCase().includes(countrySearch.toLowerCase()))
-  }
-
-  const filterCounties = () => {
-    return kenyanCounties.filter((county) => county.toLowerCase().includes(countySearch.toLowerCase()))
-  }
-
-  const filterConstituencies = () => {
-    if (!formData.county || !kenyanConstituencies[formData.county as keyof typeof kenyanConstituencies]) {
+  // Memoized filtered data
+  const filteredConstituencies = useMemo(() => {
+    if (
+      !formData.county ||
+      !DATA_CONSTANTS.kenyanConstituencies[formData.county as keyof typeof DATA_CONSTANTS.kenyanConstituencies]
+    ) {
       return []
     }
-    return kenyanConstituencies[formData.county as keyof typeof kenyanConstituencies].filter((constituency) =>
-      constituency.toLowerCase().includes(constituencySearch.toLowerCase()),
-    )
-  }
+    return DATA_CONSTANTS.kenyanConstituencies[formData.county as keyof typeof DATA_CONSTANTS.kenyanConstituencies]
+  }, [formData.county])
 
-  const filterWards = () => {
-    if (!formData.constituency || !kenyanWards[formData.constituency as keyof typeof kenyanWards]) {
+  const filteredWards = useMemo(() => {
+    if (
+      !formData.constituency ||
+      !DATA_CONSTANTS.kenyanWards[formData.constituency as keyof typeof DATA_CONSTANTS.kenyanWards]
+    ) {
       return []
     }
-    return kenyanWards[formData.constituency as keyof typeof kenyanWards].filter((ward) =>
-      ward.toLowerCase().includes(wardSearch.toLowerCase()),
-    )
-  }
+    return DATA_CONSTANTS.kenyanWards[formData.constituency as keyof typeof DATA_CONSTANTS.kenyanWards]
+  }, [formData.constituency])
 
-  const filterStates = () => {
-    if (!formData.country || !countriesAndStates[formData.country as keyof typeof countriesAndStates]) {
+  const filteredStates = useMemo(() => {
+    if (
+      !formData.country ||
+      !DATA_CONSTANTS.countriesAndStates[formData.country as keyof typeof DATA_CONSTANTS.countriesAndStates]
+    ) {
       return []
     }
-    return countriesAndStates[formData.country as keyof typeof countriesAndStates].filter((state) =>
-      state.toLowerCase().includes(stateSearch.toLowerCase()),
-    )
-  }
-
-  const filterTribes = () => {
-    return kenyanTribes.filter((tribe) => tribe.toLowerCase().includes(tribeSearch.toLowerCase()))
-  }
-
-  const filterLanguages = () => {
-    return worldLanguages.filter((language) => language.toLowerCase().includes(languageSearch.toLowerCase()))
-  }
+    return DATA_CONSTANTS.countriesAndStates[formData.country as keyof typeof DATA_CONSTANTS.countriesAndStates]
+  }, [formData.country])
 
   const renderStep = () => {
     switch (currentStep) {
@@ -1659,42 +1101,11 @@ export default function RegisterPage() {
               <p className="text-gray-600 dark:text-gray-400">Let's start with your basic information</p>
             </div>
 
-            {/* Avatar Selection */}
-            <div className="space-y-3">
-              <Label className="text-sm font-medium dark:text-gray-200">Choose Your Profile Avatar</Label>
-              <div className="flex justify-center mb-4">
-                <Avatar className="h-20 w-20 ring-2 ring-[#B22222]/20 dark:ring-red-400/20">
-                  <AvatarImage src={`/images/avatar${formData.selectedAvatar}.jpg`} alt="Selected avatar" />
-                  <AvatarFallback className="text-lg font-bold text-[#B22222] dark:text-red-400">
-                    {formData.fullName.charAt(0).toUpperCase() || "U"}
-                  </AvatarFallback>
-                </Avatar>
-              </div>
-              <div className="grid grid-cols-5 gap-2">
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((avatarNumber) => (
-                  <div
-                    key={avatarNumber}
-                    className={`relative cursor-pointer rounded-lg overflow-hidden border-2 transition-all aspect-square ${
-                      formData.selectedAvatar === avatarNumber
-                        ? "border-[#B22222] dark:border-red-400 bg-red-50 dark:bg-red-900/20"
-                        : "border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500"
-                    }`}
-                    onClick={() => updateFormData("selectedAvatar", avatarNumber)}
-                  >
-                    <img
-                      src={`/images/avatar${avatarNumber}.jpg`}
-                      alt={`Avatar ${avatarNumber}`}
-                      className="w-full h-full object-cover"
-                    />
-                    {formData.selectedAvatar === avatarNumber && (
-                      <div className="absolute inset-0 bg-[#B22222]/10 dark:bg-red-400/10 flex items-center justify-center">
-                        <CheckCircle className="h-4 w-4 text-[#B22222] dark:text-red-400" />
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
+            <AvatarSelection
+              selectedAvatar={formData.selectedAvatar}
+              onSelect={(avatar) => updateFormData("selectedAvatar", avatar)}
+              fullName={formData.fullName}
+            />
 
             {/* Full Name */}
             <div className="space-y-2">
@@ -1704,6 +1115,7 @@ export default function RegisterPage() {
                 value={formData.fullName}
                 onChange={(e) => updateFormData("fullName", e.target.value)}
                 placeholder="Enter your full name"
+                className="transition-all duration-200"
               />
             </div>
 
@@ -1715,6 +1127,7 @@ export default function RegisterPage() {
                 value={formData.username}
                 onChange={(e) => updateFormData("username", e.target.value)}
                 placeholder="Choose a username"
+                className="transition-all duration-200"
               />
             </div>
 
@@ -1722,7 +1135,7 @@ export default function RegisterPage() {
             <div className="space-y-2">
               <Label>Gender *</Label>
               <Select value={formData.gender} onValueChange={(value) => updateFormData("gender", value)}>
-                <SelectTrigger>
+                <SelectTrigger className="transition-all duration-200">
                   <SelectValue placeholder="Select gender" />
                 </SelectTrigger>
                 <SelectContent>
@@ -1736,6 +1149,7 @@ export default function RegisterPage() {
                   value={formData.customGender}
                   onChange={(e) => updateFormData("customGender", e.target.value)}
                   placeholder="Please describe"
+                  className="transition-all duration-200 animate-in slide-in-from-top-2"
                 />
               )}
             </div>
@@ -1749,171 +1163,80 @@ export default function RegisterPage() {
                 max={getMinDate()}
                 value={formData.dateOfBirth}
                 onChange={(e) => updateFormData("dateOfBirth", e.target.value)}
+                className="transition-all duration-200"
               />
             </div>
 
             {/* Country */}
-            <div className="space-y-2">
-              <Label>Country *</Label>
-              <div className="space-y-2">
-                <Input
-                  placeholder="Search countries..."
-                  value={countrySearch}
-                  onChange={(e) => setCountrySearch(e.target.value)}
-                />
-                <Select
-                  value={formData.country}
-                  onValueChange={(value) => {
-                    updateFormData("country", value)
-                    updateFormData("county", "")
-                    updateFormData("constituency", "")
-                    updateFormData("ward", "")
-                    updateFormData("state", "")
-                    setCountrySearch("")
-                  }}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select country" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {filterCountries().map((country) => (
-                      <SelectItem key={country} value={country}>
-                        {country}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+            <SearchableSelect
+              items={DATA_CONSTANTS.worldCountries}
+              value={formData.country}
+              onValueChange={(value) => {
+                updateFormData("country", value)
+                updateFormData("county", "")
+                updateFormData("constituency", "")
+                updateFormData("ward", "")
+                updateFormData("state", "")
+              }}
+              placeholder="Select country"
+              searchPlaceholder="Search countries..."
+              label="Country *"
+            />
 
             {/* Kenya-specific location fields */}
             {formData.country === "Kenya" && (
-              <>
-                <div className="space-y-2">
-                  <Label>County *</Label>
-                  <div className="space-y-2">
-                    <Input
-                      placeholder="Search counties..."
-                      value={countySearch}
-                      onChange={(e) => setCountySearch(e.target.value)}
-                    />
-                    <Select
-                      value={formData.county}
-                      onValueChange={(value) => {
-                        updateFormData("county", value)
-                        updateFormData("constituency", "")
-                        updateFormData("ward", "")
-                        setCountySearch("")
-                      }}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select county" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {filterCounties().map((county) => (
-                          <SelectItem key={county} value={county}>
-                            {county}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
+              <div className="space-y-4 animate-in slide-in-from-top-4">
+                <SearchableSelect
+                  items={DATA_CONSTANTS.kenyanCounties}
+                  value={formData.county}
+                  onValueChange={(value) => {
+                    updateFormData("county", value)
+                    updateFormData("constituency", "")
+                    updateFormData("ward", "")
+                  }}
+                  placeholder="Select county"
+                  searchPlaceholder="Search counties..."
+                  label="County *"
+                />
 
-                {formData.county && (
-                  <div className="space-y-2">
-                    <Label>Constituency</Label>
-                    <div className="space-y-2">
-                      <Input
-                        placeholder="Search constituencies..."
-                        value={constituencySearch}
-                        onChange={(e) => setConstituencySearch(e.target.value)}
-                      />
-                      <Select
-                        value={formData.constituency}
-                        onValueChange={(value) => {
-                          updateFormData("constituency", value)
-                          updateFormData("ward", "")
-                          setConstituencySearch("")
-                        }}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select constituency" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {filterConstituencies().map((constituency) => (
-                            <SelectItem key={constituency} value={constituency}>
-                              {constituency}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
+                {formData.county && filteredConstituencies.length > 0 && (
+                  <SearchableSelect
+                    items={filteredConstituencies}
+                    value={formData.constituency}
+                    onValueChange={(value) => {
+                      updateFormData("constituency", value)
+                      updateFormData("ward", "")
+                    }}
+                    placeholder="Select constituency"
+                    searchPlaceholder="Search constituencies..."
+                    label="Constituency"
+                  />
                 )}
 
-                {formData.constituency && (
-                  <div className="space-y-2">
-                    <Label>Ward</Label>
-                    <div className="space-y-2">
-                      <Input
-                        placeholder="Search wards..."
-                        value={wardSearch}
-                        onChange={(e) => setWardSearch(e.target.value)}
-                      />
-                      <Select
-                        value={formData.ward}
-                        onValueChange={(value) => {
-                          updateFormData("ward", value)
-                          setWardSearch("")
-                        }}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select ward" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {filterWards().map((ward) => (
-                            <SelectItem key={ward} value={ward}>
-                              {ward}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
+                {formData.constituency && filteredWards.length > 0 && (
+                  <SearchableSelect
+                    items={filteredWards}
+                    value={formData.ward}
+                    onValueChange={(value) => updateFormData("ward", value)}
+                    placeholder="Select ward"
+                    searchPlaceholder="Search wards..."
+                    label="Ward"
+                  />
                 )}
-              </>
+              </div>
             )}
 
             {/* State for other countries */}
-            {formData.country && formData.country !== "Kenya" && (
-              <div className="space-y-2">
-                <Label>State/Province</Label>
-                <div className="space-y-2">
-                  <Input
-                    placeholder="Search states..."
-                    value={stateSearch}
-                    onChange={(e) => setStateSearch(e.target.value)}
-                  />
-                  <Select
-                    value={formData.state}
-                    onValueChange={(value) => {
-                      updateFormData("state", value)
-                      setStateSearch("")
-                    }}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select state/province" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {filterStates().map((state) => (
-                        <SelectItem key={state} value={state}>
-                          {state}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+            {formData.country && formData.country !== "Kenya" && filteredStates.length > 0 && (
+              <div className="animate-in slide-in-from-top-4">
+                <SearchableSelect
+                  items={filteredStates}
+                  value={formData.state}
+                  onValueChange={(value) => updateFormData("state", value)}
+                  placeholder="Select state/province"
+                  searchPlaceholder="Search states..."
+                  label="State/Province"
+                />
               </div>
             )}
 
@@ -1926,6 +1249,7 @@ export default function RegisterPage() {
                 value={formData.email}
                 onChange={(e) => updateFormData("email", e.target.value)}
                 placeholder="Enter your email address"
+                className="transition-all duration-200"
               />
             </div>
 
@@ -1938,13 +1262,13 @@ export default function RegisterPage() {
                   value={formData.password}
                   onChange={(e) => updateFormData("password", e.target.value)}
                   placeholder="Create a strong password"
-                  className="pr-10"
+                  className="pr-10 transition-all duration-200"
                 />
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent transition-colors duration-200"
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? (
@@ -1965,13 +1289,13 @@ export default function RegisterPage() {
                   value={formData.confirmPassword}
                   onChange={(e) => updateFormData("confirmPassword", e.target.value)}
                   placeholder="Confirm your password"
-                  className="pr-10"
+                  className="pr-10 transition-all duration-200"
                 />
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent transition-colors duration-200"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 >
                   {showConfirmPassword ? (
@@ -1993,62 +1317,23 @@ export default function RegisterPage() {
               <p className="text-gray-600 dark:text-gray-400">Tell us about your cultural background</p>
             </div>
 
-            {/* Languages for everyone */}
-            <div className="space-y-2">
-              <Label>Languages Spoken (Select all that apply) *</Label>
-              <div className="space-y-2">
-                <Input
-                  placeholder="Search languages..."
-                  value={languageSearch}
-                  onChange={(e) => setLanguageSearch(e.target.value)}
-                />
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-60 overflow-y-auto border rounded-md p-3">
-                  {filterLanguages().map((language) => (
-                    <div key={language} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={language}
-                        checked={formData.languages.includes(language)}
-                        onCheckedChange={() => toggleLanguage(language)}
-                      />
-                      <Label htmlFor={language} className="text-sm">
-                        {language}
-                      </Label>
-                    </div>
-                  ))}
-                </div>
-                <p className="text-sm text-gray-500">Selected: {formData.languages.join(", ") || "None"}</p>
-              </div>
-            </div>
+            <LanguageSelection
+              languages={DATA_CONSTANTS.worldLanguages}
+              selectedLanguages={formData.languages}
+              onToggle={toggleLanguage}
+            />
 
             {/* Tribe - only for Kenya */}
             {formData.country === "Kenya" && (
-              <div className="space-y-2">
-                <Label>Tribe *</Label>
-                <div className="space-y-2">
-                  <Input
-                    placeholder="Search tribes..."
-                    value={tribeSearch}
-                    onChange={(e) => setTribeSearch(e.target.value)}
-                  />
-                  <Select
-                    value={formData.tribe}
-                    onValueChange={(value) => {
-                      updateFormData("tribe", value)
-                      setTribeSearch("")
-                    }}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select your tribe" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {filterTribes().map((tribe) => (
-                        <SelectItem key={tribe} value={tribe}>
-                          {tribe}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+              <div className="animate-in slide-in-from-top-4">
+                <SearchableSelect
+                  items={DATA_CONSTANTS.kenyanTribes}
+                  value={formData.tribe}
+                  onValueChange={(value) => updateFormData("tribe", value)}
+                  placeholder="Select your tribe"
+                  searchPlaceholder="Search tribes..."
+                  label="Tribe *"
+                />
               </div>
             )}
           </div>
@@ -2070,10 +1355,10 @@ export default function RegisterPage() {
                   type="number"
                   value={formData.weight}
                   onChange={(e) => updateFormData("weight", e.target.value)}
-                  className="flex-1"
+                  className="flex-1 transition-all duration-200"
                 />
                 <Select value={formData.weightUnit} onValueChange={(value) => updateFormData("weightUnit", value)}>
-                  <SelectTrigger className="w-20">
+                  <SelectTrigger className="w-20 transition-all duration-200">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -2092,10 +1377,10 @@ export default function RegisterPage() {
                   type="number"
                   value={formData.height}
                   onChange={(e) => updateFormData("height", e.target.value)}
-                  className="flex-1"
+                  className="flex-1 transition-all duration-200"
                 />
                 <Select value={formData.heightUnit} onValueChange={(value) => updateFormData("heightUnit", value)}>
-                  <SelectTrigger className="w-20">
+                  <SelectTrigger className="w-20 transition-all duration-200">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -2111,7 +1396,7 @@ export default function RegisterPage() {
               <div className="space-y-2">
                 <Label>Dimples</Label>
                 <Select value={formData.dimples} onValueChange={(value) => updateFormData("dimples", value)}>
-                  <SelectTrigger>
+                  <SelectTrigger className="transition-all duration-200">
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent>
@@ -2124,7 +1409,7 @@ export default function RegisterPage() {
               <div className="space-y-2">
                 <Label>Eye Color</Label>
                 <Select value={formData.eyeColor} onValueChange={(value) => updateFormData("eyeColor", value)}>
-                  <SelectTrigger>
+                  <SelectTrigger className="transition-all duration-200">
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent>
@@ -2141,7 +1426,7 @@ export default function RegisterPage() {
               <div className="space-y-2">
                 <Label>Complexion</Label>
                 <Select value={formData.complexion} onValueChange={(value) => updateFormData("complexion", value)}>
-                  <SelectTrigger>
+                  <SelectTrigger className="transition-all duration-200">
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent>
@@ -2157,7 +1442,7 @@ export default function RegisterPage() {
               <div className="space-y-2">
                 <Label>Piercings</Label>
                 <Select value={formData.piercings} onValueChange={(value) => updateFormData("piercings", value)}>
-                  <SelectTrigger>
+                  <SelectTrigger className="transition-all duration-200">
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent>
@@ -2170,7 +1455,7 @@ export default function RegisterPage() {
               <div className="space-y-2">
                 <Label>Tattoos</Label>
                 <Select value={formData.tattoos} onValueChange={(value) => updateFormData("tattoos", value)}>
-                  <SelectTrigger>
+                  <SelectTrigger className="transition-all duration-200">
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent>
@@ -2187,6 +1472,7 @@ export default function RegisterPage() {
                 value={formData.teethFeatures}
                 onChange={(e) => updateFormData("teethFeatures", e.target.value)}
                 placeholder="Describe any notable teeth features"
+                className="transition-all duration-200"
               />
             </div>
           </div>
@@ -2204,7 +1490,7 @@ export default function RegisterPage() {
               <div className="space-y-2">
                 <Label>Do you wear glasses?</Label>
                 <Select value={formData.glasses} onValueChange={(value) => updateFormData("glasses", value)}>
-                  <SelectTrigger>
+                  <SelectTrigger className="transition-all duration-200">
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent>
@@ -2217,7 +1503,7 @@ export default function RegisterPage() {
               <div className="space-y-2">
                 <Label>HIV Status</Label>
                 <Select value={formData.hivStatus} onValueChange={(value) => updateFormData("hivStatus", value)}>
-                  <SelectTrigger>
+                  <SelectTrigger className="transition-all duration-200">
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent>
@@ -2231,7 +1517,7 @@ export default function RegisterPage() {
               <div className="space-y-2">
                 <Label>Any disability?</Label>
                 <Select value={formData.disability} onValueChange={(value) => updateFormData("disability", value)}>
-                  <SelectTrigger>
+                  <SelectTrigger className="transition-all duration-200">
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent>
@@ -2247,7 +1533,7 @@ export default function RegisterPage() {
                   value={formData.chronicIllness}
                   onValueChange={(value) => updateFormData("chronicIllness", value)}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="transition-all duration-200">
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent>
@@ -2260,7 +1546,7 @@ export default function RegisterPage() {
               <div className="space-y-2">
                 <Label>Allergies?</Label>
                 <Select value={formData.allergies} onValueChange={(value) => updateFormData("allergies", value)}>
-                  <SelectTrigger>
+                  <SelectTrigger className="transition-all duration-200">
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent>
@@ -2273,7 +1559,7 @@ export default function RegisterPage() {
               <div className="space-y-2">
                 <Label>Blood Type</Label>
                 <Select value={formData.bloodType} onValueChange={(value) => updateFormData("bloodType", value)}>
-                  <SelectTrigger>
+                  <SelectTrigger className="transition-all duration-200">
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent>
@@ -2291,23 +1577,25 @@ export default function RegisterPage() {
             </div>
 
             {formData.disability === "yes" && (
-              <div className="space-y-2">
+              <div className="space-y-2 animate-in slide-in-from-top-2">
                 <Label>Please describe your disability</Label>
                 <Textarea
                   value={formData.disabilityDescription}
                   onChange={(e) => updateFormData("disabilityDescription", e.target.value)}
                   placeholder="Describe your disability"
+                  className="transition-all duration-200"
                 />
               </div>
             )}
 
             {formData.chronicIllness === "yes" && (
-              <div className="space-y-2">
+              <div className="space-y-2 animate-in slide-in-from-top-2">
                 <Label>Please describe your chronic illness</Label>
                 <Textarea
                   value={formData.chronicIllnessDescription}
                   onChange={(e) => updateFormData("chronicIllnessDescription", e.target.value)}
                   placeholder="Describe your chronic illness"
+                  className="transition-all duration-200"
                 />
               </div>
             )}
@@ -2329,11 +1617,11 @@ export default function RegisterPage() {
                   value={formData.educationLevel}
                   onValueChange={(value) => updateFormData("educationLevel", value)}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="transition-all duration-200">
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent>
-                    {educationLevels.map((level) => (
+                    {DATA_CONSTANTS.educationLevels.map((level) => (
                       <SelectItem key={level} value={level}>
                         {level}
                       </SelectItem>
@@ -2348,7 +1636,7 @@ export default function RegisterPage() {
                   value={formData.employmentStatus}
                   onValueChange={(value) => updateFormData("employmentStatus", value)}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="transition-all duration-200">
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent>
@@ -2368,126 +1656,104 @@ export default function RegisterPage() {
                 value={formData.occupation}
                 onChange={(e) => updateFormData("occupation", e.target.value)}
                 placeholder="What do you do for work?"
+                className="transition-all duration-200"
               />
             </div>
 
             <div className="space-y-4">
               <Label className="text-lg font-semibold">Work Location</Label>
 
-              <div className="space-y-2">
-                <Label>Work Country</Label>
-                <Select
-                  value={formData.workCountry}
-                  onValueChange={(value) => {
-                    updateFormData("workCountry", value)
-                    updateFormData("workCounty", "")
-                    updateFormData("workConstituency", "")
-                    updateFormData("workWard", "")
-                    updateFormData("workState", "")
-                  }}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select work country" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {worldCountries.map((country) => (
-                      <SelectItem key={country} value={country}>
-                        {country}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+              <SearchableSelect
+                items={DATA_CONSTANTS.worldCountries}
+                value={formData.workCountry}
+                onValueChange={(value) => {
+                  updateFormData("workCountry", value)
+                  updateFormData("workCounty", "")
+                  updateFormData("workConstituency", "")
+                  updateFormData("workWard", "")
+                  updateFormData("workState", "")
+                }}
+                placeholder="Select work country"
+                searchPlaceholder="Search countries..."
+                label="Work Country"
+              />
 
               {formData.workCountry === "Kenya" && (
-                <>
-                  <div className="space-y-2">
-                    <Label>Work County</Label>
-                    <Select
-                      value={formData.workCounty}
-                      onValueChange={(value) => {
-                        updateFormData("workCounty", value)
-                        updateFormData("workConstituency", "")
-                        updateFormData("workWard", "")
-                      }}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select work county" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {kenyanCounties.map((county) => (
-                          <SelectItem key={county} value={county}>
-                            {county}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                <div className="space-y-4 animate-in slide-in-from-top-4">
+                  <SearchableSelect
+                    items={DATA_CONSTANTS.kenyanCounties}
+                    value={formData.workCounty}
+                    onValueChange={(value) => {
+                      updateFormData("workCounty", value)
+                      updateFormData("workConstituency", "")
+                      updateFormData("workWard", "")
+                    }}
+                    placeholder="Select work county"
+                    searchPlaceholder="Search counties..."
+                    label="Work County"
+                  />
 
                   {formData.workCounty &&
-                    kenyanConstituencies[formData.workCounty as keyof typeof kenyanConstituencies] && (
-                      <div className="space-y-2">
-                        <Label>Work Constituency</Label>
-                        <Select
-                          value={formData.workConstituency}
-                          onValueChange={(value) => {
-                            updateFormData("workConstituency", value)
-                            updateFormData("workWard", "")
-                          }}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select work constituency" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {kenyanConstituencies[formData.workCounty as keyof typeof kenyanConstituencies].map(
-                              (constituency) => (
-                                <SelectItem key={constituency} value={constituency}>
-                                  {constituency}
-                                </SelectItem>
-                              ),
-                            )}
-                          </SelectContent>
-                        </Select>
-                      </div>
+                    DATA_CONSTANTS.kenyanConstituencies[
+                      formData.workCounty as keyof typeof DATA_CONSTANTS.kenyanConstituencies
+                    ] && (
+                      <SearchableSelect
+                        items={
+                          DATA_CONSTANTS.kenyanConstituencies[
+                            formData.workCounty as keyof typeof DATA_CONSTANTS.kenyanConstituencies
+                          ]
+                        }
+                        value={formData.workConstituency}
+                        onValueChange={(value) => {
+                          updateFormData("workConstituency", value)
+                          updateFormData("workWard", "")
+                        }}
+                        placeholder="Select work constituency"
+                        searchPlaceholder="Search constituencies..."
+                        label="Work Constituency"
+                      />
                     )}
 
-                  {formData.workConstituency && kenyanWards[formData.workConstituency as keyof typeof kenyanWards] && (
-                    <div className="space-y-2">
-                      <Label>Work Ward</Label>
-                      <Select value={formData.workWard} onValueChange={(value) => updateFormData("workWard", value)}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select work ward" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {kenyanWards[formData.workConstituency as keyof typeof kenyanWards].map((ward) => (
-                            <SelectItem key={ward} value={ward}>
-                              {ward}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  )}
-                </>
-              )}
-
-              {formData.workCountry && formData.workCountry !== "Kenya" && (
-                <div className="space-y-2">
-                  <Label>Work State/Province</Label>
-                  <Select value={formData.workState} onValueChange={(value) => updateFormData("workState", value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select work state/province" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {countriesAndStates[formData.workCountry as keyof typeof countriesAndStates]?.map((state) => (
-                        <SelectItem key={state} value={state}>
-                          {state}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  {formData.workConstituency &&
+                    DATA_CONSTANTS.kenyanWards[
+                      formData.workConstituency as keyof typeof DATA_CONSTANTS.kenyanWards
+                    ] && (
+                      <SearchableSelect
+                        items={
+                          DATA_CONSTANTS.kenyanWards[
+                            formData.workConstituency as keyof typeof DATA_CONSTANTS.kenyanWards
+                          ]
+                        }
+                        value={formData.workWard}
+                        onValueChange={(value) => updateFormData("workWard", value)}
+                        placeholder="Select work ward"
+                        searchPlaceholder="Search wards..."
+                        label="Work Ward"
+                      />
+                    )}
                 </div>
               )}
+
+              {formData.workCountry &&
+                formData.workCountry !== "Kenya" &&
+                DATA_CONSTANTS.countriesAndStates[
+                  formData.workCountry as keyof typeof DATA_CONSTANTS.countriesAndStates
+                ] && (
+                  <div className="animate-in slide-in-from-top-4">
+                    <SearchableSelect
+                      items={
+                        DATA_CONSTANTS.countriesAndStates[
+                          formData.workCountry as keyof typeof DATA_CONSTANTS.countriesAndStates
+                        ]
+                      }
+                      value={formData.workState}
+                      onValueChange={(value) => updateFormData("workState", value)}
+                      placeholder="Select work state/province"
+                      searchPlaceholder="Search states..."
+                      label="Work State/Province"
+                    />
+                  </div>
+                )}
             </div>
 
             <div className="space-y-2">
@@ -2496,7 +1762,7 @@ export default function RegisterPage() {
                 value={formData.financialStability}
                 onValueChange={(value) => updateFormData("financialStability", value)}
               >
-                <SelectTrigger>
+                <SelectTrigger className="transition-all duration-200">
                   <SelectValue placeholder="Select" />
                 </SelectTrigger>
                 <SelectContent>
@@ -2522,7 +1788,7 @@ export default function RegisterPage() {
               <div className="space-y-2">
                 <Label>Alcohol Use</Label>
                 <Select value={formData.alcohol} onValueChange={(value) => updateFormData("alcohol", value)}>
-                  <SelectTrigger>
+                  <SelectTrigger className="transition-all duration-200">
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent>
@@ -2536,7 +1802,7 @@ export default function RegisterPage() {
               <div className="space-y-2">
                 <Label>Smoking</Label>
                 <Select value={formData.smoking} onValueChange={(value) => updateFormData("smoking", value)}>
-                  <SelectTrigger>
+                  <SelectTrigger className="transition-all duration-200">
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent>
@@ -2554,6 +1820,7 @@ export default function RegisterPage() {
                 value={formData.hobbies}
                 onChange={(e) => updateFormData("hobbies", e.target.value)}
                 placeholder="What are your hobbies?"
+                className="transition-all duration-200"
               />
             </div>
 
@@ -2563,17 +1830,18 @@ export default function RegisterPage() {
                 value={formData.interests}
                 onChange={(e) => updateFormData("interests", e.target.value)}
                 placeholder="What interests you?"
+                className="transition-all duration-200"
               />
             </div>
 
             <div className="space-y-2">
               <Label>Religion</Label>
               <Select value={formData.religion} onValueChange={(value) => updateFormData("religion", value)}>
-                <SelectTrigger>
+                <SelectTrigger className="transition-all duration-200">
                   <SelectValue placeholder="Select" />
                 </SelectTrigger>
                 <SelectContent>
-                  {religions.map((religion) => (
+                  {DATA_CONSTANTS.religions.map((religion) => (
                     <SelectItem key={religion} value={religion}>
                       {religion}
                     </SelectItem>
@@ -2590,7 +1858,7 @@ export default function RegisterPage() {
                 max={5}
                 min={1}
                 step={1}
-                className="w-full"
+                className="w-full transition-all duration-200"
               />
               <div className="flex justify-between text-xs text-gray-500">
                 <span>Not at all</span>
@@ -2604,6 +1872,7 @@ export default function RegisterPage() {
                 value={formData.denomination}
                 onChange={(e) => updateFormData("denomination", e.target.value)}
                 placeholder="e.g., Catholic, Protestant, etc."
+                className="transition-all duration-200"
               />
             </div>
 
@@ -2614,7 +1883,7 @@ export default function RegisterPage() {
                   value={formData.churchAttendance}
                   onValueChange={(value) => updateFormData("churchAttendance", value)}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="transition-all duration-200">
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent>
@@ -2633,7 +1902,7 @@ export default function RegisterPage() {
                   value={formData.exerciseFrequency}
                   onValueChange={(value) => updateFormData("exerciseFrequency", value)}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="transition-all duration-200">
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent>
@@ -2664,11 +1933,11 @@ export default function RegisterPage() {
                   value={formData.maritalStatus}
                   onValueChange={(value) => updateFormData("maritalStatus", value)}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="transition-all duration-200">
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent>
-                    {maritalStatuses.map((status) => (
+                    {DATA_CONSTANTS.maritalStatuses.map((status) => (
                       <SelectItem key={status} value={status}>
                         {status}
                       </SelectItem>
@@ -2683,7 +1952,7 @@ export default function RegisterPage() {
                   value={formData.marriedBefore}
                   onValueChange={(value) => updateFormData("marriedBefore", value)}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="transition-all duration-200">
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent>
@@ -2697,7 +1966,7 @@ export default function RegisterPage() {
             <div className="space-y-2">
               <Label>Do you have children?</Label>
               <Select value={formData.hasChildren} onValueChange={(value) => updateFormData("hasChildren", value)}>
-                <SelectTrigger>
+                <SelectTrigger className="transition-all duration-200">
                   <SelectValue placeholder="Select" />
                 </SelectTrigger>
                 <SelectContent>
@@ -2708,7 +1977,7 @@ export default function RegisterPage() {
             </div>
 
             {formData.hasChildren === "yes" && (
-              <>
+              <div className="space-y-4 animate-in slide-in-from-top-4">
                 <div className="space-y-2">
                   <Label>Number of Children</Label>
                   <Input
@@ -2716,6 +1985,7 @@ export default function RegisterPage() {
                     value={formData.numberOfChildren}
                     onChange={(e) => updateFormData("numberOfChildren", e.target.value)}
                     placeholder="How many children do you have?"
+                    className="transition-all duration-200"
                   />
                 </div>
 
@@ -2725,6 +1995,7 @@ export default function RegisterPage() {
                     value={formData.childrenAges}
                     onChange={(e) => updateFormData("childrenAges", e.target.value)}
                     placeholder="e.g., 5, 8, 12"
+                    className="transition-all duration-200"
                   />
                 </div>
 
@@ -2734,7 +2005,7 @@ export default function RegisterPage() {
                     value={formData.childrenLiveWithUser}
                     onValueChange={(value) => updateFormData("childrenLiveWithUser", value)}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="transition-all duration-200">
                       <SelectValue placeholder="Select" />
                     </SelectTrigger>
                     <SelectContent>
@@ -2744,7 +2015,7 @@ export default function RegisterPage() {
                     </SelectContent>
                   </Select>
                 </div>
-              </>
+              </div>
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -2754,7 +2025,7 @@ export default function RegisterPage() {
                   value={formData.wantsChildren}
                   onValueChange={(value) => updateFormData("wantsChildren", value)}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="transition-all duration-200">
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent>
@@ -2771,7 +2042,7 @@ export default function RegisterPage() {
                   value={formData.acceptsPartnerWithKids}
                   onValueChange={(value) => updateFormData("acceptsPartnerWithKids", value)}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="transition-all duration-200">
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent>
@@ -2789,7 +2060,7 @@ export default function RegisterPage() {
                 value={formData.longDistanceOk}
                 onValueChange={(value) => updateFormData("longDistanceOk", value)}
               >
-                <SelectTrigger>
+                <SelectTrigger className="transition-all duration-200">
                   <SelectValue placeholder="Select" />
                 </SelectTrigger>
                 <SelectContent>
@@ -2806,6 +2077,7 @@ export default function RegisterPage() {
                 value={formData.datingPerspective}
                 onChange={(e) => updateFormData("datingPerspective", e.target.value)}
                 placeholder="What's your perspective on dating?"
+                className="transition-all duration-200"
               />
             </div>
 
@@ -2815,6 +2087,7 @@ export default function RegisterPage() {
                 value={formData.dealBreakers}
                 onChange={(e) => updateFormData("dealBreakers", e.target.value)}
                 placeholder="What are your deal breakers?"
+                className="transition-all duration-200"
               />
             </div>
 
@@ -2824,6 +2097,7 @@ export default function RegisterPage() {
                 value={formData.relationshipHopes}
                 onChange={(e) => updateFormData("relationshipHopes", e.target.value)}
                 placeholder="Describe your relationship goals"
+                className="transition-all duration-200"
               />
             </div>
           </div>
@@ -2843,7 +2117,7 @@ export default function RegisterPage() {
                 value={formData.personalityType}
                 onValueChange={(value) => updateFormData("personalityType", value)}
               >
-                <SelectTrigger>
+                <SelectTrigger className="transition-all duration-200">
                   <SelectValue placeholder="Select" />
                 </SelectTrigger>
                 <SelectContent>
@@ -2860,6 +2134,7 @@ export default function RegisterPage() {
                 value={formData.dontContactIf}
                 onChange={(e) => updateFormData("dontContactIf", e.target.value)}
                 placeholder="What would make you not want to be contacted?"
+                className="transition-all duration-200"
               />
             </div>
 
@@ -2869,6 +2144,7 @@ export default function RegisterPage() {
                 value={formData.imperfections}
                 onChange={(e) => updateFormData("imperfections", e.target.value)}
                 placeholder="What are some of your imperfections?"
+                className="transition-all duration-200"
               />
             </div>
 
@@ -2878,6 +2154,7 @@ export default function RegisterPage() {
                 value={formData.politicalViews}
                 onChange={(e) => updateFormData("politicalViews", e.target.value)}
                 placeholder="Describe your political views"
+                className="transition-all duration-200"
               />
             </div>
 
@@ -2888,7 +2165,7 @@ export default function RegisterPage() {
                   value={formData.dateDifferentPolitics}
                   onValueChange={(value) => updateFormData("dateDifferentPolitics", value)}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="transition-all duration-200">
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent>
@@ -2905,7 +2182,7 @@ export default function RegisterPage() {
                   value={formData.believesInMarriage}
                   onValueChange={(value) => updateFormData("believesInMarriage", value)}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="transition-all duration-200">
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent>
@@ -2924,6 +2201,7 @@ export default function RegisterPage() {
                 onChange={(e) => updateFormData("selfDescription", e.target.value)}
                 placeholder="Tell us about yourself in your own words"
                 rows={4}
+                className="transition-all duration-200"
               />
             </div>
           </div>
@@ -2935,46 +2213,55 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
-      <div className="max-w-4xl mx-auto px-4">
-        <Card className="w-full">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-3xl font-bold">Create Your Profile</CardTitle>
-              <div className="text-sm text-gray-500">
-                Step {currentStep} of {totalSteps}
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-4 px-2 sm:py-8 sm:px-4">
+      <div className="max-w-4xl mx-auto">
+        <div className="h-screen max-h-screen overflow-y-auto">
+          <Card className="w-full shadow-lg">
+            <CardHeader className="sticky top-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-10 border-b">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-2xl sm:text-3xl font-bold">Create Your Profile</CardTitle>
+                <div className="text-sm text-gray-500">
+                  Step {currentStep} of {totalSteps}
+                </div>
               </div>
-            </div>
-            <Progress value={progress} className="w-full" />
-          </CardHeader>
+              <Progress value={progress} className="w-full transition-all duration-300" />
+            </CardHeader>
 
-          <CardContent className="space-y-6">
-            {renderStep()}
+            <CardContent className="p-4 sm:p-6 space-y-6 pb-24">
+              <div className="transition-all duration-300 ease-in-out">{renderStep()}</div>
 
-            <div className="flex justify-between pt-6">
-              <Button
-                variant="outline"
-                onClick={prevStep}
-                disabled={currentStep === 1}
-                className="flex items-center space-x-2 bg-transparent"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                <span>Previous</span>
-              </Button>
-
-              {currentStep === totalSteps ? (
-                <Button onClick={handleSubmit} disabled={isLoading} className="flex items-center space-x-2">
-                  {isLoading ? "Creating Account..." : "Complete Registration"}
+              <div className="flex justify-between pt-6 sticky bottom-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t mt-8 -mx-4 sm:-mx-6 px-4 sm:px-6 py-4">
+                <Button
+                  variant="outline"
+                  onClick={prevStep}
+                  disabled={currentStep === 1}
+                  className="flex items-center space-x-2 bg-transparent transition-all duration-200 hover:scale-105 disabled:hover:scale-100"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  <span>Previous</span>
                 </Button>
-              ) : (
-                <Button onClick={nextStep} className="flex items-center space-x-2">
-                  <span>Next</span>
-                  <ArrowRight className="w-4 h-4" />
-                </Button>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+
+                {currentStep === totalSteps ? (
+                  <Button
+                    onClick={handleSubmit}
+                    disabled={isLoading}
+                    className="flex items-center space-x-2 transition-all duration-200 hover:scale-105 disabled:hover:scale-100"
+                  >
+                    {isLoading ? "Creating Account..." : "Complete Registration"}
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={nextStep}
+                    className="flex items-center space-x-2 transition-all duration-200 hover:scale-105"
+                  >
+                    <span>Next</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </Button>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   )
