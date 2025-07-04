@@ -185,5 +185,4 @@ function useToast() {
   }
 }
 
-// Re-export from the correct location
 export { useToast, toast }

@@ -1,12 +1,17 @@
 "use server"
 
 export async function registerUser(formData: FormData) {
+  // In a real app, this would store the user in a database
   const username = formData.get("username") as string
   const email = formData.get("email") as string
   const password = formData.get("password") as string
   const name = formData.get("name") as string
   const occupation = formData.get("occupation") as string
 
+  // Simulate storing in localStorage (this would be done client-side in a real app)
+  // In a real app, this would be a database operation
+
+  // Simulate sending verification email
   await sendVerificationEmail(email, username, name, password)
 
   return {
@@ -16,6 +21,7 @@ export async function registerUser(formData: FormData) {
 }
 
 export async function sendVerificationEmail(email: string, username: string, name: string, password: string) {
+  // In a real app, this would send an actual email
   console.log(`
     To: ${email}
     From: info@hannasconnect.com
@@ -47,6 +53,7 @@ export async function sendConnectionRequest(formData: FormData) {
   const recipientName = formData.get("recipientName") as string
   const senderName = formData.get("senderName") as string
 
+  // In a real app, this would send an actual email and store the request in a database
   console.log(`
     To: ${recipientEmail}
     From: info@hannasconnect.com
@@ -71,6 +78,7 @@ export async function acceptConnection(formData: FormData) {
   const recipientName = formData.get("recipientName") as string
   const acceptorName = formData.get("acceptorName") as string
 
+  // In a real app, this would send an actual email and update the database
   console.log(`
     To: ${recipientEmail}
     From: info@hannasconnect.com
@@ -94,6 +102,7 @@ export async function rejectConnection(formData: FormData) {
   const recipientEmail = formData.get("recipientEmail") as string
   const recipientName = formData.get("recipientName") as string
 
+  // In a real app, this would send an actual email and update the database
   console.log(`
     To: ${recipientEmail}
     From: info@hannasconnect.com
