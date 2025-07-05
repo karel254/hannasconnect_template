@@ -10,11 +10,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Slider } from "@/components/ui/slider"
-import { Progress } from "@/components/ui/progress"
+import { Progress } from "../../components/ui/progress"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ArrowLeft, ArrowRight, CheckCircle, Eye, EyeOff } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
-// import { useDebounce } from "@/hooks/use-debounce" // Removing the local import
 import { useDebounce } from "@/hooks/use-debounce"
 
 // Data constants moved to separate object for better performance
@@ -638,24 +637,6 @@ const DATA_CONSTANTS = {
 
   maritalStatuses: ["Single", "Divorced", "Widowed", "Separated", "In a relationship"],
 }
-
-// // Custom hook for debounced search // Removed local declaration
-
-// function useDebounce(value: string, delay: number) {
-//   const [debouncedValue, setDebouncedValue] = useState(value)
-
-//   useState(() => {
-//     const handler = setTimeout(() => {
-//       setDebouncedValue(value)
-//     }, delay)
-
-//     return () => {
-//       clearTimeout(handler)
-//     }
-//   }, [value, delay])
-
-//   return debouncedValue
-// }
 
 // Memoized Avatar Selection Component
 const AvatarSelection = memo(
