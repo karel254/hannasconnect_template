@@ -40,7 +40,7 @@ export default function Dashboard() {
       occupation: "Graphic Designer",
       location: "Lagos, Nigeria",
       interests: ["Art", "Travel", "Photography"],
-      avatar: "/images/avatar1.jpg",
+      avatar: "/images/male1.jpg",
       compatibility: 92,
     },
     {
@@ -50,7 +50,7 @@ export default function Dashboard() {
       occupation: "Marketing Manager",
       location: "Abuja, Nigeria",
       interests: ["Fitness", "Cooking", "Music"],
-      avatar: "/images/avatar2.jpg",
+      avatar: "/images/female1.jpg",
       compatibility: 88,
     },
     {
@@ -60,7 +60,7 @@ export default function Dashboard() {
       occupation: "Software Engineer",
       location: "Port Harcourt, Nigeria",
       interests: ["Technology", "Gaming", "Reading"],
-      avatar: "/images/avatar3.jpg",
+      avatar: "/images/male2.jpg",
       compatibility: 85,
     },
     {
@@ -70,7 +70,7 @@ export default function Dashboard() {
       occupation: "Doctor",
       location: "Ibadan, Nigeria",
       interests: ["Healthcare", "Volunteering", "Yoga"],
-      avatar: "/images/avatar4.jpg",
+      avatar: "/images/female2.jpg",
       compatibility: 90,
     },
   ]

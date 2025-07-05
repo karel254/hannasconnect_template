@@ -4,11 +4,19 @@ import type React from "react"
 
 import { useState, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { ArrowLeft, Search, Send, MoreVertical, Phone, Video } from "lucide-react"
+import { ArrowLeft, Search, Send } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
+
+interface Message {
+  id: number
+  text: string
+  sender: "me" | string
+  timestamp: Date
+  isTyping?: boolean
+}
 
 export default function Messages() {
   const router = useRouter()
@@ -17,6 +25,8 @@ export default function Messages() {
   const [selectedUser, setSelectedUser] = useState<string | null>(userParam)
   const [message, setMessage] = useState("")
   const [searchQuery, setSearchQuery] = useState("")
+  const [messages, setMessages] = useState<Message[]>([])
+  const [isTyping, setIsTyping] = useState(false)
 
   useEffect(() => {
     // Check if user is logged in
@@ -27,12 +37,36 @@ export default function Messages() {
     }
   }, [router])
 
+  useEffect(() => {
+    if (selectedUser) {
+      // Load initial messages
+      const initialMessages = getMessages(selectedUser)
+      setMessages(initialMessages)
+      
+      // Simulate typing indicator after a delay
+      setTimeout(() => {
+        setIsTyping(true)
+        setTimeout(() => {
+          setIsTyping(false)
+          // Add a simulated response
+          const newMessage: Message = {
+            id: Date.now(),
+            text: getRandomResponse(selectedUser),
+            sender: selectedUser,
+            timestamp: new Date(),
+          }
+          setMessages(prev => [...prev, newMessage])
+        }, 2000)
+      }, 1000)
+    }
+  }, [selectedUser])
+
   // Sample conversations data with new avatars
   const conversations = [
     {
       id: "amara",
       name: "Amara",
-      avatar: "/images/avatar1.jpg",
+      avatar: "/images/male1.jpg",
       lastMessage: "That sounds like a great plan! I'd love to join you for coffee this weekend.",
       timestamp: "2 min ago",
       unread: 2,
@@ -41,7 +75,7 @@ export default function Messages() {
     {
       id: "kemi",
       name: "Kemi",
-      avatar: "/images/avatar2.jpg",
+      avatar: "/images/female1.jpg",
       lastMessage: "Thanks for the book recommendation! I just started reading it.",
       timestamp: "1 hour ago",
       unread: 0,
@@ -50,7 +84,7 @@ export default function Messages() {
     {
       id: "david",
       name: "David",
-      avatar: "/images/avatar3.jpg",
+      avatar: "/images/male2.jpg",
       lastMessage: "The concert was amazing! You would have loved it.",
       timestamp: "3 hours ago",
       unread: 1,
@@ -59,7 +93,7 @@ export default function Messages() {
     {
       id: "funmi",
       name: "Funmi",
-      avatar: "/images/avatar4.jpg",
+      avatar: "/images/female2.jpg",
       lastMessage: "Hope you're having a great day! 😊",
       timestamp: "Yesterday",
       unread: 0,
@@ -68,7 +102,7 @@ export default function Messages() {
     {
       id: "tunde",
       name: "Tunde",
-      avatar: "/images/avatar5.jpg",
+      avatar: "/images/male3.jpg",
       lastMessage: "Let's catch up soon. It's been too long!",
       timestamp: "2 days ago",
       unread: 0,
@@ -77,46 +111,93 @@ export default function Messages() {
   ]
 
   // Sample messages for selected conversation
-  const getMessages = (userId: string) => {
-    const messageData: { [key: string]: any[] } = {
+  const getMessages = (userId: string): Message[] => {
+    const messageData: { [key: string]: Message[] } = {
       amara: [
-        { id: 1, text: "Hey! How was your day?", sender: "amara", timestamp: "10:30 AM" },
-        { id: 2, text: "It was great! Just finished a new project at work.", sender: "me", timestamp: "10:32 AM" },
-        { id: 3, text: "That's awesome! What kind of project?", sender: "amara", timestamp: "10:33 AM" },
+        { id: 1, text: "Hey! How was your day?", sender: "amara", timestamp: new Date(Date.now() - 30 * 60 * 1000) },
+        { id: 2, text: "It was great! Just finished a new project at work.", sender: "me", timestamp: new Date(Date.now() - 28 * 60 * 1000) },
+        { id: 3, text: "That's awesome! What kind of project?", sender: "amara", timestamp: new Date(Date.now() - 27 * 60 * 1000) },
         {
           id: 4,
           text: "A mobile app for a local restaurant. Really proud of how it turned out!",
           sender: "me",
-          timestamp: "10:35 AM",
+          timestamp: new Date(Date.now() - 25 * 60 * 1000),
         },
         {
           id: 5,
           text: "That sounds like a great plan! I'd love to join you for coffee this weekend.",
           sender: "amara",
-          timestamp: "10:40 AM",
+          timestamp: new Date(Date.now() - 20 * 60 * 1000),
         },
       ],
       kemi: [
-        { id: 1, text: "Hi there! How are you doing?", sender: "kemi", timestamp: "Yesterday" },
-        { id: 2, text: "I'm doing well, thanks! How about you?", sender: "me", timestamp: "Yesterday" },
+        { id: 1, text: "Hi there! How are you doing?", sender: "kemi", timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000) },
+        { id: 2, text: "I'm doing well, thanks! How about you?", sender: "me", timestamp: new Date(Date.now() - 23 * 60 * 60 * 1000) },
         {
           id: 3,
           text: "Thanks for the book recommendation! I just started reading it.",
           sender: "kemi",
-          timestamp: "1 hour ago",
+          timestamp: new Date(Date.now() - 60 * 60 * 1000),
         },
       ],
       david: [
-        { id: 1, text: "The concert was amazing! You would have loved it.", sender: "david", timestamp: "3 hours ago" },
-        { id: 2, text: "Which band was playing?", sender: "me", timestamp: "2 hours ago" },
+        { id: 1, text: "The concert was amazing! You would have loved it.", sender: "david", timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000) },
+        { id: 2, text: "Which band was playing?", sender: "me", timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000) },
       ],
-      funmi: [{ id: 1, text: "Hope you're having a great day! 😊", sender: "funmi", timestamp: "Yesterday" }],
+      funmi: [{ id: 1, text: "Hope you're having a great day! 😊", sender: "funmi", timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000) }],
       tunde: [
-        { id: 1, text: "Let's catch up soon. It's been too long!", sender: "tunde", timestamp: "2 days ago" },
-        { id: 2, text: "How about this weekend?", sender: "me", timestamp: "2 days ago" },
+        { id: 1, text: "Let's catch up soon. It's been too long!", sender: "tunde", timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000) },
+        { id: 2, text: "How about this weekend?", sender: "me", timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000) },
       ],
     }
     return messageData[userId] || []
+  }
+
+  const getRandomResponse = (userId: string): string => {
+    const responses: { [key: string]: string[] } = {
+      amara: [
+        "That's really interesting! Tell me more about it.",
+        "I'd love to hear more about your day!",
+        "Sounds like you had a productive time!",
+        "That's fantastic! I'm happy for you.",
+      ],
+      kemi: [
+        "That's wonderful! I'm glad to hear that.",
+        "You always have such great stories!",
+        "I'd love to know more about that.",
+        "That sounds like a lot of fun!",
+      ],
+      david: [
+        "That's amazing! I'm impressed.",
+        "You're really talented at what you do!",
+        "I'd love to see that sometime.",
+        "That's definitely something to be proud of!",
+      ],
+      funmi: [
+        "That's so exciting! I'm happy for you.",
+        "You always make everything sound so interesting!",
+        "I'd love to hear more details.",
+        "That's definitely worth celebrating!",
+      ],
+      tunde: [
+        "That's really cool! I'm impressed.",
+        "You have such great ideas!",
+        "I'd love to learn more about that.",
+        "That's definitely something special!",
+      ],
+    }
+    const userResponses = responses[userId] || ["That's great!", "I'm happy for you!", "Tell me more!"]
+    return userResponses[Math.floor(Math.random() * userResponses.length)]
+  }
+
+  const formatTime = (date: Date): string => {
+    const now = new Date()
+    const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60))
+    
+    if (diffInMinutes < 1) return "Just now"
+    if (diffInMinutes < 60) return `${diffInMinutes}m ago`
+    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`
+    return date.toLocaleDateString()
   }
 
   const filteredConversations = conversations.filter((conv) =>
@@ -124,13 +205,32 @@ export default function Messages() {
   )
 
   const selectedConversation = conversations.find((conv) => conv.id === selectedUser)
-  const messages = selectedUser ? getMessages(selectedUser) : []
 
   const handleSendMessage = () => {
     if (message.trim()) {
-      // In a real app, this would send the message to the server
-      console.log("Sending message:", message)
+      const newMessage: Message = {
+        id: Date.now(),
+        text: message.trim(),
+        sender: "me",
+        timestamp: new Date(),
+      }
+      setMessages(prev => [...prev, newMessage])
       setMessage("")
+      
+      // Simulate typing indicator and response
+      setTimeout(() => {
+        setIsTyping(true)
+        setTimeout(() => {
+          setIsTyping(false)
+          const response: Message = {
+            id: Date.now() + 1,
+            text: getRandomResponse(selectedUser!),
+            sender: selectedUser!,
+            timestamp: new Date(),
+          }
+          setMessages(prev => [...prev, response])
+        }, 2000)
+      }, 1000)
     }
   }
 
@@ -139,6 +239,12 @@ export default function Messages() {
       e.preventDefault()
       handleSendMessage()
     }
+  }
+
+  const handleUserSelect = (userId: string) => {
+    setSelectedUser(userId)
+    // Update URL to reflect the selected user
+    router.push(`/messages?user=${userId}`)
   }
 
   return (
@@ -167,7 +273,7 @@ export default function Messages() {
             {filteredConversations.map((conversation) => (
               <div
                 key={conversation.id}
-                onClick={() => setSelectedUser(conversation.id)}
+                onClick={() => handleUserSelect(conversation.id)}
                 className={`p-3 rounded-xl cursor-pointer transition-colors ${
                   selectedUser === conversation.id
                     ? "bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800"
@@ -213,7 +319,10 @@ export default function Messages() {
           <div className="flex-shrink-0 p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <Button variant="ghost" size="sm" className="md:hidden" onClick={() => setSelectedUser(null)}>
+                <Button variant="ghost" size="sm" className="md:hidden" onClick={() => {
+                  setSelectedUser(null)
+                  router.push("/messages")
+                }}>
                   <ArrowLeft className="h-4 w-4" />
                 </Button>
                 <div className="relative">
@@ -236,17 +345,6 @@ export default function Messages() {
                     {selectedConversation?.online ? "Online" : "Last seen recently"}
                   </p>
                 </div>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Button variant="ghost" size="sm" className="text-gray-600 dark:text-gray-400">
-                  <Phone className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="sm" className="text-gray-600 dark:text-gray-400">
-                  <Video className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="sm" className="text-gray-600 dark:text-gray-400">
-                  <MoreVertical className="h-4 w-4" />
-                </Button>
               </div>
             </div>
           </div>
@@ -280,12 +378,36 @@ export default function Messages() {
                     <p
                       className={`text-xs mt-1 ${msg.sender === "me" ? "text-white/70" : "text-gray-500 dark:text-gray-400"}`}
                     >
-                      {msg.timestamp}
+                      {formatTime(msg.timestamp)}
                     </p>
                   </div>
                 </div>
               </div>
             ))}
+            
+            {/* Typing indicator */}
+            {isTyping && (
+              <div className="flex justify-start">
+                <div className="flex items-end space-x-2">
+                  <Avatar className="h-6 w-6 flex-shrink-0">
+                    <AvatarImage
+                      src={selectedConversation?.avatar || "/placeholder.svg"}
+                      alt={selectedConversation?.name}
+                    />
+                    <AvatarFallback className="bg-[#B22222] text-white text-xs">
+                      {selectedConversation?.name.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="px-4 py-2 rounded-2xl bg-gray-100 dark:bg-gray-700 rounded-bl-md">
+                    <div className="flex space-x-1">
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Message Input */}

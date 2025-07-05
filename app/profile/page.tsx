@@ -65,16 +65,18 @@ interface UserProfile {
 }
 
 const availableAvatars = [
-  "/images/avatar1.jpg",
-  "/images/avatar2.jpg",
-  "/images/avatar3.jpg",
-  "/images/avatar4.jpg",
-  "/images/avatar5.jpg",
-  "/images/avatar6.jpg",
-  "/images/avatar7.jpg",
-  "/images/avatar8.jpg",
-  "/images/avatar9.jpg",
-  "/images/avatar10.jpg",
+  "/images/male1.jpg",
+  "/images/male2.jpg",
+  "/images/male3.jpg",
+  "/images/male4.jpeg",
+  "/images/female1.jpg",
+  "/images/female2.jpg",
+  "/images/female3.jpg",
+  "/images/female4.jpg",
+  "/images/female5.jpg",
+  "/images/female6.jpg",
+  "/images/female7.jpg",
+  "/images/female8.jpeg",
 ]
 
 const interestOptions = [
@@ -114,7 +116,7 @@ export default function ProfilePage() {
     occupation: "",
     bio: "",
     interests: [],
-    avatar: "/images/avatar1.jpg",
+    avatar: "/images/male1.jpg",
     photos: [],
     preferences: {
       ageRange: [22, 35],
@@ -149,7 +151,7 @@ export default function ProfilePage() {
     const storedName = localStorage.getItem("userName") || "Demo User"
     const storedUsername = localStorage.getItem("userUsername") || "demouser"
     const storedOccupation = localStorage.getItem("userOccupation") || "Professional"
-    const storedAvatar = localStorage.getItem("selectedIcon") || "/images/avatar1.jpg"
+    const storedAvatar = localStorage.getItem("selectedIcon") || "/images/male1.jpg"
 
     setProfile((prev) => ({
       ...prev,

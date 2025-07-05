@@ -648,43 +648,51 @@ const AvatarSelection = memo(
     selectedAvatar: number
     onSelect: (avatar: number) => void
     fullName: string
-  }) => (
-    <div className="space-y-3">
-      <Label className="text-sm font-medium dark:text-gray-200">Choose Your Profile Avatar</Label>
-      <div className="flex justify-center mb-4">
-        <Avatar className="h-20 w-20 ring-2 ring-[#B22222]/20 dark:ring-red-400/20">
-          <AvatarImage src={`/images/avatar${selectedAvatar}.jpg`} alt="Selected avatar" />
-          <AvatarFallback className="text-lg font-bold text-[#B22222] dark:text-red-400">
-            {fullName.charAt(0).toUpperCase() || "U"}
-          </AvatarFallback>
-        </Avatar>
+  }) => {
+    const maleImages = ['male1.jpg', 'male2.jpg', 'male3.jpg', 'male4.jpeg']
+    const femaleImages = ['female1.jpg', 'female2.jpg', 'female3.jpg', 'female4.jpg', 'female5.jpg', 'female6.jpg', 'female7.jpg', 'female8.jpeg']
+    
+    const allImages = [...maleImages, ...femaleImages]
+    const selectedImage = allImages[selectedAvatar] || allImages[0]
+    
+    return (
+      <div className="space-y-3">
+        <Label className="text-sm font-medium dark:text-gray-200">Choose Your Profile Avatar</Label>
+        <div className="flex justify-center mb-4">
+          <Avatar className="h-20 w-20 ring-2 ring-[#B22222]/20 dark:ring-red-400/20">
+            <AvatarImage src={`/images/${selectedImage}`} alt="Selected avatar" />
+            <AvatarFallback className="text-lg font-bold text-[#B22222] dark:text-red-400">
+              {fullName.charAt(0).toUpperCase() || "U"}
+            </AvatarFallback>
+          </Avatar>
+        </div>
+        <div className="grid grid-cols-4 gap-2">
+          {allImages.map((imageName, index) => (
+            <div
+              key={index}
+              className={`relative cursor-pointer rounded-lg overflow-hidden border-2 transition-all duration-200 aspect-square ${
+                selectedAvatar === index
+                  ? "border-[#B22222] dark:border-red-400 bg-red-50 dark:bg-red-900/20 scale-105"
+                  : "border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 hover:scale-102"
+              }`}
+              onClick={() => onSelect(index)}
+            >
+              <img
+                src={`/images/${imageName}`}
+                alt={`Avatar ${index + 1}`}
+                className="w-full h-full object-cover"
+              />
+              {selectedAvatar === index && (
+                <div className="absolute inset-0 bg-[#B22222]/10 dark:bg-red-400/10 flex items-center justify-center">
+                  <CheckCircle className="h-4 w-4 text-[#B22222] dark:text-red-400" />
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
-      <div className="grid grid-cols-5 gap-2">
-        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((avatarNumber) => (
-          <div
-            key={avatarNumber}
-            className={`relative cursor-pointer rounded-lg overflow-hidden border-2 transition-all duration-200 aspect-square ${
-              selectedAvatar === avatarNumber
-                ? "border-[#B22222] dark:border-red-400 bg-red-50 dark:bg-red-900/20 scale-105"
-                : "border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 hover:scale-102"
-            }`}
-            onClick={() => onSelect(avatarNumber)}
-          >
-            <img
-              src={`/images/avatar${avatarNumber}.jpg`}
-              alt={`Avatar ${avatarNumber}`}
-              className="w-full h-full object-cover"
-            />
-            {selectedAvatar === avatarNumber && (
-              <div className="absolute inset-0 bg-[#B22222]/10 dark:bg-red-400/10 flex items-center justify-center">
-                <CheckCircle className="h-4 w-4 text-[#B22222] dark:text-red-400" />
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-    </div>
-  ),
+    )
+  },
 )
 
 // Memoized Searchable Select Component
@@ -885,7 +893,7 @@ export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false)
 
   const [formData, setFormData] = useState<FormData>({
-    selectedAvatar: 1,
+    selectedAvatar: 0,
     fullName: "",
     username: "",
     gender: "",
