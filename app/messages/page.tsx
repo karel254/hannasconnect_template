@@ -342,7 +342,7 @@ export default function Messages() {
 
       {/* Chat Area */}
       {selectedUser ? (
-        <div className="flex-1 flex flex-col bg-white dark:bg-gray-800 overflow-hidden">
+        <div className="h-full min-h-0 flex flex-col bg-white dark:bg-gray-800 overflow-hidden">
           {/* Chat Header - Sticky & Prominent */}
           <div className="sticky top-0 z-20 flex-shrink-0 px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-md">
             <div className="flex items-center gap-4">
@@ -377,7 +377,7 @@ export default function Messages() {
           </div>
 
           {/* Messages - Scrollable */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4">
             {messages.map((msg) => (
               <div key={msg.id} className={`flex ${msg.sender === "me" ? "justify-end" : "justify-start"}`}>
                 <div
@@ -411,7 +411,6 @@ export default function Messages() {
                 </div>
               </div>
             ))}
-            
             {/* Typing indicator */}
             {isTyping && (
               <div className="flex justify-start">
@@ -439,7 +438,7 @@ export default function Messages() {
           </div>
 
           {/* Message Input - Sticky Bottom */}
-          <div className="sticky bottom-0 z-10 flex-shrink-0 p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+          <div className="sticky bottom-0 z-20 flex-shrink-0 p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
             <div className="flex items-center space-x-2">
               <Input
                 placeholder="Type a message..."
