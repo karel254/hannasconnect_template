@@ -35,10 +35,10 @@ function MobileBottomNavigationContent() {
       active: pathname === "/browse",
     },
     {
-      name: "Matches",
-      href: "/members",
+      name: "Requests",
+      href: "/requests",
       icon: Heart,
-      active: pathname === "/members",
+      active: pathname === "/requests",
     },
     {
       name: "Messages",

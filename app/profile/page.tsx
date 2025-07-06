@@ -18,6 +18,9 @@ import {
   Moon,
   Sun,
   Monitor,
+  Users,
+  UserX,
+  Clock,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -781,6 +784,73 @@ export default function ProfilePage() {
                     }
                     className="border-[#B22222] data-[state=checked]:bg-[#B22222] data-[state=checked]:border-[#B22222]"
                   />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+              <CardHeader>
+                <CardTitle className="text-gray-900 dark:text-gray-100">Connection Management</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <Users className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+                    <div>
+                      <Label className="text-gray-700 dark:text-gray-300">Manage Connections</Label>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        View and manage your connections
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => router.push("/connections")}
+                    className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300"
+                  >
+                    Manage
+                  </Button>
+                </div>
+                
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <UserX className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+                    <div>
+                      <Label className="text-gray-700 dark:text-gray-300">Blocked Users</Label>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        Manage blocked users and privacy
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => router.push("/blocked")}
+                    className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300"
+                  >
+                    View
+                  </Button>
+                </div>
+                
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <Clock className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+                    <div>
+                      <Label className="text-gray-700 dark:text-gray-300">Pending Requests</Label>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        View and manage pending connection requests
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => router.push("/requests")}
+                    className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300"
+                  >
+                    View
+                  </Button>
                 </div>
               </CardContent>
             </Card>

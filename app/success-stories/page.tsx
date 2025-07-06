@@ -36,7 +36,7 @@ export default function SuccessStoriesPage() {
       names: "Maria & Alex",
       location: "Austin, TX",
       duration: "Together 1 year",
-      image: "/images/avatar3.png",
+      image: "/images/female3.jpg",
       story:
         "After several failed relationships, we were both looking for something real. Hanna's Connect's focus on long-term compatibility over superficial attraction was exactly what we needed. We're now planning our future together.",
       quote: "Finally, a dating app that cares about finding lasting love, not just hookups.",
@@ -45,7 +45,7 @@ export default function SuccessStoriesPage() {
       names: "Rachel & Tom",
       location: "Seattle, WA",
       duration: "Together 2.5 years",
-      image: "/images/avatar4.png",
+      image: "/images/male3.jpg",
       story:
         "We lived in the same city for years but never met until Hanna's Connect brought us together. The platform's safety features made us both feel comfortable, and the conversation starters helped break the ice. We're now married!",
       quote: "Hanna's Connect didn't just find us a date - it found us our soulmate.",

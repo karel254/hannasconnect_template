@@ -635,7 +635,7 @@ const DATA_CONSTANTS = {
     "Trade/Vocational School",
   ],
 
-  maritalStatuses: ["Single", "Divorced", "Widowed", "Separated", "In a relationship"],
+  maritalStatuses: ["Single", "Divorced", "Widowed", "In a relationship"],
 }
 
 // Memoized Avatar Selection Component
@@ -812,7 +812,6 @@ const LanguageSelection = memo(
 
 interface FormData {
   selectedAvatar: number
-  fullName: string
   username: string
   gender: string
   customGender: string
@@ -832,20 +831,23 @@ interface FormData {
   height: string
   heightUnit: string
   dimples: string
+  dimplesDescription?: string
   teethFeatures: string
   eyeColor: string
   complexion: string
   piercings: string
+  piercingsDescription?: string
   tattoos: string
+  tattoosDescription?: string
   glasses: string
+  glassesDescription?: string
   hivStatus: string
   disability: string
-  disabilityDescription: string
+  disabilityDescription?: string
   chronicIllness: string
-  chronicIllnessDescription: string
+  chronicIllnessDescription?: string
   allergies: string
   bloodType: string
-  educationLevel: string
   employmentStatus: string
   occupation: string
   workCountry: string
@@ -864,17 +866,18 @@ interface FormData {
   churchAttendance: string
   exerciseFrequency: string
   maritalStatus: string
-  marriedBefore: string
   hasChildren: string
   numberOfChildren: string
   childrenAges: string
   childrenLiveWithUser: string
   wantsChildren: string
   acceptsPartnerWithKids: string
+  acceptsPartnerWithKidsDescription?: string
   longDistanceOk: string
   datingPerspective: string
   dealBreakers: string
   relationshipHopes: string
+  partnerPreferences: string
   personalityType: string
   dontContactIf: string
   imperfections: string
@@ -882,6 +885,8 @@ interface FormData {
   dateDifferentPolitics: string
   believesInMarriage: string
   selfDescription: string
+  termsAccepted: boolean
+  paymentCompleted: boolean
 }
 
 export default function RegisterPage() {
@@ -894,7 +899,6 @@ export default function RegisterPage() {
 
   const [formData, setFormData] = useState<FormData>({
     selectedAvatar: 0,
-    fullName: "",
     username: "",
     gender: "",
     customGender: "",
@@ -914,12 +918,16 @@ export default function RegisterPage() {
     height: "",
     heightUnit: "cm",
     dimples: "",
+    dimplesDescription: "",
     teethFeatures: "",
     eyeColor: "",
     complexion: "",
     piercings: "",
+    piercingsDescription: "",
     tattoos: "",
+    tattoosDescription: "",
     glasses: "",
+    glassesDescription: "",
     hivStatus: "",
     disability: "",
     disabilityDescription: "",
@@ -927,7 +935,6 @@ export default function RegisterPage() {
     chronicIllnessDescription: "",
     allergies: "",
     bloodType: "",
-    educationLevel: "",
     employmentStatus: "",
     occupation: "",
     workCountry: "",
@@ -946,17 +953,18 @@ export default function RegisterPage() {
     churchAttendance: "",
     exerciseFrequency: "",
     maritalStatus: "",
-    marriedBefore: "",
     hasChildren: "",
     numberOfChildren: "",
     childrenAges: "",
     childrenLiveWithUser: "",
     wantsChildren: "",
     acceptsPartnerWithKids: "",
+    acceptsPartnerWithKidsDescription: "",
     longDistanceOk: "",
     datingPerspective: "",
     dealBreakers: "",
     relationshipHopes: "",
+    partnerPreferences: "",
     personalityType: "",
     dontContactIf: "",
     imperfections: "",
@@ -964,9 +972,11 @@ export default function RegisterPage() {
     dateDifferentPolitics: "",
     believesInMarriage: "",
     selfDescription: "",
+    termsAccepted: false,
+    paymentCompleted: false,
   })
 
-  const totalSteps = 8
+  const totalSteps = 7
   const progress = useMemo(() => (currentStep / totalSteps) * 100, [currentStep])
 
   const updateFormData = useCallback((field: string, value: any) => {
@@ -998,7 +1008,7 @@ export default function RegisterPage() {
     setIsLoading(true)
 
     // Basic validation
-    if (!formData.fullName || !formData.username || !formData.email || !formData.password) {
+    if (!formData.username || !formData.email || !formData.password) {
       toast({
         title: "Error",
         description: "Please fill in all required fields.",
@@ -1049,6 +1059,12 @@ export default function RegisterPage() {
     return minDate.toISOString().split("T")[0]
   }, [])
 
+  const getMaxDate = useCallback(() => {
+    const today = new Date()
+    const maxDate = new Date(today.getFullYear() - 25, today.getMonth(), today.getDate())
+    return maxDate.toISOString().split("T")[0]
+  }, [])
+
   // Memoized filtered data
   const filteredConstituencies = useMemo(() => {
     if (
@@ -1093,20 +1109,8 @@ export default function RegisterPage() {
             <AvatarSelection
               selectedAvatar={formData.selectedAvatar}
               onSelect={(avatar) => updateFormData("selectedAvatar", avatar)}
-              fullName={formData.fullName}
+              fullName={formData.username}
             />
-
-            {/* Full Name */}
-            <div className="space-y-2">
-              <Label htmlFor="fullName">Full Name *</Label>
-              <Input
-                id="fullName"
-                value={formData.fullName}
-                onChange={(e) => updateFormData("fullName", e.target.value)}
-                placeholder="Enter your full name"
-                className="transition-all duration-200"
-              />
-            </div>
 
             {/* Username */}
             <div className="space-y-2">
@@ -1149,10 +1153,11 @@ export default function RegisterPage() {
               <Input
                 id="dateOfBirth"
                 type="date"
-                max={getMinDate()}
+                max={getMaxDate()}
                 value={formData.dateOfBirth}
                 onChange={(e) => updateFormData("dateOfBirth", e.target.value)}
                 className="transition-all duration-200"
+                pattern="\d{4}-\d{2}-\d{2}"
               />
             </div>
 
@@ -1207,9 +1212,9 @@ export default function RegisterPage() {
                     items={filteredWards}
                     value={formData.ward}
                     onValueChange={(value) => updateFormData("ward", value)}
-                    placeholder="Select ward"
+                    placeholder="Select ward (optional)"
                     searchPlaceholder="Search wards..."
-                    label="Ward"
+                    label="Ward (Optional)"
                   />
                 )}
               </div>
@@ -1261,9 +1266,9 @@ export default function RegisterPage() {
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? (
-                    <EyeOff className="h-4 w-4 text-gray-400" />
+                    <EyeOff className="w-4 h-4 text-gray-400" />
                   ) : (
-                    <Eye className="h-4 w-4 text-gray-400" />
+                    <Eye className="w-4 h-4 text-gray-400" />
                   )}
                 </Button>
               </div>
@@ -1288,22 +1293,12 @@ export default function RegisterPage() {
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 >
                   {showConfirmPassword ? (
-                    <EyeOff className="h-4 w-4 text-gray-400" />
+                    <EyeOff className="w-4 h-4 text-gray-400" />
                   ) : (
-                    <Eye className="h-4 w-4 text-gray-400" />
+                    <Eye className="w-4 h-4 text-gray-400" />
                   )}
                 </Button>
               </div>
-            </div>
-          </div>
-        )
-
-      case 2:
-        return (
-          <div className="space-y-6">
-            <div className="text-center">
-              <h2 className="text-2xl font-bold mb-2">Cultural Identity</h2>
-              <p className="text-gray-600 dark:text-gray-400">Tell us about your cultural background</p>
             </div>
 
             <LanguageSelection
@@ -1328,146 +1323,7 @@ export default function RegisterPage() {
           </div>
         )
 
-      case 3:
-        return (
-          <div className="space-y-6">
-            <div className="text-center">
-              <h2 className="text-2xl font-bold mb-2">Features & Appearance</h2>
-              <p className="text-gray-600 dark:text-gray-400">Share your physical characteristics</p>
-            </div>
-
-            {/* Weight */}
-            <div className="space-y-2">
-              <Label>Weight</Label>
-              <div className="flex space-x-2">
-                <Input
-                  type="number"
-                  value={formData.weight}
-                  onChange={(e) => updateFormData("weight", e.target.value)}
-                  className="flex-1 transition-all duration-200"
-                />
-                <Select value={formData.weightUnit} onValueChange={(value) => updateFormData("weightUnit", value)}>
-                  <SelectTrigger className="w-20 transition-all duration-200">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="kg">kg</SelectItem>
-                    <SelectItem value="lbs">lbs</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            {/* Height */}
-            <div className="space-y-2">
-              <Label>Height</Label>
-              <div className="flex space-x-2">
-                <Input
-                  type="number"
-                  value={formData.height}
-                  onChange={(e) => updateFormData("height", e.target.value)}
-                  className="flex-1 transition-all duration-200"
-                />
-                <Select value={formData.heightUnit} onValueChange={(value) => updateFormData("heightUnit", value)}>
-                  <SelectTrigger className="w-20 transition-all duration-200">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="cm">cm</SelectItem>
-                    <SelectItem value="ft">ft</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            {/* Other physical features */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Dimples</Label>
-                <Select value={formData.dimples} onValueChange={(value) => updateFormData("dimples", value)}>
-                  <SelectTrigger className="transition-all duration-200">
-                    <SelectValue placeholder="Select" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="yes">Yes</SelectItem>
-                    <SelectItem value="no">No</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Eye Color</Label>
-                <Select value={formData.eyeColor} onValueChange={(value) => updateFormData("eyeColor", value)}>
-                  <SelectTrigger className="transition-all duration-200">
-                    <SelectValue placeholder="Select" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="brown">Brown</SelectItem>
-                    <SelectItem value="black">Black</SelectItem>
-                    <SelectItem value="blue">Blue</SelectItem>
-                    <SelectItem value="green">Green</SelectItem>
-                    <SelectItem value="hazel">Hazel</SelectItem>
-                    <SelectItem value="gray">Gray</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Complexion</Label>
-                <Select value={formData.complexion} onValueChange={(value) => updateFormData("complexion", value)}>
-                  <SelectTrigger className="transition-all duration-200">
-                    <SelectValue placeholder="Select" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="very-light">Very Light</SelectItem>
-                    <SelectItem value="light">Light</SelectItem>
-                    <SelectItem value="medium">Medium</SelectItem>
-                    <SelectItem value="dark">Dark</SelectItem>
-                    <SelectItem value="very-dark">Very Dark</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Piercings</Label>
-                <Select value={formData.piercings} onValueChange={(value) => updateFormData("piercings", value)}>
-                  <SelectTrigger className="transition-all duration-200">
-                    <SelectValue placeholder="Select" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="yes">Yes</SelectItem>
-                    <SelectItem value="no">No</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Tattoos</Label>
-                <Select value={formData.tattoos} onValueChange={(value) => updateFormData("tattoos", value)}>
-                  <SelectTrigger className="transition-all duration-200">
-                    <SelectValue placeholder="Select" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="yes">Yes</SelectItem>
-                    <SelectItem value="no">No</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Teeth Features</Label>
-              <Input
-                value={formData.teethFeatures}
-                onChange={(e) => updateFormData("teethFeatures", e.target.value)}
-                placeholder="Describe any notable teeth features"
-                className="transition-all duration-200"
-              />
-            </div>
-          </div>
-        )
-
-      case 4:
+      case 2:
         return (
           <div className="space-y-6">
             <div className="text-center">
@@ -1487,6 +1343,14 @@ export default function RegisterPage() {
                     <SelectItem value="no">No</SelectItem>
                   </SelectContent>
                 </Select>
+                {formData.glasses === "yes" && (
+                  <Input
+                    value={formData.glassesDescription}
+                    onChange={e => updateFormData("glassesDescription", e.target.value)}
+                    placeholder="Describe your glasses"
+                    className="transition-all duration-200 mt-2"
+                  />
+                )}
               </div>
 
               <div className="space-y-2">
@@ -1504,7 +1368,7 @@ export default function RegisterPage() {
               </div>
 
               <div className="space-y-2">
-                <Label>Any disability?</Label>
+                <Label>Do you have any disabilities?</Label>
                 <Select value={formData.disability} onValueChange={(value) => updateFormData("disability", value)}>
                   <SelectTrigger className="transition-all duration-200">
                     <SelectValue placeholder="Select" />
@@ -1512,37 +1376,49 @@ export default function RegisterPage() {
                   <SelectContent>
                     <SelectItem value="yes">Yes</SelectItem>
                     <SelectItem value="no">No</SelectItem>
+                    <SelectItem value="prefer-not-to-say">Prefer not to say</SelectItem>
                   </SelectContent>
                 </Select>
+                {formData.disability === "yes" && (
+                  <Input
+                    value={formData.disabilityDescription}
+                    onChange={e => updateFormData("disabilityDescription", e.target.value)}
+                    placeholder="Describe your disability"
+                    className="transition-all duration-200 mt-2"
+                  />
+                )}
               </div>
 
               <div className="space-y-2">
-                <Label>Any chronic illness?</Label>
-                <Select
-                  value={formData.chronicIllness}
-                  onValueChange={(value) => updateFormData("chronicIllness", value)}
-                >
+                <Label>Do you have any chronic illnesses?</Label>
+                <Select value={formData.chronicIllness} onValueChange={(value) => updateFormData("chronicIllness", value)}>
                   <SelectTrigger className="transition-all duration-200">
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="yes">Yes</SelectItem>
                     <SelectItem value="no">No</SelectItem>
+                    <SelectItem value="prefer-not-to-say">Prefer not to say</SelectItem>
                   </SelectContent>
                 </Select>
+                {formData.chronicIllness === "yes" && (
+                  <Input
+                    value={formData.chronicIllnessDescription}
+                    onChange={e => updateFormData("chronicIllnessDescription", e.target.value)}
+                    placeholder="Describe your chronic illness"
+                    className="transition-all duration-200 mt-2"
+                  />
+                )}
               </div>
 
               <div className="space-y-2">
-                <Label>Allergies?</Label>
-                <Select value={formData.allergies} onValueChange={(value) => updateFormData("allergies", value)}>
-                  <SelectTrigger className="transition-all duration-200">
-                    <SelectValue placeholder="Select" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="yes">Yes</SelectItem>
-                    <SelectItem value="no">No</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Label>Allergies</Label>
+                <Input
+                  value={formData.allergies}
+                  onChange={(e) => updateFormData("allergies", e.target.value)}
+                  placeholder="List any allergies"
+                  className="transition-all duration-200"
+                />
               </div>
 
               <div className="space-y-2">
@@ -1552,46 +1428,23 @@ export default function RegisterPage() {
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="A+">A+</SelectItem>
-                    <SelectItem value="A-">A-</SelectItem>
-                    <SelectItem value="B+">B+</SelectItem>
-                    <SelectItem value="B-">B-</SelectItem>
-                    <SelectItem value="AB+">AB+</SelectItem>
-                    <SelectItem value="AB-">AB-</SelectItem>
-                    <SelectItem value="O+">O+</SelectItem>
-                    <SelectItem value="O-">O-</SelectItem>
+                    <SelectItem value="a-positive">A+</SelectItem>
+                    <SelectItem value="a-negative">A-</SelectItem>
+                    <SelectItem value="b-positive">B+</SelectItem>
+                    <SelectItem value="b-negative">B-</SelectItem>
+                    <SelectItem value="ab-positive">AB+</SelectItem>
+                    <SelectItem value="ab-negative">AB-</SelectItem>
+                    <SelectItem value="o-positive">O+</SelectItem>
+                    <SelectItem value="o-negative">O-</SelectItem>
+                    <SelectItem value="unknown">Unknown</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
-
-            {formData.disability === "yes" && (
-              <div className="space-y-2 animate-in slide-in-from-top-2">
-                <Label>Please describe your disability</Label>
-                <Textarea
-                  value={formData.disabilityDescription}
-                  onChange={(e) => updateFormData("disabilityDescription", e.target.value)}
-                  placeholder="Describe your disability"
-                  className="transition-all duration-200"
-                />
-              </div>
-            )}
-
-            {formData.chronicIllness === "yes" && (
-              <div className="space-y-2 animate-in slide-in-from-top-2">
-                <Label>Please describe your chronic illness</Label>
-                <Textarea
-                  value={formData.chronicIllnessDescription}
-                  onChange={(e) => updateFormData("chronicIllnessDescription", e.target.value)}
-                  placeholder="Describe your chronic illness"
-                  className="transition-all duration-200"
-                />
-              </div>
-            )}
           </div>
         )
 
-      case 5:
+      case 3:
         return (
           <div className="space-y-6">
             <div className="text-center">
@@ -1600,25 +1453,6 @@ export default function RegisterPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Education Level</Label>
-                <Select
-                  value={formData.educationLevel}
-                  onValueChange={(value) => updateFormData("educationLevel", value)}
-                >
-                  <SelectTrigger className="transition-all duration-200">
-                    <SelectValue placeholder="Select" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {DATA_CONSTANTS.educationLevels.map((level) => (
-                      <SelectItem key={level} value={level}>
-                        {level}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
               <div className="space-y-2">
                 <Label>Employment Status</Label>
                 <Select
@@ -1755,9 +1589,12 @@ export default function RegisterPage() {
                   <SelectValue placeholder="Select" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="stable">Stable</SelectItem>
-                  <SelectItem value="managing">Managing</SelectItem>
-                  <SelectItem value="struggling">Struggling</SelectItem>
+                  <SelectItem value="not-fully-settled">I'm not fully financially settled but I can handle my bills/expenses</SelectItem>
+                  <SelectItem value="fully-settled">I'm fully financially settled</SelectItem>
+                  <SelectItem value="almost-there">Almost there</SelectItem>
+                  <SelectItem value="building-wealth">Building wealth and investments</SelectItem>
+                  <SelectItem value="student">Student with limited income</SelectItem>
+                  <SelectItem value="entrepreneur">Entrepreneur building business</SelectItem>
                   <SelectItem value="prefer-not-to-say">Prefer not to say</SelectItem>
                 </SelectContent>
               </Select>
@@ -1765,7 +1602,7 @@ export default function RegisterPage() {
           </div>
         )
 
-      case 6:
+      case 4:
         return (
           <div className="space-y-6">
             <div className="text-center">
@@ -1907,7 +1744,7 @@ export default function RegisterPage() {
           </div>
         )
 
-      case 7:
+      case 5:
         return (
           <div className="space-y-6">
             <div className="text-center">
@@ -1936,11 +1773,8 @@ export default function RegisterPage() {
               </div>
 
               <div className="space-y-2">
-                <Label>Were you married before?</Label>
-                <Select
-                  value={formData.marriedBefore}
-                  onValueChange={(value) => updateFormData("marriedBefore", value)}
-                >
+                <Label>Do you have children?</Label>
+                <Select value={formData.hasChildren} onValueChange={(value) => updateFormData("hasChildren", value)}>
                   <SelectTrigger className="transition-all duration-200">
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
@@ -1950,19 +1784,6 @@ export default function RegisterPage() {
                   </SelectContent>
                 </Select>
               </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Do you have children?</Label>
-              <Select value={formData.hasChildren} onValueChange={(value) => updateFormData("hasChildren", value)}>
-                <SelectTrigger className="transition-all duration-200">
-                  <SelectValue placeholder="Select" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="yes">Yes</SelectItem>
-                  <SelectItem value="no">No</SelectItem>
-                </SelectContent>
-              </Select>
             </div>
 
             {formData.hasChildren === "yes" && (
@@ -2026,7 +1847,7 @@ export default function RegisterPage() {
               </div>
 
               <div className="space-y-2">
-                <Label>Can you accept someone with kids?</Label>
+                <Label>Can you date someone with kids?</Label>
                 <Select
                   value={formData.acceptsPartnerWithKids}
                   onValueChange={(value) => updateFormData("acceptsPartnerWithKids", value)}
@@ -2040,6 +1861,14 @@ export default function RegisterPage() {
                     <SelectItem value="depends">Depends</SelectItem>
                   </SelectContent>
                 </Select>
+                {formData.acceptsPartnerWithKids === "yes" && (
+                  <Input
+                    value={formData.acceptsPartnerWithKidsDescription}
+                    onChange={e => updateFormData("acceptsPartnerWithKidsDescription", e.target.value)}
+                    placeholder="Describe your preference"
+                    className="transition-all duration-200 mt-2"
+                  />
+                )}
               </div>
             </div>
 
@@ -2089,10 +1918,20 @@ export default function RegisterPage() {
                 className="transition-all duration-200"
               />
             </div>
+
+            <div className="space-y-2">
+              <Label>What are you looking for in a partner?</Label>
+              <Textarea
+                value={formData.partnerPreferences}
+                onChange={(e) => updateFormData("partnerPreferences", e.target.value)}
+                placeholder="Describe what you are looking for in a partner"
+                className="transition-all duration-200"
+              />
+            </div>
           </div>
         )
 
-      case 8:
+      case 6:
         return (
           <div className="space-y-6">
             <div className="text-center">
@@ -2193,6 +2032,29 @@ export default function RegisterPage() {
                 className="transition-all duration-200"
               />
             </div>
+
+            <div className="space-y-4 pt-4">
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="terms"
+                  checked={formData.termsAccepted}
+                  onChange={e => updateFormData("termsAccepted", e.target.checked)}
+                  className="accent-primary"
+                />
+                <label htmlFor="terms" className="text-sm cursor-pointer">
+                  I accept the <a href="/terms" target="_blank" className="underline text-primary">Terms and Conditions</a>
+                </label>
+              </div>
+              <button
+                type="button"
+                className={`w-full py-2 px-4 rounded bg-blue-600 text-white font-semibold transition-all duration-200 ${formData.paymentCompleted ? "bg-green-600" : "bg-blue-600"}`}
+                onClick={() => updateFormData("paymentCompleted", true)}
+                disabled={formData.paymentCompleted}
+              >
+                {formData.paymentCompleted ? "Payment Complete" : "Pay to Complete Registration"}
+              </button>
+            </div>
           </div>
         )
 
@@ -2233,7 +2095,7 @@ export default function RegisterPage() {
                 {currentStep === totalSteps ? (
                   <Button
                     onClick={handleSubmit}
-                    disabled={isLoading}
+                    disabled={isLoading || !formData.termsAccepted || !formData.paymentCompleted}
                     className="flex items-center space-x-2 transition-all duration-200 hover:scale-105 disabled:hover:scale-100"
                   >
                     {isLoading ? "Creating Account..." : "Complete Registration"}

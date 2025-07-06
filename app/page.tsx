@@ -19,7 +19,7 @@ export default function Home() {
       {/* Content - Centered layout matching the screenshot */}
       <div className="relative z-10 h-full w-full flex flex-col justify-between">
         {/* Top section with title and tagline */}
-        <div className="flex-1 flex flex-col justify-center items-center text-center px-6">
+        <div className="flex-1 flex flex-col justify-start items-center text-center px-6 mt-10 sm:mt-14 md:mt-20">
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-4 leading-tight">
             Welcome to Hanna's Connect
           </h1>

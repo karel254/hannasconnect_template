@@ -348,13 +348,24 @@ export default function Dashboard() {
         </Card>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Link href="/browse">
             <Card className="cursor-pointer hover:shadow-md transition-shadow dark:bg-gray-800 dark:border-gray-700">
               <CardContent className="p-6 text-center">
                 <Users className="h-12 w-12 text-[#B22222] dark:text-red-400 mx-auto mb-4" />
                 <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Browse Profiles</h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400">Discover new people in your area</p>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/requests">
+            <Card className="cursor-pointer hover:shadow-md transition-shadow dark:bg-gray-800 dark:border-gray-700">
+              <CardContent className="p-6 text-center">
+                <Heart className="h-12 w-12 text-[#B22222] dark:text-red-400 mx-auto mb-4" />
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Requests</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Manage connection requests</p>
+                <Badge className="mt-2 bg-[#B22222] text-white">3 new</Badge>
               </CardContent>
             </Card>
           </Link>
