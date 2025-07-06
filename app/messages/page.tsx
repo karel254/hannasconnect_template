@@ -262,10 +262,10 @@ export default function Messages() {
   }
 
   return (
-    <div className="h-screen bg-gray-50 dark:bg-gray-900 flex overflow-hidden">
+    <div className="h-screen bg-gray-50 dark:bg-gray-900 flex overflow-hidden w-screen max-w-none">
       {/* Contacts List */}
       <div
-        className={`${selectedUser ? "hidden md:flex" : "flex"} flex-col w-full md:w-80 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 overflow-hidden`}
+        className={`${selectedUser ? "hidden md:flex" : "flex"} flex-col w-full md:w-80 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 overflow-hidden flex-shrink-0`}
       >
         {/* Header */}
         <div className="flex-shrink-0 p-4 border-b border-gray-200 dark:border-gray-700">
@@ -342,7 +342,7 @@ export default function Messages() {
 
       {/* Chat Area */}
       {selectedUser ? (
-        <div className="h-full min-h-0 flex flex-col bg-white dark:bg-gray-800 overflow-hidden">
+        <div className="h-full min-h-0 flex flex-col bg-white dark:bg-gray-800 overflow-hidden flex-1 w-full max-w-none">
           {/* Chat Header - Sticky & Prominent */}
           <div className="sticky top-0 z-20 flex-shrink-0 px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-md">
             <div className="flex items-center gap-4">

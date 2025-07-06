@@ -328,17 +328,17 @@ export default function RequestsPage() {
                           </div>
                         </div>
                         
-                        <div className="flex space-x-3">
+                        <div className="flex flex-nowrap gap-3 mt-2">
                           <Button
                             onClick={() => router.push(`/messages?user=${request.userId}`)}
-                            className="flex-1 bg-[#B22222] hover:bg-[#8B0000] text-white"
+                            className="flex-1 bg-[#B22222] hover:bg-[#8B0000] text-white min-w-0"
                           >
                             <User className="h-4 w-4 mr-2" />
                             Send Message
                           </Button>
                           <Button
                             variant="outline"
-                            className="flex-1 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300"
+                            className="flex-1 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 min-w-0"
                           >
                             View Profile
                           </Button>
