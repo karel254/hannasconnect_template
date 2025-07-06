@@ -82,7 +82,7 @@ export default function NotificationsPage() {
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-40">
+      <div className="bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-50">
         <div className="px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -100,7 +100,7 @@ export default function NotificationsPage() {
       </div>
 
       {/* Notifications List */}
-      <div className="px-4 py-4 space-y-3">
+      <div className="px-4 py-4 space-y-3 pt-20">
         {notificationList.length === 0 ? (
           <div className="text-center py-12">
             <Bell className="w-12 h-12 text-gray-300 mx-auto mb-4" />

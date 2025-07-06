@@ -342,9 +342,9 @@ export default function Messages() {
 
       {/* Chat Area */}
       {selectedUser ? (
-        <div className="h-full min-h-0 flex flex-col bg-white dark:bg-gray-800 overflow-hidden flex-1 w-full max-w-none">
-          {/* Chat Header - Sticky & Prominent */}
-          <div className="sticky top-0 z-20 flex-shrink-0 px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-md">
+        <div className="h-full min-h-0 flex flex-col bg-white dark:bg-gray-800 overflow-hidden flex-1 w-full max-w-none relative">
+          {/* Chat Header - Fixed & Prominent */}
+          <div className="fixed top-0 z-50 px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-md md:left-80 left-0 right-0">
             <div className="flex items-center gap-4">
               <Button variant="ghost" size="icon" className="md:hidden mr-2" onClick={() => {
                 setSelectedUser(null)
@@ -376,8 +376,8 @@ export default function Messages() {
             </div>
           </div>
 
-          {/* Messages - Scrollable */}
-          <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4">
+          {/* Messages - Scrollable with top padding for fixed header */}
+          <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4 pt-24 pb-32">
             {messages.map((msg) => (
               <div key={msg.id} className={`flex ${msg.sender === "me" ? "justify-end" : "justify-start"}`}>
                 <div
@@ -437,8 +437,8 @@ export default function Messages() {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Message Input - Sticky Bottom */}
-          <div className="sticky bottom-0 z-20 flex-shrink-0 p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+          {/* Message Input - Fixed Bottom */}
+          <div className="fixed bottom-0 z-50 p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 md:left-80 left-0 right-0 pb-20">
             <div className="flex items-center space-x-2">
               <Input
                 placeholder="Type a message..."

@@ -266,7 +266,7 @@ export default function Browse() {
 
           {/* Filters - Desktop */}
           <div className="hidden lg:block w-80 bg-white dark:bg-gray-800 shadow-lg h-full overflow-y-auto">
-            <div className="p-6 sticky top-0">
+            <div className="p-6 fixed top-0 w-80 bg-white dark:bg-gray-800 z-40">
               <h2 className="text-xl font-bold text-[#B22222] dark:text-red-400 mb-6">Filter Profiles</h2>
 
               <div className="space-y-6">
@@ -335,7 +335,7 @@ export default function Browse() {
 
           {/* Profile Grid */}
           <div className="flex-1 h-full overflow-y-auto bg-gray-50 dark:bg-gray-900">
-            <div className="p-4 lg:p-6">
+            <div className="p-4 lg:p-6 pt-24">
               {/* Loading State */}
               {isLoading && (
                 <div className="flex justify-center items-center py-12">
