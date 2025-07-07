@@ -6,20 +6,23 @@ if (workbox) {
     { url: '/offline.html', revision: null },
   ]);
 
-  // Use ONLY Workbox's networkFirst for navigations
+  // Custom networkFirst for navigations that NEVER caches offline.html
   workbox.routing.registerRoute(
     ({ request }) => request.mode === 'navigate',
     async ({ event }) => {
       try {
-        // Always try the network first
-        return await workbox.strategies.networkFirst({
-          cacheName: 'pages',
-          plugins: [
-            new workbox.expiration.ExpirationPlugin({ maxEntries: 50 }),
-          ],
-        }).handle({ event });
+        const response = await fetch(event.request);
+        // If we get a valid response, clone and cache it
+        if (response && response.ok && response.type === 'basic') {
+          const cache = await caches.open('pages');
+          cache.put(event.request, response.clone());
+        }
+        return response;
       } catch (error) {
-        // Only serve offline.html if network fails
+        // If network fails, try cache, else offline.html
+        const cache = await caches.open('pages');
+        const cached = await cache.match(event.request);
+        if (cached) return cached;
         return caches.match('/offline.html');
       }
     }
@@ -56,7 +59,6 @@ if (workbox) {
     })
   );
 
-  // REMOVE redundant fetch event listener for navigations
 } else {
   console.log('Workbox could not be loaded. No offline support.');
 } 
