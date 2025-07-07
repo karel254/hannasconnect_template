@@ -19,9 +19,23 @@ self.addEventListener('activate', event => {
 });
 
 if (workbox) {
-  // Precache the offline fallback page
+  // Precache the offline fallback page and important app pages
   workbox.precaching.precacheAndRoute([
     { url: '/offline.html', revision: null },
+    { url: '/', revision: null },
+    { url: '/dashboard', revision: null },
+    { url: '/login', revision: null },
+    { url: '/register', revision: null },
+    { url: '/about', revision: null },
+    { url: '/faq', revision: null },
+    { url: '/contact', revision: null },
+    { url: '/requests', revision: null },
+    { url: '/messages', revision: null },
+    { url: '/profile', revision: null },
+    { url: '/more-about', revision: null },
+    { url: '/terms', revision: null },
+    { url: '/privacy', revision: null },
+    { url: '/disclaimer', revision: null },
   ]);
 
   // Custom networkFirst for navigations that NEVER caches offline.html
