@@ -1,5 +1,23 @@
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/6.5.4/workbox-sw.js');
 
+// Force immediate activation and purge old caches
+self.addEventListener('install', event => {
+  self.skipWaiting();
+});
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    (async () => {
+      const cacheNames = await caches.keys();
+      await Promise.all(
+        cacheNames
+          .filter(name => !['pages-v2', 'images-v2', 'fonts-v2', 'static-resources-v2'].includes(name))
+          .map(name => caches.delete(name))
+      );
+      await self.clients.claim();
+    })()
+  );
+});
+
 if (workbox) {
   // Precache the offline fallback page
   workbox.precaching.precacheAndRoute([
