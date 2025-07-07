@@ -27,10 +27,24 @@
 
     // If we are on offline.html, listen for coming back online
     if (window.location.pathname === '/offline.html') {
-      window.addEventListener('online', function () {
-        const lastPath = localStorage.getItem('lastOnlinePath') || '/';
-        window.location.href = lastPath;
-      });
+      function forceCleanReload() {
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.getRegistrations().then(function(registrations) {
+            for (let registration of registrations) {
+              registration.unregister();
+            }
+            setTimeout(() => {
+              const lastPath = localStorage.getItem('lastOnlinePath') || '/';
+              window.location.href = lastPath;
+            }, 500);
+          });
+        } else {
+          const lastPath = localStorage.getItem('lastOnlinePath') || '/';
+          window.location.href = lastPath;
+        }
+      }
+      window.addEventListener('online', forceCleanReload);
+      setTimeout(forceCleanReload, 5000);
     }
   </script>
 </body>
