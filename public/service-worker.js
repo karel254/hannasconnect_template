@@ -91,6 +91,14 @@ if (workbox) {
     })
   );
 
+  // Catch-all fallback for navigations
+  workbox.routing.setCatchHandler(async ({ event }) => {
+    if (event.request.destination === 'document') {
+      return caches.match('/offline.html');
+    }
+    return Response.error();
+  });
+
 } else {
   console.log('Workbox could not be loaded. No offline support.');
 } 
