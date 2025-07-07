@@ -1407,9 +1407,9 @@ export default function RegisterPage() {
                 variant="default"
                 disabled={formData.paymentCompleted}
                 onClick={() => updateFormData("paymentCompleted", true)}
-                className="w-full bg-green-600 hover:bg-green-700 text-white font-bold text-lg py-3"
+                className={`w-full font-bold text-lg py-3 ${formData.paymentCompleted ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-blue-600 hover:bg-blue-700 text-white'}`}
               >
-                Payment Complete
+                {formData.paymentCompleted ? 'Payment Complete' : 'Complete Payment'}
               </Button>
               {/* Email Verification */}
               <Button type="button" variant="outline" disabled={formData.emailVerified} onClick={() => updateFormData("emailVerified", true)}>
