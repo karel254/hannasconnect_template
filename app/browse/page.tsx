@@ -90,7 +90,6 @@ export default function Browse() {
   const [allUsers] = useState(generateUsers())
   const [currentPage, setCurrentPage] = useState(1)
   const [ageRange, setAgeRange] = useState([25, 45])
-  const [selectedEducation, setSelectedEducation] = useState<string>("any")
   const [selectedGoals, setSelectedGoals] = useState<string>("any")
   const [isLoading, setIsLoading] = useState(false)
   const [likedUsers, setLikedUsers] = useState<Set<number>>(new Set())
@@ -124,8 +123,6 @@ export default function Browse() {
     return allUsers.filter((user) => {
       // Age Range
       if (user.age < ageRange[0] || user.age > ageRange[1]) return false;
-      // Education
-      if (selectedEducation !== "any" && !user.education.includes(selectedEducation)) return false;
       // Relationship Goals
       if (selectedGoals !== "any" && user.relationshipGoals !== selectedGoals) return false;
       // Gender
@@ -174,7 +171,7 @@ export default function Browse() {
       if (selectedRelationshipTradition && selectedRelationshipTradition !== "any" && user.relationshipTradition !== selectedRelationshipTradition) return false;
       return true;
     });
-  }, [allUsers, ageRange, selectedEducation, selectedGoals, selectedGender, selectedRace, selectedCountry, selectedCounty, selectedTribe, selectedLanguages, selectedReligion, selectedDenomination, selectedReligiousness, selectedChurchAttendance, selectedMaritalStatus, selectedHasChildren, selectedWantsChildren, selectedAcceptsPartnerWithKids, selectedSmoking, selectedAlcohol, selectedDietaryPreference, selectedPets, selectedSnoring, selectedOpenToRelocate, selectedSexualOrientation, selectedRelationshipTradition]);
+  }, [allUsers, ageRange, selectedGoals, selectedGender, selectedRace, selectedCountry, selectedCounty, selectedTribe, selectedLanguages, selectedReligion, selectedDenomination, selectedReligiousness, selectedChurchAttendance, selectedMaritalStatus, selectedHasChildren, selectedWantsChildren, selectedAcceptsPartnerWithKids, selectedSmoking, selectedAlcohol, selectedDietaryPreference, selectedPets, selectedSnoring, selectedOpenToRelocate, selectedSexualOrientation, selectedRelationshipTradition]);
 
   // Calculate pagination
   const totalPages = Math.ceil(filteredUsers.length / USERS_PER_PAGE)
@@ -281,28 +278,6 @@ export default function Browse() {
                       onValueChange={setAgeRange}
                       className="mt-3"
                     />
-                  </div>
-
-                  {/* Education */}
-                  <div>
-                    <Label
-                      htmlFor="education-mobile"
-                      className="text-base font-medium text-gray-900 dark:text-gray-100"
-                    >
-                      Education Level
-                    </Label>
-                    <Select value={selectedEducation} onValueChange={setSelectedEducation}>
-                      <SelectTrigger id="education-mobile" className="mt-2 rounded-xl">
-                        <SelectValue placeholder="Any Education Level" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="any">Any Education Level</SelectItem>
-                        <SelectItem value="High School">High School</SelectItem>
-                        <SelectItem value="Bachelor">Bachelor's Degree</SelectItem>
-                        <SelectItem value="Master">Master's Degree</SelectItem>
-                        <SelectItem value="Doctorate">Doctorate</SelectItem>
-                      </SelectContent>
-                    </Select>
                   </div>
 
                   {/* Relationship Goals */}
@@ -573,25 +548,6 @@ export default function Browse() {
                     onValueChange={setAgeRange}
                     className="mt-3"
                   />
-                </div>
-
-                {/* Education */}
-                <div>
-                  <Label htmlFor="education" className="text-base font-medium text-gray-900 dark:text-gray-100">
-                    Education Level
-                  </Label>
-                  <Select value={selectedEducation} onValueChange={setSelectedEducation}>
-                    <SelectTrigger id="education" className="mt-2 rounded-xl">
-                      <SelectValue placeholder="Any Education Level" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="any">Any Education Level</SelectItem>
-                      <SelectItem value="High School">High School</SelectItem>
-                      <SelectItem value="Bachelor">Bachelor's Degree</SelectItem>
-                      <SelectItem value="Master">Master's Degree</SelectItem>
-                      <SelectItem value="Doctorate">Doctorate</SelectItem>
-                    </SelectContent>
-                  </Select>
                 </div>
 
                 {/* Relationship Goals */}
@@ -866,7 +822,6 @@ export default function Browse() {
                         className="mt-4 border-[#B22222] text-[#B22222] hover:bg-[#B22222] hover:text-white rounded-xl bg-transparent"
                         onClick={() => {
                           setAgeRange([25, 45])
-                          setSelectedEducation("any")
                           setSelectedGoals("any")
                           setCurrentPage(1)
                         }}

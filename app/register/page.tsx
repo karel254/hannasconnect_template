@@ -648,16 +648,6 @@ const DATA_CONSTANTS = {
     "Other",
   ],
 
-  educationLevels: [
-    "Primary School",
-    "Secondary School",
-    "College/Diploma",
-    "University (Bachelor's)",
-    "Postgraduate (Master's)",
-    "PhD/Doctorate",
-    "Trade/Vocational School",
-  ],
-
   maritalStatuses: ["Single", "Divorced", "Widowed", "In a relationship"],
 }
 
