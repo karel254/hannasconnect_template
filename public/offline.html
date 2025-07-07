@@ -43,8 +43,14 @@
           window.location.href = lastPath;
         }
       }
-      window.addEventListener('online', forceCleanReload);
+      function tryRedirect() {
+        if (navigator.onLine && window.location.pathname === '/offline.html') {
+          forceCleanReload();
+        }
+      }
+      window.addEventListener('online', tryRedirect);
       setTimeout(forceCleanReload, 1); // Fastest possible automatic reload
+      setInterval(tryRedirect, 1000); // Poll every second
     }
   </script>
 </body>
