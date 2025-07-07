@@ -786,6 +786,7 @@ interface FormData {
   gender: string
   customGender: string
   dateOfBirth: string
+  race: string // NEW
   country: string
   county: string
   constituency: string
@@ -855,8 +856,16 @@ interface FormData {
   dateDifferentPolitics: string
   believesInMarriage: string
   selfDescription: string
-  termsAccepted: boolean
-  paymentCompleted: boolean
+  termsAccepted: boolean // moved up
+  paymentCompleted: boolean // moved up
+  emailVerified: boolean // NEW
+  snoring: string // NEW
+  dietaryPreference: string // NEW
+  hasPets: string // NEW
+  petsDescription?: string // NEW
+  openToRelocate: string // NEW
+  sexualOrientation: string // NEW
+  relationshipTradition: string // NEW
 }
 
 export default function RegisterPage() {
@@ -873,6 +882,7 @@ export default function RegisterPage() {
     gender: "",
     customGender: "",
     dateOfBirth: "",
+    race: "", // NEW
     country: "",
     county: "",
     constituency: "",
@@ -944,6 +954,14 @@ export default function RegisterPage() {
     selfDescription: "",
     termsAccepted: false,
     paymentCompleted: false,
+    emailVerified: false, // NEW
+    snoring: "", // NEW
+    dietaryPreference: "", // NEW
+    hasPets: "", // NEW
+    petsDescription: "", // NEW
+    openToRelocate: "", // NEW
+    sexualOrientation: "", // NEW
+    relationshipTradition: "", // NEW
   })
 
   const totalSteps = 7
@@ -1148,6 +1166,23 @@ export default function RegisterPage() {
               />
             </div>
 
+            {/* Race */}
+            <div className="space-y-2">
+              <Label htmlFor="race">Race *</Label>
+              <Select value={formData.race} onValueChange={value => updateFormData("race", value)}>
+                <SelectTrigger className="transition-all duration-200">
+                  <SelectValue placeholder="Select race" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Black">Black</SelectItem>
+                  <SelectItem value="White">White</SelectItem>
+                  <SelectItem value="Asian">Asian</SelectItem>
+                  <SelectItem value="Latino">Latino</SelectItem>
+                  <SelectItem value="Mixed">Mixed</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
             {/* Country */}
             <SearchableSelect
               items={DATA_CONSTANTS.worldCountries}
@@ -1298,7 +1333,7 @@ export default function RegisterPage() {
 
             {/* REMOVE the LanguageSelection component usage and insert the new free-form input section for 'Fluent in' here */}
             <div className="space-y-2">
-              <Label>Fluent in *</Label>
+              <Label>What languages are you fluent in? *</Label>
               {formData.languages.map((lang: string, idx: number) => (
                 <div key={idx} className="flex items-center gap-2 mb-2">
                   <Input
@@ -1338,7 +1373,7 @@ export default function RegisterPage() {
                   onClick={() => updateFormData("languages", [...formData.languages, ""])}
                   className="mt-1"
                 >
-                  Add another language
+                  {formData.languages.length === 0 ? "Add a language" : "Add another language"}
                 </Button>
               )}
               <p className="text-xs text-gray-500">You can add up to 3 languages. At least 1 is required.</p>
@@ -1358,6 +1393,29 @@ export default function RegisterPage() {
                 />
               </div>
             )}
+
+            {/* Payment, Terms, and Email Verification */}
+            <div className="space-y-2">
+              {/* Terms and Conditions */}
+              <div className="flex items-center gap-2 mb-2">
+                <Checkbox id="termsAccepted" checked={formData.termsAccepted} onCheckedChange={checked => updateFormData("termsAccepted", !!checked)} />
+                <Label htmlFor="termsAccepted" className="text-xs">I accept the <a href="/terms" target="_blank" className="underline">Terms and Conditions</a></Label>
+              </div>
+              {/* Payment UI placeholder */}
+              <Button
+                type="button"
+                variant="default"
+                disabled={formData.paymentCompleted}
+                onClick={() => updateFormData("paymentCompleted", true)}
+                className="w-full bg-green-600 hover:bg-green-700 text-white font-bold text-lg py-3"
+              >
+                Payment Complete
+              </Button>
+              {/* Email Verification */}
+              <Button type="button" variant="outline" disabled={formData.emailVerified} onClick={() => updateFormData("emailVerified", true)}>
+                {formData.emailVerified ? "Email Verified" : "Send Verification Email"}
+              </Button>
+            </div>
           </div>
         )
 
@@ -1482,6 +1540,19 @@ export default function RegisterPage() {
                   </SelectContent>
                 </Select>
               </div>
+
+              <div className="space-y-2">
+                <Label>Do you snore?</Label>
+                <Select value={formData.snoring} onValueChange={value => updateFormData("snoring", value)}>
+                  <SelectTrigger className="transition-all duration-200">
+                    <SelectValue placeholder="Select" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="yes">Yes</SelectItem>
+                    <SelectItem value="no">No</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
         )
@@ -1490,7 +1561,7 @@ export default function RegisterPage() {
         return (
           <div className="space-y-6">
             <div className="text-center">
-              <h2 className="text-2xl font-bold mb-2">Education & Work</h2>
+              <h2 className="text-2xl font-bold mb-2">Career</h2>
               <p className="text-gray-600 dark:text-gray-400">Tell us about your education and career</p>
             </div>
 
@@ -1792,6 +1863,42 @@ export default function RegisterPage() {
                 </Select>
               </div>
             </div>
+
+            <div className="space-y-2">
+              <Label>Dietary Preference</Label>
+              <Select value={formData.dietaryPreference} onValueChange={value => updateFormData("dietaryPreference", value)}>
+                <SelectTrigger className="transition-all duration-200">
+                  <SelectValue placeholder="Select" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Halal">Halal</SelectItem>
+                  <SelectItem value="Pescatarian">Pescatarian</SelectItem>
+                  <SelectItem value="Omnivore">Omnivore</SelectItem>
+                  <SelectItem value="Vegetarian">Vegetarian</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Do you have pets?</Label>
+              <Select value={formData.hasPets} onValueChange={value => updateFormData("hasPets", value)}>
+                <SelectTrigger className="transition-all duration-200">
+                  <SelectValue placeholder="Select" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="yes">Yes</SelectItem>
+                  <SelectItem value="no">No</SelectItem>
+                </SelectContent>
+              </Select>
+              {formData.hasPets === "yes" && (
+                <Input
+                  value={formData.petsDescription}
+                  onChange={e => updateFormData("petsDescription", e.target.value)}
+                  placeholder="Describe your pet(s)"
+                  className="transition-all duration-200"
+                  onFocus={handleFieldFocus}
+                />
+              )}
+            </div>
           </div>
         )
 
@@ -1986,6 +2093,27 @@ export default function RegisterPage() {
                 onFocus={handleFieldFocus}
               />
             </div>
+
+            <div className="space-y-2">
+              <Label>Sexual Orientation</Label>
+              <Input
+                value={formData.sexualOrientation}
+                onChange={e => updateFormData("sexualOrientation", e.target.value)}
+                placeholder="Type your sexual orientation"
+                className="transition-all duration-200"
+                onFocus={handleFieldFocus}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>How traditional or modern are you in relationships?</Label>
+              <Input
+                value={formData.relationshipTradition}
+                onChange={e => updateFormData("relationshipTradition", e.target.value)}
+                placeholder="Describe your approach to relationships"
+                className="transition-all duration-200"
+                onFocus={handleFieldFocus}
+              />
+            </div>
           </div>
         )
 
@@ -2093,29 +2221,6 @@ export default function RegisterPage() {
                 className="transition-all duration-200"
                 onFocus={handleFieldFocus}
               />
-            </div>
-
-            <div className="space-y-4 pt-4">
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  id="terms"
-                  checked={formData.termsAccepted}
-                  onChange={e => updateFormData("termsAccepted", e.target.checked)}
-                  className="accent-primary"
-                />
-                <label htmlFor="terms" className="text-sm cursor-pointer">
-                  I accept the <a href="/terms" target="_blank" className="underline text-primary">Terms and Conditions</a>
-                </label>
-              </div>
-              <button
-                type="button"
-                className={`w-full py-2 px-4 rounded bg-blue-600 text-white font-semibold transition-all duration-200 ${formData.paymentCompleted ? "bg-green-600" : "bg-blue-600"}`}
-                onClick={() => updateFormData("paymentCompleted", true)}
-                disabled={formData.paymentCompleted}
-              >
-                {formData.paymentCompleted ? "Payment Complete" : "Pay to Complete Registration"}
-              </button>
             </div>
           </div>
         )

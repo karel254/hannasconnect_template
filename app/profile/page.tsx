@@ -48,8 +48,29 @@ interface UserProfile {
   photos: string[]
   preferences: {
     ageRange: [number, number]
-    maxDistance: number
     lookingFor: string
+    gender?: string
+    race?: string
+    country?: string
+    county?: string
+    tribe?: string
+    languages?: string[]
+    religion?: string
+    denomination?: string
+    religiousness?: number
+    churchAttendance?: string
+    smoking?: string
+    alcohol?: string
+    dietaryPreference?: string
+    pets?: string
+    snoring?: string
+    maritalStatus?: string
+    hasChildren?: string
+    wantsChildren?: string
+    acceptsPartnerWithKids?: string
+    openToRelocate?: string
+    sexualOrientation?: string
+    relationshipTradition?: string
   }
   settings: {
     theme: string
@@ -123,7 +144,6 @@ export default function ProfilePage() {
     photos: [],
     preferences: {
       ageRange: [22, 35],
-      maxDistance: 50,
       lookingFor: "serious",
     },
     settings: {
@@ -511,6 +531,170 @@ export default function ProfilePage() {
                 </div>
               </CardContent>
             </Card>
+
+            {isEditing && (
+              <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 mt-6">
+                <CardHeader>
+                  <CardTitle className="text-gray-900 dark:text-gray-100">Demographics & Preferences</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {/* Race */}
+                  <Label>Race</Label>
+                  <Select value={profile.preferences?.race || "any"} onValueChange={value => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, race: value } }))}>
+                    <SelectTrigger className="rounded-xl">
+                      <SelectValue placeholder="Any Race" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="any">Any Race</SelectItem>
+                      <SelectItem value="african">African</SelectItem>
+                      <SelectItem value="asian">Asian</SelectItem>
+                      <SelectItem value="caucasian">Caucasian</SelectItem>
+                      <SelectItem value="latino">Latino</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {/* Country */}
+                  <Label>Country</Label>
+                  <Input value={profile.preferences?.country || ""} onChange={e => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, country: e.target.value } }))} placeholder="Any Country" className="rounded-xl" />
+                  {/* County */}
+                  <Label>County</Label>
+                  <Input value={profile.preferences?.county || ""} onChange={e => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, county: e.target.value } }))} placeholder="Any County" className="rounded-xl" />
+                  {/* Tribe */}
+                  <Label>Tribe</Label>
+                  <Input value={profile.preferences?.tribe || ""} onChange={e => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, tribe: e.target.value } }))} placeholder="Any Tribe" className="rounded-xl" />
+                  {/* Languages */}
+                  <Label>Fluent in (comma separated)</Label>
+                  <Input value={profile.preferences?.languages?.join(", ") || ""} onChange={e => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, languages: e.target.value.split(",").map(s => s.trim()) } }))} placeholder="e.g. English, Swahili" className="rounded-xl" />
+                  {/* Religion */}
+                  <Label>Religion</Label>
+                  <Input value={profile.preferences?.religion || ""} onChange={e => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, religion: e.target.value } }))} placeholder="Any Religion" className="rounded-xl" />
+                  {/* Denomination */}
+                  <Label>Denomination</Label>
+                  <Input value={profile.preferences?.denomination || ""} onChange={e => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, denomination: e.target.value } }))} placeholder="Any Denomination" className="rounded-xl" />
+                  {/* Marital Status */}
+                  <Label>Marital Status</Label>
+                  <Select value={profile.preferences?.maritalStatus || "any"} onValueChange={value => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, maritalStatus: value } }))}>
+                    <SelectTrigger className="rounded-xl">
+                      <SelectValue placeholder="Any Marital Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="any">Any</SelectItem>
+                      <SelectItem value="single">Single</SelectItem>
+                      <SelectItem value="divorced">Divorced</SelectItem>
+                      <SelectItem value="widowed">Widowed</SelectItem>
+                      <SelectItem value="separated">Separated</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {/* Has Children */}
+                  <Label>Has Children</Label>
+                  <Select value={profile.preferences?.hasChildren || "any"} onValueChange={value => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, hasChildren: value } }))}>
+                    <SelectTrigger className="rounded-xl">
+                      <SelectValue placeholder="Any" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="any">Any</SelectItem>
+                      <SelectItem value="yes">Yes</SelectItem>
+                      <SelectItem value="no">No</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {/* Wants Children */}
+                  <Label>Wants Children</Label>
+                  <Select value={profile.preferences?.wantsChildren || "any"} onValueChange={value => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, wantsChildren: value } }))}>
+                    <SelectTrigger className="rounded-xl">
+                      <SelectValue placeholder="Any" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="any">Any</SelectItem>
+                      <SelectItem value="yes">Yes</SelectItem>
+                      <SelectItem value="no">No</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {/* Accepts Partner with Kids */}
+                  <Label>Accepts Partner with Kids</Label>
+                  <Select value={profile.preferences?.acceptsPartnerWithKids || "any"} onValueChange={value => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, acceptsPartnerWithKids: value } }))}>
+                    <SelectTrigger className="rounded-xl">
+                      <SelectValue placeholder="Any" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="any">Any</SelectItem>
+                      <SelectItem value="yes">Yes</SelectItem>
+                      <SelectItem value="no">No</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {/* Smoking */}
+                  <Label>Smoking</Label>
+                  <Select value={profile.preferences?.smoking || "any"} onValueChange={value => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, smoking: value } }))}>
+                    <SelectTrigger className="rounded-xl">
+                      <SelectValue placeholder="Any Smoking" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="any">Any</SelectItem>
+                      <SelectItem value="yes">Yes</SelectItem>
+                      <SelectItem value="no">No</SelectItem>
+                      <SelectItem value="occasionally">Occasionally</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {/* Alcohol */}
+                  <Label>Alcohol</Label>
+                  <Select value={profile.preferences?.alcohol || "any"} onValueChange={value => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, alcohol: value } }))}>
+                    <SelectTrigger className="rounded-xl">
+                      <SelectValue placeholder="Any Alcohol" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="any">Any</SelectItem>
+                      <SelectItem value="yes">Yes</SelectItem>
+                      <SelectItem value="no">No</SelectItem>
+                      <SelectItem value="occasionally">Occasionally</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {/* Dietary Preference */}
+                  <Label>Dietary Preference</Label>
+                  <Input value={profile.preferences?.dietaryPreference || ""} onChange={e => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, dietaryPreference: e.target.value } }))} placeholder="Any Diet" className="rounded-xl" />
+                  {/* Pets */}
+                  <Label>Pets</Label>
+                  <Select value={profile.preferences?.pets || "any"} onValueChange={value => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, pets: value } }))}>
+                    <SelectTrigger className="rounded-xl">
+                      <SelectValue placeholder="Any Pets" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="any">Any</SelectItem>
+                      <SelectItem value="yes">Yes</SelectItem>
+                      <SelectItem value="no">No</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {/* Snoring */}
+                  <Label>Snoring</Label>
+                  <Select value={profile.preferences?.snoring || "any"} onValueChange={value => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, snoring: value } }))}>
+                    <SelectTrigger className="rounded-xl">
+                      <SelectValue placeholder="Any Snoring" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="any">Any</SelectItem>
+                      <SelectItem value="yes">Yes</SelectItem>
+                      <SelectItem value="no">No</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {/* Open to Relocate */}
+                  <Label>Open to Relocate</Label>
+                  <Select value={profile.preferences?.openToRelocate || "any"} onValueChange={value => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, openToRelocate: value } }))}>
+                    <SelectTrigger className="rounded-xl">
+                      <SelectValue placeholder="Any" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="any">Any</SelectItem>
+                      <SelectItem value="yes">Yes</SelectItem>
+                      <SelectItem value="no">No</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {/* Sexual Orientation */}
+                  <Label>Sexual Orientation</Label>
+                  <Input value={profile.preferences?.sexualOrientation || ""} onChange={e => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, sexualOrientation: e.target.value } }))} placeholder="Any" className="rounded-xl" />
+                  {/* Relationship Tradition */}
+                  <Label>Relationship Tradition</Label>
+                  <Input value={profile.preferences?.relationshipTradition || ""} onChange={e => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, relationshipTradition: e.target.value } }))} placeholder="Any" className="rounded-xl" />
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
 
           <TabsContent value="preferences" className="space-y-6">
@@ -518,7 +702,7 @@ export default function ProfilePage() {
               <CardHeader>
                 <CardTitle className="text-gray-900 dark:text-gray-100">Dating Preferences</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent className="space-y-6 max-h-[70vh] overflow-y-auto scrollbar-thin scrollbar-thumb-[#B22222] scrollbar-track-gray-200 dark:scrollbar-thumb-red-400 dark:scrollbar-track-gray-800">
                 <div>
                   <Label className="text-gray-700 dark:text-gray-300 mb-3 block">
                     Age Range: {profile.preferences.ageRange[0]} - {profile.preferences.ageRange[1]} years
@@ -533,25 +717,6 @@ export default function ProfilePage() {
                     }
                     min={18}
                     max={65}
-                    step={1}
-                    className="w-full"
-                    disabled={!isEditing}
-                  />
-                </div>
-                <div>
-                  <Label className="text-gray-700 dark:text-gray-300 mb-3 block">
-                    Maximum Distance: {profile.preferences.maxDistance} km
-                  </Label>
-                  <Slider
-                    value={[profile.preferences.maxDistance]}
-                    onValueChange={(value) =>
-                      setProfile((prev) => ({
-                        ...prev,
-                        preferences: { ...prev.preferences, maxDistance: value[0] },
-                      }))
-                    }
-                    min={1}
-                    max={200}
                     step={1}
                     className="w-full"
                     disabled={!isEditing}
@@ -582,6 +747,221 @@ export default function ProfilePage() {
                     </SelectContent>
                   </Select>
                 </div>
+
+<details className="mb-4">
+  <summary className="font-semibold text-gray-900 dark:text-gray-100 cursor-pointer py-2">Demographics</summary>
+  <div className="space-y-3 mt-2">
+    {/* Gender */}
+    <Label>Gender</Label>
+    <Select value={profile.preferences?.gender || "any"} onValueChange={value => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, gender: value } }))} disabled={!isEditing}>
+      <SelectTrigger className="rounded-xl">
+        <SelectValue placeholder="Any Gender" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="any">Any Gender</SelectItem>
+        <SelectItem value="male">Male</SelectItem>
+        <SelectItem value="female">Female</SelectItem>
+        <SelectItem value="other">Other</SelectItem>
+      </SelectContent>
+    </Select>
+    {/* Race */}
+    <Label>Race</Label>
+    <Select value={profile.preferences?.race || "any"} onValueChange={value => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, race: value } }))} disabled={!isEditing}>
+      <SelectTrigger className="rounded-xl">
+        <SelectValue placeholder="Any Race" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="any">Any Race</SelectItem>
+        <SelectItem value="african">African</SelectItem>
+        <SelectItem value="asian">Asian</SelectItem>
+        <SelectItem value="caucasian">Caucasian</SelectItem>
+        <SelectItem value="latino">Latino</SelectItem>
+        <SelectItem value="other">Other</SelectItem>
+      </SelectContent>
+    </Select>
+    {/* Country */}
+    <Label>Country</Label>
+    <Input value={profile.preferences?.country || ""} onChange={e => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, country: e.target.value } }))} placeholder="Any Country" className="rounded-xl" disabled={!isEditing} />
+    {/* County */}
+    <Label>County</Label>
+    <Input value={profile.preferences?.county || ""} onChange={e => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, county: e.target.value } }))} placeholder="Any County" className="rounded-xl" disabled={!isEditing} />
+    {/* Tribe */}
+    <Label>Tribe</Label>
+    <Input value={profile.preferences?.tribe || ""} onChange={e => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, tribe: e.target.value } }))} placeholder="Any Tribe" className="rounded-xl" disabled={!isEditing} />
+    {/* Languages */}
+    <Label>Fluent in (comma separated)</Label>
+    <Input value={profile.preferences?.languages?.join(", ") || ""} onChange={e => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, languages: e.target.value.split(",").map(s => s.trim()) } }))} placeholder="e.g. English, Swahili" className="rounded-xl" disabled={!isEditing} />
+  </div>
+</details>
+
+<details className="mb-4">
+  <summary className="font-semibold text-gray-900 dark:text-gray-100 cursor-pointer py-2">Beliefs</summary>
+  <div className="space-y-3 mt-2">
+    {/* Religion */}
+    <Label>Religion</Label>
+    <Input value={profile.preferences?.religion || ""} onChange={e => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, religion: e.target.value } }))} placeholder="Any Religion" className="rounded-xl" disabled={!isEditing} />
+    {/* Denomination */}
+    <Label>Denomination</Label>
+    <Input value={profile.preferences?.denomination || ""} onChange={e => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, denomination: e.target.value } }))} placeholder="Any Denomination" className="rounded-xl" disabled={!isEditing} />
+    {/* Religiousness */}
+    <Label>Religiousness</Label>
+    <Slider min={0} max={10} step={1} value={[profile.preferences?.religiousness || 0]} onValueChange={v => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, religiousness: v[0] } }))} className="mt-2" disabled={!isEditing} />
+    {/* Church Attendance */}
+    <Label>Church Attendance</Label>
+    <Select value={profile.preferences?.churchAttendance || "any"} onValueChange={value => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, churchAttendance: value } }))} disabled={!isEditing}>
+      <SelectTrigger className="rounded-xl">
+        <SelectValue placeholder="Any Attendance" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="any">Any</SelectItem>
+        <SelectItem value="regular">Regular</SelectItem>
+        <SelectItem value="occasional">Occasional</SelectItem>
+        <SelectItem value="rarely">Rarely</SelectItem>
+        <SelectItem value="never">Never</SelectItem>
+      </SelectContent>
+    </Select>
+  </div>
+</details>
+
+<details className="mb-4">
+  <summary className="font-semibold text-gray-900 dark:text-gray-100 cursor-pointer py-2">Lifestyle</summary>
+  <div className="space-y-3 mt-2">
+    {/* Smoking */}
+    <Label>Smoking</Label>
+    <Select value={profile.preferences?.smoking || "any"} onValueChange={value => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, smoking: value } }))} disabled={!isEditing}>
+      <SelectTrigger className="rounded-xl">
+        <SelectValue placeholder="Any Smoking" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="any">Any</SelectItem>
+        <SelectItem value="yes">Yes</SelectItem>
+        <SelectItem value="no">No</SelectItem>
+        <SelectItem value="occasionally">Occasionally</SelectItem>
+      </SelectContent>
+    </Select>
+    {/* Alcohol */}
+    <Label>Alcohol</Label>
+    <Select value={profile.preferences?.alcohol || "any"} onValueChange={value => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, alcohol: value } }))} disabled={!isEditing}>
+      <SelectTrigger className="rounded-xl">
+        <SelectValue placeholder="Any Alcohol" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="any">Any</SelectItem>
+        <SelectItem value="yes">Yes</SelectItem>
+        <SelectItem value="no">No</SelectItem>
+        <SelectItem value="occasionally">Occasionally</SelectItem>
+      </SelectContent>
+    </Select>
+    {/* Dietary Preference */}
+    <Label>Dietary Preference</Label>
+    <Input value={profile.preferences?.dietaryPreference || ""} onChange={e => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, dietaryPreference: e.target.value } }))} placeholder="Any Diet" className="rounded-xl" disabled={!isEditing} />
+    {/* Pets */}
+    <Label>Pets</Label>
+    <Select value={profile.preferences?.pets || "any"} onValueChange={value => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, pets: value } }))} disabled={!isEditing}>
+      <SelectTrigger className="rounded-xl">
+        <SelectValue placeholder="Any Pets" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="any">Any</SelectItem>
+        <SelectItem value="yes">Yes</SelectItem>
+        <SelectItem value="no">No</SelectItem>
+      </SelectContent>
+    </Select>
+    {/* Snoring */}
+    <Label>Snoring</Label>
+    <Select value={profile.preferences?.snoring || "any"} onValueChange={value => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, snoring: value } }))} disabled={!isEditing}>
+      <SelectTrigger className="rounded-xl">
+        <SelectValue placeholder="Any Snoring" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="any">Any</SelectItem>
+        <SelectItem value="yes">Yes</SelectItem>
+        <SelectItem value="no">No</SelectItem>
+      </SelectContent>
+    </Select>
+  </div>
+</details>
+
+<details className="mb-4">
+  <summary className="font-semibold text-gray-900 dark:text-gray-100 cursor-pointer py-2">Family</summary>
+  <div className="space-y-3 mt-2">
+    {/* Marital Status */}
+    <Label>Marital Status</Label>
+    <Select value={profile.preferences?.maritalStatus || "any"} onValueChange={value => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, maritalStatus: value } }))} disabled={!isEditing}>
+      <SelectTrigger className="rounded-xl">
+        <SelectValue placeholder="Any Marital Status" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="any">Any</SelectItem>
+        <SelectItem value="single">Single</SelectItem>
+        <SelectItem value="divorced">Divorced</SelectItem>
+        <SelectItem value="widowed">Widowed</SelectItem>
+        <SelectItem value="separated">Separated</SelectItem>
+      </SelectContent>
+    </Select>
+    {/* Has Children */}
+    <Label>Has Children</Label>
+    <Select value={profile.preferences?.hasChildren || "any"} onValueChange={value => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, hasChildren: value } }))} disabled={!isEditing}>
+      <SelectTrigger className="rounded-xl">
+        <SelectValue placeholder="Any" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="any">Any</SelectItem>
+        <SelectItem value="yes">Yes</SelectItem>
+        <SelectItem value="no">No</SelectItem>
+      </SelectContent>
+    </Select>
+    {/* Wants Children */}
+    <Label>Wants Children</Label>
+    <Select value={profile.preferences?.wantsChildren || "any"} onValueChange={value => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, wantsChildren: value } }))} disabled={!isEditing}>
+      <SelectTrigger className="rounded-xl">
+        <SelectValue placeholder="Any" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="any">Any</SelectItem>
+        <SelectItem value="yes">Yes</SelectItem>
+        <SelectItem value="no">No</SelectItem>
+      </SelectContent>
+    </Select>
+    {/* Accepts Partner with Kids */}
+    <Label>Accepts Partner with Kids</Label>
+    <Select value={profile.preferences?.acceptsPartnerWithKids || "any"} onValueChange={value => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, acceptsPartnerWithKids: value } }))} disabled={!isEditing}>
+      <SelectTrigger className="rounded-xl">
+        <SelectValue placeholder="Any" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="any">Any</SelectItem>
+        <SelectItem value="yes">Yes</SelectItem>
+        <SelectItem value="no">No</SelectItem>
+      </SelectContent>
+    </Select>
+  </div>
+</details>
+
+<details className="mb-4">
+  <summary className="font-semibold text-gray-900 dark:text-gray-100 cursor-pointer py-2">Preferences</summary>
+  <div className="space-y-3 mt-2">
+    {/* Open to Relocate */}
+    <Label>Open to Relocate</Label>
+    <Select value={profile.preferences?.openToRelocate || "any"} onValueChange={value => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, openToRelocate: value } }))} disabled={!isEditing}>
+      <SelectTrigger className="rounded-xl">
+        <SelectValue placeholder="Any" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="any">Any</SelectItem>
+        <SelectItem value="yes">Yes</SelectItem>
+        <SelectItem value="no">No</SelectItem>
+      </SelectContent>
+    </Select>
+    {/* Sexual Orientation */}
+    <Label>Sexual Orientation</Label>
+    <Input value={profile.preferences?.sexualOrientation || ""} onChange={e => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, sexualOrientation: e.target.value } }))} placeholder="Any" className="rounded-xl" disabled={!isEditing} />
+    {/* Relationship Tradition */}
+    <Label>Relationship Tradition</Label>
+    <Input value={profile.preferences?.relationshipTradition || ""} onChange={e => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, relationshipTradition: e.target.value } }))} placeholder="Any" className="rounded-xl" disabled={!isEditing} />
+  </div>
+</details>
+
               </CardContent>
             </Card>
           </TabsContent>
