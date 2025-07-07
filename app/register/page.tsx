@@ -15,6 +15,29 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ArrowLeft, ArrowRight, CheckCircle, Eye, EyeOff } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { useDebounce } from "@/hooks/use-debounce"
+import { useRef } from "react"
+
+function scrollIntoViewIfNeeded(element: HTMLElement | null) {
+  if (!element) return;
+  const rect = element.getBoundingClientRect();
+  const headerOffset = 80; // Adjust if your header is taller
+  const footerOffset = 80; // Adjust if your footer is taller
+  const viewHeight = window.innerHeight;
+  // If the input is below the visible area (minus footer), scroll it up
+  if (rect.bottom > viewHeight - footerOffset) {
+    window.scrollBy({
+      top: rect.bottom - (viewHeight - footerOffset) + 16,
+      behavior: "smooth",
+    });
+  }
+  // If the input is above the visible area (plus header), scroll it down
+  if (rect.top < headerOffset) {
+    window.scrollBy({
+      top: rect.top - headerOffset - 16,
+      behavior: "smooth",
+    });
+  }
+}
 
 // Data constants moved to separate object for better performance
 const DATA_CONSTANTS = {
@@ -704,6 +727,7 @@ const SearchableSelect = memo(
     placeholder,
     searchPlaceholder,
     label,
+    onFocus,
   }: {
     items: string[]
     value: string
@@ -711,6 +735,7 @@ const SearchableSelect = memo(
     placeholder: string
     searchPlaceholder: string
     label: string
+    onFocus?: (e: React.FocusEvent<HTMLElement>) => void
   }) => {
     const [search, setSearch] = useState("")
     const debouncedSearch = useDebounce(search, 300)
@@ -729,6 +754,7 @@ const SearchableSelect = memo(
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="transition-all duration-200"
+            onFocus={onFocus}
           />
           <Select
             value={value}
@@ -737,7 +763,7 @@ const SearchableSelect = memo(
               setSearch("")
             }}
           >
-            <SelectTrigger className="transition-all duration-200">
+            <SelectTrigger className="transition-all duration-200" onFocus={onFocus}>
               <SelectValue placeholder={placeholder} />
             </SelectTrigger>
             <SelectContent className="max-h-60 overflow-y-auto">
@@ -748,62 +774,6 @@ const SearchableSelect = memo(
               ))}
             </SelectContent>
           </Select>
-        </div>
-      </div>
-    )
-  },
-)
-
-// Memoized Language Selection Component
-const LanguageSelection = memo(
-  ({
-    languages,
-    selectedLanguages,
-    onToggle,
-  }: {
-    languages: string[]
-    selectedLanguages: string[]
-    onToggle: (language: string) => void
-  }) => {
-    const [search, setSearch] = useState("")
-    const debouncedSearch = useDebounce(search, 300)
-
-    const filteredLanguages = useMemo(
-      () => languages.filter((lang) => lang.toLowerCase().includes(debouncedSearch.toLowerCase())),
-      [languages, debouncedSearch],
-    )
-
-    return (
-      <div className="space-y-2">
-        <Label>Languages Spoken (Select all that apply) *</Label>
-        <div className="space-y-2">
-          <Input
-            placeholder="Search languages..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="transition-all duration-200"
-          />
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-60 overflow-y-auto border rounded-md p-3 bg-background">
-            {filteredLanguages.map((language) => (
-              <div
-                key={language}
-                className="flex items-center space-x-2 p-1 rounded hover:bg-muted/50 transition-colors duration-150"
-              >
-                <Checkbox
-                  id={language}
-                  checked={selectedLanguages.includes(language)}
-                  onCheckedChange={() => onToggle(language)}
-                  className="transition-all duration-200"
-                />
-                <Label htmlFor={language} className="text-sm cursor-pointer">
-                  {language}
-                </Label>
-              </div>
-            ))}
-          </div>
-          <p className="text-sm text-gray-500">
-            Selected: {selectedLanguages.length > 0 ? selectedLanguages.join(", ") : "None"}
-          </p>
         </div>
       </div>
     )
@@ -1038,6 +1008,16 @@ export default function RegisterPage() {
       return
     }
 
+    if (!formData.languages[0] || formData.languages.some(l => !l.trim())) {
+      toast({
+        title: "Error",
+        description: "Please enter at least one language (and no blanks).",
+        variant: "destructive",
+      })
+      setIsLoading(false)
+      return
+    }
+
     // Simulate registration process
     await new Promise((resolve) => setTimeout(resolve, 2000))
 
@@ -1096,6 +1076,10 @@ export default function RegisterPage() {
     return DATA_CONSTANTS.countriesAndStates[formData.country as keyof typeof DATA_CONSTANTS.countriesAndStates]
   }, [formData.country])
 
+  const handleFieldFocus = useCallback((e: React.FocusEvent<HTMLElement>) => {
+    scrollIntoViewIfNeeded(e.target as HTMLElement)
+  }, [])
+
   const renderStep = () => {
     switch (currentStep) {
       case 1:
@@ -1121,6 +1105,7 @@ export default function RegisterPage() {
                 onChange={(e) => updateFormData("username", e.target.value)}
                 placeholder="Choose a username"
                 className="transition-all duration-200"
+                onFocus={handleFieldFocus}
               />
             </div>
 
@@ -1143,6 +1128,7 @@ export default function RegisterPage() {
                   onChange={(e) => updateFormData("customGender", e.target.value)}
                   placeholder="Please describe"
                   className="transition-all duration-200 animate-in slide-in-from-top-2"
+                  onFocus={handleFieldFocus}
                 />
               )}
             </div>
@@ -1158,6 +1144,7 @@ export default function RegisterPage() {
                 onChange={(e) => updateFormData("dateOfBirth", e.target.value)}
                 className="transition-all duration-200"
                 pattern="\d{4}-\d{2}-\d{2}"
+                onFocus={handleFieldFocus}
               />
             </div>
 
@@ -1175,6 +1162,7 @@ export default function RegisterPage() {
               placeholder="Select country"
               searchPlaceholder="Search countries..."
               label="Country *"
+              onFocus={handleFieldFocus}
             />
 
             {/* Kenya-specific location fields */}
@@ -1191,6 +1179,7 @@ export default function RegisterPage() {
                   placeholder="Select county"
                   searchPlaceholder="Search counties..."
                   label="County *"
+                  onFocus={handleFieldFocus}
                 />
 
                 {formData.county && filteredConstituencies.length > 0 && (
@@ -1204,6 +1193,7 @@ export default function RegisterPage() {
                     placeholder="Select constituency"
                     searchPlaceholder="Search constituencies..."
                     label="Constituency"
+                    onFocus={handleFieldFocus}
                   />
                 )}
 
@@ -1215,6 +1205,7 @@ export default function RegisterPage() {
                     placeholder="Select ward (optional)"
                     searchPlaceholder="Search wards..."
                     label="Ward (Optional)"
+                    onFocus={handleFieldFocus}
                   />
                 )}
               </div>
@@ -1230,6 +1221,7 @@ export default function RegisterPage() {
                   placeholder="Select state/province"
                   searchPlaceholder="Search states..."
                   label="State/Province"
+                  onFocus={handleFieldFocus}
                 />
               </div>
             )}
@@ -1244,6 +1236,7 @@ export default function RegisterPage() {
                 onChange={(e) => updateFormData("email", e.target.value)}
                 placeholder="Enter your email address"
                 className="transition-all duration-200"
+                onFocus={handleFieldFocus}
               />
             </div>
 
@@ -1257,6 +1250,7 @@ export default function RegisterPage() {
                   onChange={(e) => updateFormData("password", e.target.value)}
                   placeholder="Create a strong password"
                   className="pr-10 transition-all duration-200"
+                  onFocus={handleFieldFocus}
                 />
                 <Button
                   type="button"
@@ -1284,6 +1278,7 @@ export default function RegisterPage() {
                   onChange={(e) => updateFormData("confirmPassword", e.target.value)}
                   placeholder="Confirm your password"
                   className="pr-10 transition-all duration-200"
+                  onFocus={handleFieldFocus}
                 />
                 <Button
                   type="button"
@@ -1301,11 +1296,53 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            <LanguageSelection
-              languages={DATA_CONSTANTS.worldLanguages}
-              selectedLanguages={formData.languages}
-              onToggle={toggleLanguage}
-            />
+            {/* REMOVE the LanguageSelection component usage and insert the new free-form input section for 'Fluent in' here */}
+            <div className="space-y-2">
+              <Label>Fluent in *</Label>
+              {formData.languages.map((lang: string, idx: number) => (
+                <div key={idx} className="flex items-center gap-2 mb-2">
+                  <Input
+                    value={lang}
+                    placeholder={`Language ${idx + 1}`}
+                    onChange={e => {
+                      const newLangs = [...formData.languages]
+                      newLangs[idx] = e.target.value
+                      updateFormData("languages", newLangs)
+                    }}
+                    maxLength={32}
+                    required={idx === 0}
+                    className="flex-1"
+                    onFocus={handleFieldFocus}
+                  />
+                  {formData.languages.length > 1 && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => {
+                        const newLangs = formData.languages.filter((_: string, i: number) => i !== idx)
+                        updateFormData("languages", newLangs)
+                      }}
+                      aria-label="Remove language"
+                    >
+                      &times;
+                    </Button>
+                  )}
+                </div>
+              ))}
+              {formData.languages.length < 3 && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => updateFormData("languages", [...formData.languages, ""])}
+                  className="mt-1"
+                >
+                  Add another language
+                </Button>
+              )}
+              <p className="text-xs text-gray-500">You can add up to 3 languages. At least 1 is required.</p>
+            </div>
 
             {/* Tribe - only for Kenya */}
             {formData.country === "Kenya" && (
@@ -1317,6 +1354,7 @@ export default function RegisterPage() {
                   placeholder="Select your tribe"
                   searchPlaceholder="Search tribes..."
                   label="Tribe *"
+                  onFocus={handleFieldFocus}
                 />
               </div>
             )}
@@ -1349,6 +1387,7 @@ export default function RegisterPage() {
                     onChange={e => updateFormData("glassesDescription", e.target.value)}
                     placeholder="Describe your glasses"
                     className="transition-all duration-200 mt-2"
+                    onFocus={handleFieldFocus}
                   />
                 )}
               </div>
@@ -1385,6 +1424,7 @@ export default function RegisterPage() {
                     onChange={e => updateFormData("disabilityDescription", e.target.value)}
                     placeholder="Describe your disability"
                     className="transition-all duration-200 mt-2"
+                    onFocus={handleFieldFocus}
                   />
                 )}
               </div>
@@ -1407,6 +1447,7 @@ export default function RegisterPage() {
                     onChange={e => updateFormData("chronicIllnessDescription", e.target.value)}
                     placeholder="Describe your chronic illness"
                     className="transition-all duration-200 mt-2"
+                    onFocus={handleFieldFocus}
                   />
                 )}
               </div>
@@ -1418,6 +1459,7 @@ export default function RegisterPage() {
                   onChange={(e) => updateFormData("allergies", e.target.value)}
                   placeholder="List any allergies"
                   className="transition-all duration-200"
+                  onFocus={handleFieldFocus}
                 />
               </div>
 
@@ -1480,6 +1522,7 @@ export default function RegisterPage() {
                 onChange={(e) => updateFormData("occupation", e.target.value)}
                 placeholder="What do you do for work?"
                 className="transition-all duration-200"
+                onFocus={handleFieldFocus}
               />
             </div>
 
@@ -1499,6 +1542,7 @@ export default function RegisterPage() {
                 placeholder="Select work country"
                 searchPlaceholder="Search countries..."
                 label="Work Country"
+                onFocus={handleFieldFocus}
               />
 
               {formData.workCountry === "Kenya" && (
@@ -1514,6 +1558,7 @@ export default function RegisterPage() {
                     placeholder="Select work county"
                     searchPlaceholder="Search counties..."
                     label="Work County"
+                    onFocus={handleFieldFocus}
                   />
 
                   {formData.workCounty &&
@@ -1534,6 +1579,7 @@ export default function RegisterPage() {
                         placeholder="Select work constituency"
                         searchPlaceholder="Search constituencies..."
                         label="Work Constituency"
+                        onFocus={handleFieldFocus}
                       />
                     )}
 
@@ -1552,6 +1598,7 @@ export default function RegisterPage() {
                         placeholder="Select work ward"
                         searchPlaceholder="Search wards..."
                         label="Work Ward"
+                        onFocus={handleFieldFocus}
                       />
                     )}
                 </div>
@@ -1574,6 +1621,7 @@ export default function RegisterPage() {
                       placeholder="Select work state/province"
                       searchPlaceholder="Search states..."
                       label="Work State/Province"
+                      onFocus={handleFieldFocus}
                     />
                   </div>
                 )}
@@ -1647,6 +1695,7 @@ export default function RegisterPage() {
                 onChange={(e) => updateFormData("hobbies", e.target.value)}
                 placeholder="What are your hobbies?"
                 className="transition-all duration-200"
+                onFocus={handleFieldFocus}
               />
             </div>
 
@@ -1657,6 +1706,7 @@ export default function RegisterPage() {
                 onChange={(e) => updateFormData("interests", e.target.value)}
                 placeholder="What interests you?"
                 className="transition-all duration-200"
+                onFocus={handleFieldFocus}
               />
             </div>
 
@@ -1699,6 +1749,7 @@ export default function RegisterPage() {
                 onChange={(e) => updateFormData("denomination", e.target.value)}
                 placeholder="e.g., Catholic, Protestant, etc."
                 className="transition-all duration-200"
+                onFocus={handleFieldFocus}
               />
             </div>
 
@@ -1796,6 +1847,7 @@ export default function RegisterPage() {
                     onChange={(e) => updateFormData("numberOfChildren", e.target.value)}
                     placeholder="How many children do you have?"
                     className="transition-all duration-200"
+                    onFocus={handleFieldFocus}
                   />
                 </div>
 
@@ -1806,6 +1858,7 @@ export default function RegisterPage() {
                     onChange={(e) => updateFormData("childrenAges", e.target.value)}
                     placeholder="e.g., 5, 8, 12"
                     className="transition-all duration-200"
+                    onFocus={handleFieldFocus}
                   />
                 </div>
 
@@ -1867,6 +1920,7 @@ export default function RegisterPage() {
                     onChange={e => updateFormData("acceptsPartnerWithKidsDescription", e.target.value)}
                     placeholder="Describe your preference"
                     className="transition-all duration-200 mt-2"
+                    onFocus={handleFieldFocus}
                   />
                 )}
               </div>
@@ -1896,6 +1950,7 @@ export default function RegisterPage() {
                 onChange={(e) => updateFormData("datingPerspective", e.target.value)}
                 placeholder="What's your perspective on dating?"
                 className="transition-all duration-200"
+                onFocus={handleFieldFocus}
               />
             </div>
 
@@ -1906,6 +1961,7 @@ export default function RegisterPage() {
                 onChange={(e) => updateFormData("dealBreakers", e.target.value)}
                 placeholder="What are your deal breakers?"
                 className="transition-all duration-200"
+                onFocus={handleFieldFocus}
               />
             </div>
 
@@ -1916,6 +1972,7 @@ export default function RegisterPage() {
                 onChange={(e) => updateFormData("relationshipHopes", e.target.value)}
                 placeholder="Describe your relationship goals"
                 className="transition-all duration-200"
+                onFocus={handleFieldFocus}
               />
             </div>
 
@@ -1926,6 +1983,7 @@ export default function RegisterPage() {
                 onChange={(e) => updateFormData("partnerPreferences", e.target.value)}
                 placeholder="Describe what you are looking for in a partner"
                 className="transition-all duration-200"
+                onFocus={handleFieldFocus}
               />
             </div>
           </div>
@@ -1963,6 +2021,7 @@ export default function RegisterPage() {
                 onChange={(e) => updateFormData("dontContactIf", e.target.value)}
                 placeholder="What would make you not want to be contacted?"
                 className="transition-all duration-200"
+                onFocus={handleFieldFocus}
               />
             </div>
 
@@ -1973,6 +2032,7 @@ export default function RegisterPage() {
                 onChange={(e) => updateFormData("imperfections", e.target.value)}
                 placeholder="What are some of your imperfections?"
                 className="transition-all duration-200"
+                onFocus={handleFieldFocus}
               />
             </div>
 
@@ -1983,6 +2043,7 @@ export default function RegisterPage() {
                 onChange={(e) => updateFormData("politicalViews", e.target.value)}
                 placeholder="Describe your political views"
                 className="transition-all duration-200"
+                onFocus={handleFieldFocus}
               />
             </div>
 
@@ -2030,6 +2091,7 @@ export default function RegisterPage() {
                 placeholder="Tell us about yourself in your own words"
                 rows={4}
                 className="transition-all duration-200"
+                onFocus={handleFieldFocus}
               />
             </div>
 
@@ -2068,7 +2130,7 @@ export default function RegisterPage() {
       <div className="max-w-4xl mx-auto">
         <div className="h-screen max-h-screen overflow-y-auto">
           <Card className="w-full shadow-lg">
-            <CardHeader className="sticky top-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-10 border-b">
+            <CardHeader className="fixed top-0 left-0 right-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50 border-b max-w-4xl mx-auto">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-2xl sm:text-3xl font-bold">Create Your Profile</CardTitle>
                 <div className="text-sm text-gray-500">
@@ -2078,10 +2140,10 @@ export default function RegisterPage() {
               <Progress value={progress} className="w-full transition-all duration-300" />
             </CardHeader>
 
-            <CardContent className="p-4 sm:p-6 space-y-6 pb-24">
+            <CardContent className="p-4 sm:p-6 space-y-6 pb-24 pt-32">
               <div className="transition-all duration-300 ease-in-out">{renderStep()}</div>
 
-              <div className="flex justify-between pt-6 sticky bottom-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t mt-8 -mx-4 sm:-mx-6 px-4 sm:px-6 py-4">
+              <div className="flex justify-between pt-6 fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t max-w-4xl mx-auto px-4 sm:px-6 py-4 z-50">
                 <Button
                   variant="outline"
                   onClick={prevStep}

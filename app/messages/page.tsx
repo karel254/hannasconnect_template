@@ -204,14 +204,46 @@ export default function Messages() {
     return userResponses[Math.floor(Math.random() * userResponses.length)]
   }
 
+  // Replace the formatTime function with WhatsApp-style formatting
   const formatTime = (date: Date): string => {
     const now = new Date()
-    const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60))
-    
-    if (diffInMinutes < 1) return "Just now"
-    if (diffInMinutes < 60) return `${diffInMinutes}m ago`
-    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`
-    return date.toLocaleDateString()
+    const isToday = date.toDateString() === now.toDateString()
+    const yesterday = new Date(now)
+    yesterday.setDate(now.getDate() - 1)
+    const isYesterday = date.toDateString() === yesterday.toDateString()
+    if (isToday) {
+      // Show time only
+      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    } else if (isYesterday) {
+      return 'Yesterday'
+    } else {
+      // Show date in user's locale (e.g., 4/21/2024)
+      return date.toLocaleDateString()
+    }
+  }
+
+  // Helper for conversation list: parse relative timestamps to Date
+  const parseTimestamp = (timestamp: string): Date => {
+    const now = new Date()
+    if (timestamp.includes('min')) {
+      const mins = parseInt(timestamp)
+      return new Date(now.getTime() - mins * 60 * 1000)
+    } else if (timestamp.includes('hour')) {
+      const hours = parseInt(timestamp)
+      return new Date(now.getTime() - hours * 60 * 60 * 1000)
+    } else if (timestamp === 'Yesterday') {
+      const yesterday = new Date(now)
+      yesterday.setDate(now.getDate() - 1)
+      return yesterday
+    } else if (timestamp.includes('day')) {
+      const days = parseInt(timestamp)
+      const date = new Date(now)
+      date.setDate(now.getDate() - days)
+      return date
+    } else {
+      // fallback: now
+      return now
+    }
   }
 
   const filteredConversations = conversations.filter((conv) =>
@@ -316,7 +348,7 @@ export default function Messages() {
                     <div className="flex items-center justify-between mb-1">
                       <h3 className="font-medium text-gray-900 dark:text-gray-100 truncate">{conversation.name}</h3>
                       <div className="flex items-center space-x-2 flex-shrink-0 ml-2">
-                        <span className="text-xs text-gray-500 dark:text-gray-400">{conversation.timestamp}</span>
+                        <span className="text-xs text-gray-500 dark:text-gray-400">{formatTime(parseTimestamp(conversation.timestamp))}</span>
                         {conversation.unread > 0 && conversation.isConnected && (
                           <Badge className="bg-[#B22222] text-white text-xs min-w-[20px] h-5 flex items-center justify-center rounded-full px-1">
                             {conversation.unread}

@@ -9,18 +9,63 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
+// Add these helper functions for badge counts
+// Sample conversations data (copied from messages/page.tsx for badge count)
+const sampleConversations = [
+  { id: "amara", unread: 2, isConnected: true },
+  { id: "kemi", unread: 0, isConnected: true },
+  { id: "david", unread: 1, isConnected: true },
+  { id: "funmi", unread: 0, isConnected: false },
+  { id: "tunde", unread: 0, isConnected: true },
+]
+const totalUnreadMessages = sampleConversations.reduce((sum, c) => c.isConnected ? sum + (c.unread || 0) : sum, 0)
+
+// Sample requests data (copied from requests/page.tsx for badge count)
+const sampleRequests = [
+  { status: "pending" },
+  { status: "pending" },
+  { status: "accepted" },
+  { status: "rejected" },
+]
+const totalPendingRequests = sampleRequests.filter(r => r.status === "pending").length
+
 export default function Dashboard() {
   const router = useRouter()
   const [user, setUser] = useState<any>(null)
 
+  // --- Dynamic badge counts ---
+  // Messages: import the same sample conversations structure as in messages/page.tsx
+  const [unreadMessages, setUnreadMessages] = useState(0)
+  // Requests: import the same sample requests structure as in requests/page.tsx
+  const [pendingRequests, setPendingRequests] = useState(0)
+
   useEffect(() => {
-    // Check if user is logged in
+    // Restore user authentication check
     const userData = localStorage.getItem("demoUser")
     if (!userData) {
       router.push("/login")
       return
     }
     setUser(JSON.parse(userData))
+
+    // Sample conversations data (should match messages/page.tsx)
+    const conversations = [
+      { id: "amara", name: "Amara", unread: 2, isConnected: true },
+      { id: "kemi", name: "Kemi", unread: 0, isConnected: true },
+      { id: "david", name: "David", unread: 1, isConnected: true },
+      { id: "funmi", name: "Funmi", unread: 0, isConnected: false },
+      { id: "tunde", name: "Tunde", unread: 0, isConnected: true },
+    ]
+    setUnreadMessages(conversations.reduce((sum, c) => c.isConnected ? sum + (c.unread || 0) : sum, 0))
+
+    // Sample requests data (should match requests/page.tsx)
+    const requests = [
+      { status: "pending" },
+      { status: "pending" },
+      { status: "accepted" },
+      { status: "rejected" },
+    ]
+    setPendingRequests(requests.filter(r => r.status === "pending").length)
   }, [router])
 
   // Sample data for dashboard
@@ -361,19 +406,32 @@ export default function Dashboard() {
 
           <Link href="/requests">
             <Card className="cursor-pointer hover:shadow-md transition-shadow dark:bg-gray-800 dark:border-gray-700">
-              <CardContent className="p-6 text-center">
+              <CardContent className="p-6 text-center relative">
+                <span className="inline-block relative">
                 <Heart className="h-12 w-12 text-[#B22222] dark:text-red-400 mx-auto mb-4" />
+                  {pendingRequests > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-[#B22222] text-white text-xs min-w-[20px] h-5 flex items-center justify-center rounded-full px-1 border-2 border-white dark:border-gray-800">
+                      {pendingRequests}
+                    </span>
+                  )}
+                </span>
                 <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Requests</h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400">Manage connection requests</p>
-                <Badge className="mt-2 bg-[#B22222] text-white">3 new</Badge>
               </CardContent>
             </Card>
           </Link>
 
           <Link href="/messages">
             <Card className="cursor-pointer hover:shadow-md transition-shadow dark:bg-gray-800 dark:border-gray-700">
-              <CardContent className="p-6 text-center">
+              <CardContent className="p-6 text-center relative">
+                <span className="inline-block relative">
                 <MessageCircle className="h-12 w-12 text-[#B22222] dark:text-red-400 mx-auto mb-4" />
+                  {unreadMessages > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-[#B22222] text-white text-xs min-w-[20px] h-5 flex items-center justify-center rounded-full px-1 border-2 border-white dark:border-gray-800">
+                      {unreadMessages}
+                    </span>
+                  )}
+                </span>
                 <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Messages</h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400">Continue your conversations</p>
               </CardContent>
@@ -386,6 +444,17 @@ export default function Dashboard() {
                 <User className="h-12 w-12 text-[#B22222] dark:text-red-400 mx-auto mb-4" />
                 <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Edit Profile</h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400">Update your information</p>
+              </CardContent>
+            </Card>
+          </Link>
+
+          {/* More about this App */}
+          <Link href="/more-about">
+            <Card className="cursor-pointer hover:shadow-md transition-shadow dark:bg-gray-800 dark:border-gray-700">
+              <CardContent className="p-6 text-center">
+                <BookOpen className="h-12 w-12 text-[#B22222] dark:text-red-400 mx-auto mb-4" />
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">More about this App</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Learn about us, FAQ, policies, and more</p>
               </CardContent>
             </Card>
           </Link>
