@@ -1,41 +1,9 @@
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/6.5.4/workbox-sw.js');
 
-// Force immediate activation and purge old caches
-self.addEventListener('install', event => {
-  self.skipWaiting();
-});
-self.addEventListener('activate', event => {
-  event.waitUntil(
-    (async () => {
-      const cacheNames = await caches.keys();
-      await Promise.all(
-        cacheNames
-          .filter(name => !['pages-v2', 'images-v2', 'fonts-v2', 'static-resources-v2'].includes(name))
-          .map(name => caches.delete(name))
-      );
-      await self.clients.claim();
-    })()
-  );
-});
-
 if (workbox) {
-  // Precache the offline fallback page and important app pages
+  // Precache the offline fallback page
   workbox.precaching.precacheAndRoute([
     { url: '/offline.html', revision: null },
-    { url: '/', revision: null },
-    { url: '/dashboard', revision: null },
-    { url: '/login', revision: null },
-    { url: '/register', revision: null },
-    { url: '/about', revision: null },
-    { url: '/faq', revision: null },
-    { url: '/contact', revision: null },
-    { url: '/requests', revision: null },
-    { url: '/messages', revision: null },
-    { url: '/profile', revision: null },
-    { url: '/more-about', revision: null },
-    { url: '/terms', revision: null },
-    { url: '/privacy', revision: null },
-    { url: '/disclaimer', revision: null },
   ]);
 
   // Custom networkFirst for navigations that NEVER caches offline.html
@@ -46,13 +14,13 @@ if (workbox) {
         const response = await fetch(event.request);
         // If we get a valid response, clone and cache it
         if (response && response.ok && response.type === 'basic') {
-          const cache = await caches.open('pages-v2');
+          const cache = await caches.open('pages');
           cache.put(event.request, response.clone());
         }
         return response;
       } catch (error) {
         // If network fails, try cache, else offline.html
-        const cache = await caches.open('pages-v2');
+        const cache = await caches.open('pages');
         const cached = await cache.match(event.request);
         if (cached) return cached;
         return caches.match('/offline.html');
@@ -64,7 +32,7 @@ if (workbox) {
   workbox.routing.registerRoute(
     ({ request }) => request.destination === 'image',
     new workbox.strategies.CacheFirst({
-      cacheName: 'images-v2',
+      cacheName: 'images',
       plugins: [
         new workbox.expiration.ExpirationPlugin({ maxEntries: 100 }),
       ],
@@ -75,7 +43,7 @@ if (workbox) {
   workbox.routing.registerRoute(
     ({ request }) => request.destination === 'font',
     new workbox.strategies.CacheFirst({
-      cacheName: 'fonts-v2',
+      cacheName: 'fonts',
       plugins: [
         new workbox.expiration.ExpirationPlugin({ maxEntries: 20 }),
       ],
@@ -87,17 +55,9 @@ if (workbox) {
     ({ request }) =>
       request.destination === 'style' || request.destination === 'script',
     new workbox.strategies.StaleWhileRevalidate({
-      cacheName: 'static-resources-v2',
+      cacheName: 'static-resources',
     })
   );
-
-  // Catch-all fallback for navigations
-  workbox.routing.setCatchHandler(async ({ event }) => {
-    if (event.request.destination === 'document') {
-      return caches.match('/offline.html');
-    }
-    return Response.error();
-  });
 
 } else {
   console.log('Workbox could not be loaded. No offline support.');
