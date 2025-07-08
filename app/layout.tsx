@@ -5,6 +5,7 @@ import "./globals.css"
 import { Toaster } from "@/components/ui/toaster"
 import ClientLayout from "./ClientLayout"
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister"
+import OfflineWrapper from "@/components/OfflineWrapper"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -23,7 +24,9 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <ServiceWorkerRegister />
-        <ClientLayout>{children}</ClientLayout>
+        <OfflineWrapper>
+          <ClientLayout>{children}</ClientLayout>
+        </OfflineWrapper>
         <Toaster />
       </body>
     </html>
