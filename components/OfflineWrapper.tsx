@@ -7,9 +7,10 @@ interface OfflineWrapperProps {
 }
 
 const OfflineWrapper: React.FC<OfflineWrapperProps> = ({ children }) => {
-  const [isOnline, setIsOnline] = useState<boolean>(typeof navigator !== 'undefined' ? navigator.onLine : true);
+  const [isOnline, setIsOnline] = useState<boolean | null>(null);
 
   useEffect(() => {
+    setIsOnline(navigator.onLine);
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
     window.addEventListener('online', handleOnline);
@@ -19,6 +20,11 @@ const OfflineWrapper: React.FC<OfflineWrapperProps> = ({ children }) => {
       window.removeEventListener('offline', handleOffline);
     };
   }, []);
+
+  if (isOnline === null) {
+    // Optionally, show a loading spinner here
+    return null;
+  }
 
   if (!isOnline) {
     return (
