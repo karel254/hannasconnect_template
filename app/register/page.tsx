@@ -856,6 +856,10 @@ interface FormData {
   openToRelocate: string // NEW
   sexualOrientation: string // NEW
   relationshipTradition: string // NEW
+  selfDescriptionPhysical?: string
+  bodyType: string
+  heightFt?: string
+  heightIn?: string
 }
 
 export default function RegisterPage() {
@@ -952,6 +956,10 @@ export default function RegisterPage() {
     openToRelocate: "", // NEW
     sexualOrientation: "", // NEW
     relationshipTradition: "", // NEW
+    selfDescriptionPhysical: "",
+    bodyType: "",
+    heightFt: "",
+    heightIn: "",
   })
 
   const totalSteps = 7
@@ -1251,6 +1259,67 @@ export default function RegisterPage() {
               </div>
             )}
 
+            {/* Language */}
+            <div className="space-y-2">
+              <Label>What languages are you fluent in? *</Label>
+              {formData.languages.map((lang: string, idx: number) => (
+                <div key={idx} className="flex items-center gap-2 mb-2">
+                  <Input
+                    value={lang}
+                    placeholder={`Language ${idx + 1}`}
+                    onChange={e => {
+                      const newLangs = [...formData.languages]
+                      newLangs[idx] = e.target.value
+                      updateFormData("languages", newLangs)
+                    }}
+                    maxLength={32}
+                    required={idx === 0}
+                    className="flex-1"
+                    onFocus={handleFieldFocus}
+                  />
+                  {formData.languages.length > 1 && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => {
+                        const newLangs = formData.languages.filter((_: string, i: number) => i !== idx)
+                        updateFormData("languages", newLangs)
+                      }}
+                      aria-label="Remove language"
+                    >
+                      &times;
+                    </Button>
+                  )}
+                </div>
+              ))}
+              {formData.languages.length < 3 && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => updateFormData("languages", [...formData.languages, ""])}
+                  className="mt-1"
+                >
+                  {formData.languages.length === 0 ? "Add a language" : "Add another language"}
+                </Button>
+              )}
+              <p className="text-xs text-gray-500">You can add up to 3 languages. At least 1 is required.</p>
+            </div>
+
+            {/* Tribe - only for Kenya */}
+            {formData.country === "Kenya" && (
+              <div className="animate-in slide-in-from-top-4">
+                <Input
+                  value={formData.tribe}
+                  onChange={(e) => updateFormData("tribe", e.target.value)}
+                  placeholder="Enter your tribe"
+                  className="transition-all duration-200"
+                  onFocus={handleFieldFocus}
+                />
+              </div>
+            )}
+
             {/* Email and Password */}
             <div className="space-y-2">
               <Label htmlFor="email">Email Address *</Label>
@@ -1321,69 +1390,6 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            {/* REMOVE the LanguageSelection component usage and insert the new free-form input section for 'Fluent in' here */}
-            <div className="space-y-2">
-              <Label>What languages are you fluent in? *</Label>
-              {formData.languages.map((lang: string, idx: number) => (
-                <div key={idx} className="flex items-center gap-2 mb-2">
-                  <Input
-                    value={lang}
-                    placeholder={`Language ${idx + 1}`}
-                    onChange={e => {
-                      const newLangs = [...formData.languages]
-                      newLangs[idx] = e.target.value
-                      updateFormData("languages", newLangs)
-                    }}
-                    maxLength={32}
-                    required={idx === 0}
-                    className="flex-1"
-                    onFocus={handleFieldFocus}
-                  />
-                  {formData.languages.length > 1 && (
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => {
-                        const newLangs = formData.languages.filter((_: string, i: number) => i !== idx)
-                        updateFormData("languages", newLangs)
-                      }}
-                      aria-label="Remove language"
-                    >
-                      &times;
-                    </Button>
-                  )}
-                </div>
-              ))}
-              {formData.languages.length < 3 && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => updateFormData("languages", [...formData.languages, ""])}
-                  className="mt-1"
-                >
-                  {formData.languages.length === 0 ? "Add a language" : "Add another language"}
-                </Button>
-              )}
-              <p className="text-xs text-gray-500">You can add up to 3 languages. At least 1 is required.</p>
-            </div>
-
-            {/* Tribe - only for Kenya */}
-            {formData.country === "Kenya" && (
-              <div className="animate-in slide-in-from-top-4">
-                <SearchableSelect
-                  items={DATA_CONSTANTS.kenyanTribes}
-                  value={formData.tribe}
-                  onValueChange={(value) => updateFormData("tribe", value)}
-                  placeholder="Select your tribe"
-                  searchPlaceholder="Search tribes..."
-                  label="Tribe *"
-                  onFocus={handleFieldFocus}
-                />
-              </div>
-            )}
-
             {/* Payment, Terms, and Email Verification */}
             <div className="space-y-2">
               {/* Terms and Conditions */}
@@ -1410,6 +1416,160 @@ export default function RegisterPage() {
         )
 
       case 2:
+        return (
+          <div className="space-y-6">
+            <div className="text-center">
+              <h2 className="text-2xl font-bold mb-2">Physical Appearance</h2>
+              <p className="text-gray-600 dark:text-gray-400">Tell us about your physical features</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Height */}
+              <div className="space-y-2">
+                <Label>Height</Label>
+                <div className="flex gap-2">
+                  {formData.heightUnit === "ft" ? (
+                    <>
+                      <Input type="number" value={formData.heightFt} onChange={e => updateFormData('heightFt', e.target.value)} placeholder="ft" className="flex-1" min={0} />
+                      <Input type="number" value={formData.heightIn} onChange={e => updateFormData('heightIn', e.target.value)} placeholder="in" className="flex-1" min={0} max={11} />
+                    </>
+                  ) : (
+                    <Input type="number" value={formData.height} onChange={e => updateFormData('height', e.target.value)} placeholder="Height" className="flex-1" min={0} />
+                  )}
+                  <Select value={formData.heightUnit} onValueChange={v => updateFormData('heightUnit', v)}>
+                    <SelectTrigger className="w-24">
+                      <SelectValue placeholder="Unit" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="cm">cm</SelectItem>
+                      <SelectItem value="ft">ft</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              {/* Weight */}
+              <div className="space-y-2">
+                <Label>Weight</Label>
+                <div className="flex gap-2">
+                  <Input type="number" value={formData.weight} onChange={e => updateFormData('weight', e.target.value)} placeholder="Weight" className="flex-1" />
+                  <Select value={formData.weightUnit} onValueChange={v => updateFormData('weightUnit', v)}>
+                    <SelectTrigger className="w-24">
+                      <SelectValue placeholder="Unit" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="kg">kg</SelectItem>
+                      <SelectItem value="lb">lb</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              {/* Complexion */}
+              <div className="space-y-2">
+                <Label>Complexion</Label>
+                <Input value={formData.complexion} onChange={e => updateFormData('complexion', e.target.value)} placeholder="e.g. Fair, Dark, Light brown" />
+              </div>
+              {/* Eye Color */}
+              <div className="space-y-2">
+                <Label>Eye Color</Label>
+                <Select value={formData.eyeColor} onValueChange={v => updateFormData('eyeColor', v)}>
+                  <SelectTrigger className="w-24">
+                    <SelectValue placeholder="Select" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="brown">Brown</SelectItem>
+                    <SelectItem value="black">Black</SelectItem>
+                    <SelectItem value="blue">Blue</SelectItem>
+                    <SelectItem value="green">Green</SelectItem>
+                    <SelectItem value="hazel">Hazel</SelectItem>
+                    <SelectItem value="grey">Grey</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              {/* Body Type */}
+              <div className="space-y-2">
+                <Label>Body Type</Label>
+                <Select value={formData.bodyType} onValueChange={v => updateFormData('bodyType', v)}>
+                  <SelectTrigger className="w-24">
+                    <SelectValue placeholder="Select" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="slim">Slim</SelectItem>
+                    <SelectItem value="average">Average</SelectItem>
+                    <SelectItem value="athletic">Athletic</SelectItem>
+                    <SelectItem value="curvy">Curvy</SelectItem>
+                    <SelectItem value="plus-size">Plus-size</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              {/* Tattoos */}
+              <div className="space-y-2">
+                <Label>Do you have tattoos?</Label>
+                <Select value={formData.tattoos} onValueChange={v => updateFormData('tattoos', v)}>
+                  <SelectTrigger className="w-24">
+                    <SelectValue placeholder="Select" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="yes">Yes</SelectItem>
+                    <SelectItem value="no">No</SelectItem>
+                  </SelectContent>
+                </Select>
+                {formData.tattoos === 'yes' && (
+                  <Input value={formData.tattoosDescription} onChange={e => updateFormData('tattoosDescription', e.target.value)} placeholder="Describe your tattoos" />
+                )}
+              </div>
+              {/* Piercings */}
+              <div className="space-y-2">
+                <Label>Do you have piercings?</Label>
+                <Select value={formData.piercings} onValueChange={v => updateFormData('piercings', v)}>
+                  <SelectTrigger className="w-24">
+                    <SelectValue placeholder="Select" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="yes">Yes</SelectItem>
+                    <SelectItem value="no">No</SelectItem>
+                  </SelectContent>
+                </Select>
+                {formData.piercings === 'yes' && (
+                  <Input value={formData.piercingsDescription} onChange={e => updateFormData('piercingsDescription', e.target.value)} placeholder="Describe your piercings" />
+                )}
+              </div>
+              {/* Dimples */}
+              <div className="space-y-2">
+                <Label>Do you have dimples?</Label>
+                <Select value={formData.dimples} onValueChange={v => updateFormData('dimples', v)}>
+                  <SelectTrigger className="w-24">
+                    <SelectValue placeholder="Select" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="yes">Yes</SelectItem>
+                    <SelectItem value="no">No</SelectItem>
+                  </SelectContent>
+                </Select>
+                {formData.dimples === 'yes' && (
+                  <Input value={formData.dimplesDescription} onChange={e => updateFormData('dimplesDescription', e.target.value)} placeholder="Describe your dimples" />
+                )}
+              </div>
+              {/* State of Teeth */}
+              <div className="space-y-2">
+                <Label>State of Teeth</Label>
+                <Input
+                  value={formData.teethFeatures}
+                  onChange={(e) => updateFormData("teethFeatures", e.target.value)}
+                  placeholder="e.g. Gapped, white and well aligned, slightly yellow, missing front tooth, etc."
+                  className="transition-all duration-200"
+                  onFocus={handleFieldFocus}
+                />
+              </div>
+            </div>
+            {/* Describe how you look like */}
+            <div className="space-y-2">
+              <Label>Describe how you look like</Label>
+              <Textarea value={formData.selfDescriptionPhysical || ''} onChange={e => updateFormData('selfDescriptionPhysical', e.target.value)} placeholder="Describe your physical appearance in your own words" />
+            </div>
+          </div>
+        );
+      case 3:
         return (
           <div className="space-y-6">
             <div className="text-center">
@@ -1547,7 +1707,7 @@ export default function RegisterPage() {
           </div>
         )
 
-      case 3:
+      case 4:
         return (
           <div className="space-y-6">
             <div className="text-center">
@@ -1711,7 +1871,7 @@ export default function RegisterPage() {
           </div>
         )
 
-      case 4:
+      case 5:
         return (
           <div className="space-y-6">
             <div className="text-center">
@@ -1892,7 +2052,7 @@ export default function RegisterPage() {
           </div>
         )
 
-      case 5:
+      case 6:
         return (
           <div className="space-y-6">
             <div className="text-center">
@@ -2107,7 +2267,7 @@ export default function RegisterPage() {
           </div>
         )
 
-      case 6:
+      case 7:
         return (
           <div className="space-y-6">
             <div className="text-center">
@@ -2225,17 +2385,13 @@ export default function RegisterPage() {
       <div className="max-w-4xl mx-auto">
         <div className="h-screen max-h-screen overflow-y-auto">
           <Card className="w-full shadow-lg">
-            <CardHeader className="fixed top-0 left-0 right-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50 border-b max-w-4xl mx-auto">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-2xl sm:text-3xl font-bold">Create Your Profile</CardTitle>
-                <div className="text-sm text-gray-500">
-                  Step {currentStep} of {totalSteps}
-                </div>
-              </div>
-              <Progress value={progress} className="w-full transition-all duration-300" />
-            </CardHeader>
-
             <CardContent className="p-4 sm:p-6 space-y-6 pb-24 pt-32">
+              {currentStep > 1 && (
+                <CardHeader>
+                  <CardTitle>{`Step ${currentStep - 1} of ${totalSteps - 1}`}</CardTitle>
+                  <Progress value={progress} />
+                </CardHeader>
+              )}
               <div className="transition-all duration-300 ease-in-out">{renderStep()}</div>
 
               <div className="flex justify-between pt-6 fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t max-w-4xl mx-auto px-4 sm:px-6 py-4 z-50">

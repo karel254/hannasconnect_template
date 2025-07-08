@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge"
 import { Filter, Heart, ChevronLeft, ChevronRight, Loader2, MessageCircle } from "lucide-react"
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { Input } from "@/components/ui/input"
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogClose, DialogFooter } from "@/components/ui/dialog"
 
 // Extended sample user data for pagination
 const generateUsers = () => {
@@ -18,54 +19,358 @@ const generateUsers = () => {
     {
       id: 1,
       name: "Alex Johnson",
+      username: "alexj",
       age: 32,
+      gender: "Male",
+      customGender: "",
+      dateOfBirth: "1992-01-01",
+      race: "African",
+      country: "Kenya",
+      county: "Nairobi",
+      tribe: "Kikuyu",
+      languages: ["English", "Swahili"],
+      weight: "75",
+      weightUnit: "kg",
+      height: "180",
+      heightUnit: "cm",
+      heightFt: "5",
+      heightIn: "11",
+      bodyType: "Athletic",
+      complexion: "Dark",
+      eyeColor: "Brown",
+      dimples: "Yes",
+      dimplesDescription: "Deep dimples on both cheeks",
+      teethFeatures: "White, straight",
+      tattoos: "No",
+      tattoosDescription: "",
+      piercings: "No",
+      piercingsDescription: "",
+      glasses: "Yes",
+      glassesDescription: "Wears glasses for reading",
+      hivStatus: "Negative",
+      disability: "No",
+      disabilityDescription: "",
+      chronicIllness: "No",
+      chronicIllnessDescription: "",
+      allergies: "None",
+      bloodType: "O+",
+      employmentStatus: "Employed",
       occupation: "Software Engineer",
-      education: "Master's Degree",
-      tribe: "Yoruba",
-      relationshipGoals: "Marriage",
-      bio: "Passionate about technology and building meaningful relationships. Looking for someone who shares my values.",
+      workCountry: "Kenya",
+      workCounty: "Nairobi",
+      workConstituency: "Westlands",
+      workWard: "Parklands",
+      workState: "Nairobi",
+      financialStability: "Stable",
+      alcohol: "Occasionally",
+      smoking: "No",
+      hobbies: "Reading, Hiking",
+      interests: "Technology, AI, Cooking",
+      religion: "Christianity",
+      religiousness: 7,
+      denomination: "Protestant",
+      churchAttendance: "Weekly",
+      exerciseFrequency: "3 times/week",
+      maritalStatus: "Single",
+      hasChildren: "No",
+      numberOfChildren: "0",
+      childrenAges: "",
+      childrenLiveWithUser: "No",
+      wantsChildren: "Yes",
+      acceptsPartnerWithKids: "Yes",
+      acceptsPartnerWithKidsDescription: "Open to it",
+      longDistanceOk: "Yes",
+      datingPerspective: "Serious",
+      dealBreakers: "Smoking",
+      relationshipHopes: "Marriage",
+      partnerPreferences: "Kind, Ambitious",
+      personalityType: "INTJ",
+      dontContactIf: "Not serious",
+      imperfections: "Sometimes stubborn",
+      politicalViews: "Moderate",
+      dateDifferentPolitics: "Yes",
+      believesInMarriage: "Yes",
+      selfDescription: "Passionate about technology and building meaningful relationships. Looking for someone who shares my values.",
+      snoring: "No",
+      dietaryPreference: "Vegetarian",
+      hasPets: "No",
+      petsDescription: "",
+      openToRelocate: "Yes",
+      sexualOrientation: "Heterosexual",
+      relationshipTradition: "Modern",
+      selfDescriptionPhysical: "Tall, athletic build, short hair.",
       icon: "/images/male1.jpg",
-      interests: ["Technology", "Reading", "Hiking", "Cooking"],
+      relationshipGoals: "Marriage",
       skills: "Full-stack development, AI/ML",
+      interestsArr: ["Technology", "Reading", "Hiking", "Cooking"],
+      bio: "Passionate about technology and building meaningful relationships. Looking for someone who shares my values.",
     },
     {
       id: 2,
       name: "Amina Okafor",
+      username: "aminao",
       age: 28,
-      occupation: "Financial Analyst",
-      education: "Bachelor's Degree",
-      tribe: "Igbo",
-      relationshipGoals: "Long-term relationship",
-      bio: "Ambitious professional seeking a partner who values growth, family, and spiritual connection.",
+      gender: "Female",
+      customGender: "",
+      dateOfBirth: "1996-05-15",
+      race: "African",
+      country: "Nigeria",
+      county: "Lagos",
+      tribe: "Yoruba",
+      languages: ["English", "Igbo"],
+      weight: "60",
+      weightUnit: "kg",
+      height: "165",
+      heightUnit: "cm",
+      heightFt: "5",
+      heightIn: "5",
+      bodyType: "Slim",
+      complexion: "Fair",
+      eyeColor: "Brown",
+      dimples: "No",
+      dimplesDescription: "",
+      teethFeatures: "White, slightly crooked",
+      tattoos: "Yes",
+      tattoosDescription: "Small heart on the left shoulder",
+      piercings: "Yes",
+      piercingsDescription: "One ear lobe",
+      glasses: "No",
+      glassesDescription: "",
+      hivStatus: "Negative",
+      disability: "No",
+      disabilityDescription: "",
+      chronicIllness: "No",
+      chronicIllnessDescription: "",
+      allergies: "Pollen, dust",
+      bloodType: "O-",
+      employmentStatus: "Freelance",
+      occupation: "Content Creator",
+      workCountry: "Nigeria",
+      workCounty: "Lagos",
+      workConstituency: "Ikeja",
+      workWard: "Lekki",
+      workState: "Lagos",
+      financialStability: "Stable",
+      alcohol: "No",
+      smoking: "No",
+      hobbies: "Reading, Writing, Traveling",
+      interests: "Writing, Travel, Photography",
+      religion: "Christianity",
+      religiousness: 8,
+      denomination: "Catholic",
+      churchAttendance: "Weekly",
+      exerciseFrequency: "4 times/week",
+      maritalStatus: "Single",
+      hasChildren: "No",
+      numberOfChildren: "0",
+      childrenAges: "",
+      childrenLiveWithUser: "No",
+      wantsChildren: "Yes",
+      acceptsPartnerWithKids: "Yes",
+      acceptsPartnerWithKidsDescription: "Open to it",
+      longDistanceOk: "Yes",
+      datingPerspective: "Serious",
+      dealBreakers: "Smoking, Alcohol",
+      relationshipHopes: "Marriage",
+      partnerPreferences: "Kind, Intelligent, Adventurous",
+      personalityType: "ENFP",
+      dontContactIf: "Not serious, No chemistry",
+      imperfections: "Sometimes forgetful",
+      politicalViews: "Liberal",
+      dateDifferentPolitics: "Yes",
+      believesInMarriage: "Yes",
+      selfDescription: "Ambitious professional seeking a partner who values growth, family, and spiritual connection.",
+      snoring: "No",
+      dietaryPreference: "Vegetarian",
+      hasPets: "Yes",
+      petsDescription: "Cat named Whiskers",
+      openToRelocate: "No",
+      sexualOrientation: "Heterosexual",
+      relationshipTradition: "Traditional",
+      selfDescriptionPhysical: "Slim, fair complexion, brown eyes.",
       icon: "/images/female1.jpg",
-      interests: ["Finance", "Fitness", "Travel", "Faith"],
+      relationshipGoals: "Long-term relationship",
       skills: "Investment analysis, Risk management",
+      interestsArr: ["Finance", "Fitness", "Travel", "Faith"],
+      bio: "Ambitious professional seeking a partner who values growth, family, and spiritual connection.",
     },
     {
       id: 3,
       name: "David Mensah",
+      username: "davidm",
       age: 35,
-      occupation: "Doctor",
-      education: "Doctorate",
+      gender: "Male",
+      customGender: "",
+      dateOfBirth: "1989-11-20",
+      race: "African",
+      country: "Ghana",
+      county: "Accra",
       tribe: "Ashanti",
-      relationshipGoals: "Marriage",
-      bio: "Healthcare professional with passion for helping others. Looking for a supportive partner.",
+      languages: ["English", "Twi"],
+      weight: "85",
+      weightUnit: "kg",
+      height: "175",
+      heightUnit: "cm",
+      heightFt: "5",
+      heightIn: "9",
+      bodyType: "Athletic",
+      complexion: "Light",
+      eyeColor: "Blue",
+      dimples: "No",
+      dimplesDescription: "",
+      teethFeatures: "White, slightly crooked",
+      tattoos: "No",
+      tattoosDescription: "",
+      piercings: "No",
+      piercingsDescription: "",
+      glasses: "Yes",
+      glassesDescription: "Wears glasses for reading",
+      hivStatus: "Negative",
+      disability: "No",
+      disabilityDescription: "",
+      chronicIllness: "No",
+      chronicIllnessDescription: "",
+      allergies: "None",
+      bloodType: "A+",
+      employmentStatus: "Employed",
+      occupation: "Doctor",
+      workCountry: "Ghana",
+      workCounty: "Accra",
+      workConstituency: "Central",
+      workWard: "Osu",
+      workState: "Accra",
+      financialStability: "Stable",
+      alcohol: "No",
+      smoking: "No",
+      hobbies: "Music, Community Service, Sports",
+      interests: "Healthcare, Music, Community Service",
+      religion: "Christianity",
+      religiousness: 6,
+      denomination: "Protestant",
+      churchAttendance: "Weekly",
+      exerciseFrequency: "5 times/week",
+      maritalStatus: "Single",
+      hasChildren: "No",
+      numberOfChildren: "0",
+      childrenAges: "",
+      childrenLiveWithUser: "No",
+      wantsChildren: "Yes",
+      acceptsPartnerWithKids: "Yes",
+      acceptsPartnerWithKidsDescription: "Open to it",
+      longDistanceOk: "Yes",
+      datingPerspective: "Serious",
+      dealBreakers: "Alcohol, Smoking",
+      relationshipHopes: "Marriage",
+      partnerPreferences: "Kind, Intelligent, Adventurous",
+      personalityType: "INTJ",
+      dontContactIf: "Not serious, No chemistry",
+      imperfections: "Sometimes stubborn",
+      politicalViews: "Moderate",
+      dateDifferentPolitics: "Yes",
+      believesInMarriage: "Yes",
+      selfDescription: "Healthcare professional with passion for helping others. Looking for a supportive partner.",
+      snoring: "No",
+      dietaryPreference: "Vegetarian",
+      hasPets: "No",
+      petsDescription: "",
+      openToRelocate: "Yes",
+      sexualOrientation: "Heterosexual",
+      relationshipTradition: "Traditional",
+      selfDescriptionPhysical: "Athletic build, short hair, blue eyes.",
       icon: "/images/male2.jpg",
-      interests: ["Healthcare", "Music", "Community Service", "Sports"],
+      relationshipGoals: "Marriage",
       skills: "Emergency medicine, Patient care",
+      interestsArr: ["Healthcare", "Music", "Community Service", "Sports"],
+      bio: "Healthcare professional with passion for helping others. Looking for a supportive partner.",
     },
     {
       id: 4,
       name: "Sarah Osei",
+      username: "sarahosei",
       age: 30,
-      occupation: "Corporate Lawyer",
-      education: "Juris Doctor",
+      gender: "Female",
+      customGender: "",
+      dateOfBirth: "1994-07-10",
+      race: "African",
+      country: "Nigeria",
+      county: "Lagos",
       tribe: "Akan",
-      relationshipGoals: "Long-term relationship",
-      bio: "Driven professional seeking someone who values intellectual conversations and shared goals.",
+      languages: ["English", "Ewe"],
+      weight: "65",
+      weightUnit: "kg",
+      height: "160",
+      heightUnit: "cm",
+      heightFt: "5",
+      heightIn: "3",
+      bodyType: "Slim",
+      complexion: "Fair",
+      eyeColor: "Brown",
+      dimples: "No",
+      dimplesDescription: "",
+      teethFeatures: "White, straight",
+      tattoos: "No",
+      tattoosDescription: "",
+      piercings: "No",
+      piercingsDescription: "",
+      glasses: "No",
+      glassesDescription: "",
+      hivStatus: "Negative",
+      disability: "No",
+      disabilityDescription: "",
+      chronicIllness: "No",
+      chronicIllnessDescription: "",
+      allergies: "None",
+      bloodType: "B+",
+      employmentStatus: "Employed",
+      occupation: "Corporate Lawyer",
+      workCountry: "Nigeria",
+      workCounty: "Lagos",
+      workConstituency: "Ikeja",
+      workWard: "Lekki",
+      workState: "Lagos",
+      financialStability: "Stable",
+      alcohol: "No",
+      smoking: "No",
+      hobbies: "Art, Politics, Culinary Arts",
+      interests: "Law, Art, Politics",
+      religion: "Christianity",
+      religiousness: 9,
+      denomination: "Catholic",
+      churchAttendance: "Weekly",
+      exerciseFrequency: "3 times/week",
+      maritalStatus: "Single",
+      hasChildren: "No",
+      numberOfChildren: "0",
+      childrenAges: "",
+      childrenLiveWithUser: "No",
+      wantsChildren: "Yes",
+      acceptsPartnerWithKids: "Yes",
+      acceptsPartnerWithKidsDescription: "Open to it",
+      longDistanceOk: "Yes",
+      datingPerspective: "Serious",
+      dealBreakers: "Alcohol, Smoking",
+      relationshipHopes: "Long-term relationship",
+      partnerPreferences: "Kind, Intelligent, Adventurous",
+      personalityType: "ENFP",
+      dontContactIf: "Not serious, No chemistry",
+      imperfections: "Sometimes forgetful",
+      politicalViews: "Liberal",
+      dateDifferentPolitics: "Yes",
+      believesInMarriage: "Yes",
+      selfDescription: "Driven professional seeking someone who values intellectual conversations and shared goals.",
+      snoring: "No",
+      dietaryPreference: "Vegetarian",
+      hasPets: "No",
+      petsDescription: "",
+      openToRelocate: "Yes",
+      sexualOrientation: "Heterosexual",
+      relationshipTradition: "Traditional",
+      selfDescriptionPhysical: "Slim, fair complexion, brown eyes.",
       icon: "/images/female2.jpg",
-      interests: ["Law", "Art", "Politics", "Culinary Arts"],
+      relationshipGoals: "Long-term relationship",
       skills: "Corporate law, Contract negotiation",
+      interestsArr: ["Law", "Art", "Politics", "Culinary Arts"],
+      bio: "Driven professional seeking someone who values intellectual conversations and shared goals.",
     },
   ]
 
@@ -93,6 +398,10 @@ export default function Browse() {
   const [selectedGoals, setSelectedGoals] = useState<string>("any")
   const [isLoading, setIsLoading] = useState(false)
   const [likedUsers, setLikedUsers] = useState<Set<number>>(new Set())
+  const [selectedProfile, setSelectedProfile] = useState<any | null>(null)
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false)
+  // Simulate connection status (replace with real logic)
+  const [connectedUsers, setConnectedUsers] = useState<Set<number>>(new Set([2, 4]))
 
   // 1. Add state for all new filters at the top of the Browse component
   const [selectedGender, setSelectedGender] = useState<string>("any");
@@ -218,6 +527,15 @@ export default function Browse() {
         }),
       )}`,
     )
+  }
+
+  const handleConnect = (user: any) => {
+    if (connectedUsers.has(user.id)) {
+      handleChat(user)
+    } else {
+      // Simulate sending a connection request
+      setConnectedUsers(prev => new Set(prev).add(user.id))
+    }
   }
 
   // Generate page numbers for pagination
@@ -890,7 +1208,7 @@ export default function Browse() {
                             </div>
 
                             <div className="flex flex-wrap gap-1 justify-center">
-                              {user.interests.slice(0, 2).map((interest, index) => (
+                              {(Array.isArray(user.interests) ? user.interests : (typeof user.interests === 'string' ? user.interests.split(',').map(s => s.trim()) : [])).slice(0, 2).map((interest, index) => (
                                 <Badge
                                   key={index}
                                   variant="outline"
@@ -899,12 +1217,12 @@ export default function Browse() {
                                   {interest}
                                 </Badge>
                               ))}
-                              {user.interests.length > 2 && (
+                              {((Array.isArray(user.interests) ? user.interests : (typeof user.interests === 'string' ? user.interests.split(',').map(s => s.trim()) : [])).length > 2) && (
                                 <Badge
                                   variant="outline"
                                   className="text-xs bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 px-2 py-0.5"
                                 >
-                                  +{user.interests.length - 2}
+                                  +{(Array.isArray(user.interests) ? user.interests : (typeof user.interests === 'string' ? user.interests.split(',').map(s => s.trim()) : [])).length - 2}
                                 </Badge>
                               )}
                             </div>
@@ -916,15 +1234,16 @@ export default function Browse() {
                               variant="outline"
                               className="flex-1 border-[#B22222] text-[#B22222] hover:bg-[#B22222] hover:text-white transition-all duration-200 rounded-xl py-2 text-sm bg-transparent min-h-[36px]"
                               size="sm"
+                              onClick={() => { setSelectedProfile(user); setIsProfileModalOpen(true); }}
                             >
                               View Profile
                             </Button>
                             <Button
                               className="flex-1 bg-[#B22222] hover:bg-[#8B0000] text-white transition-all duration-200 rounded-xl py-2 text-sm min-h-[36px]"
                               size="sm"
-                              onClick={() => handleChat(user)}
+                              onClick={() => handleConnect(user)}
                             >
-                              <MessageCircle size={14} className="mr-1.5" /> Chat
+                              {connectedUsers.has(user.id) ? (<><MessageCircle size={14} className="mr-1.5" /> Chat</>) : "Connect"}
                             </Button>
                           </CardFooter>
                         </Card>
@@ -991,6 +1310,146 @@ export default function Browse() {
           </div>
         </div>
       </div>
+
+      {/* Profile Modal */}
+      <Dialog open={isProfileModalOpen} onOpenChange={setIsProfileModalOpen}>
+        <DialogContent className="max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-[#B22222] text-2xl font-bold">{selectedProfile?.name || selectedProfile?.username}, {selectedProfile?.age || selectedProfile?.dateOfBirth}</DialogTitle>
+          </DialogHeader>
+          <div className="flex flex-col md:flex-row gap-6 mt-2">
+            <div className="flex-shrink-0 flex flex-col items-center">
+              <img src={selectedProfile?.icon || selectedProfile?.avatar} alt="Profile" className="w-32 h-32 rounded-full border-4 border-[#B22222] shadow-lg" />
+              <div className="mt-3 text-center">
+                <Badge className="bg-[#DAA520] text-white font-medium px-2 py-1 text-xs">{selectedProfile?.relationshipGoals}</Badge>
+              </div>
+            </div>
+            <div className="flex-1 space-y-4">
+              {/* Personal Info */}
+              <div>
+                <h3 className="font-semibold text-[#B22222] mb-1">Personal Info</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1 text-sm">
+                  <div><span className="font-semibold">Username:</span> {selectedProfile?.username}</div>
+                  <div><span className="font-semibold">Gender:</span> {selectedProfile?.gender} {selectedProfile?.customGender && `(${selectedProfile.customGender})`}</div>
+                  <div><span className="font-semibold">Date of Birth:</span> {selectedProfile?.dateOfBirth}</div>
+                  <div><span className="font-semibold">Race:</span> {selectedProfile?.race}</div>
+                  <div><span className="font-semibold">Country:</span> {selectedProfile?.country}</div>
+                  <div><span className="font-semibold">County:</span> {selectedProfile?.county}</div>
+                  <div><span className="font-semibold">Tribe:</span> {selectedProfile?.tribe}</div>
+                  <div><span className="font-semibold">Languages:</span> {selectedProfile?.languages?.join(", ")}</div>
+                </div>
+              </div>
+              {/* Physical Appearance */}
+              <div>
+                <h3 className="font-semibold text-[#B22222] mb-1">Physical Appearance</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1 text-sm">
+                  <div><span className="font-semibold">Height:</span> {selectedProfile?.height} {selectedProfile?.heightUnit} {selectedProfile?.heightFt && `${selectedProfile.heightFt}ft`} {selectedProfile?.heightIn && `${selectedProfile.heightIn}in`}</div>
+                  <div><span className="font-semibold">Weight:</span> {selectedProfile?.weight} {selectedProfile?.weightUnit}</div>
+                  <div><span className="font-semibold">Body Type:</span> {selectedProfile?.bodyType}</div>
+                  <div><span className="font-semibold">Complexion:</span> {selectedProfile?.complexion}</div>
+                  <div><span className="font-semibold">Eye Color:</span> {selectedProfile?.eyeColor}</div>
+                  <div><span className="font-semibold">Dimples:</span> {selectedProfile?.dimples} {selectedProfile?.dimplesDescription}</div>
+                  <div><span className="font-semibold">Teeth Features:</span> {selectedProfile?.teethFeatures}</div>
+                  <div><span className="font-semibold">Tattoos:</span> {selectedProfile?.tattoos} {selectedProfile?.tattoosDescription}</div>
+                  <div><span className="font-semibold">Piercings:</span> {selectedProfile?.piercings} {selectedProfile?.piercingsDescription}</div>
+                  <div><span className="font-semibold">Glasses:</span> {selectedProfile?.glasses} {selectedProfile?.glassesDescription}</div>
+                  <div><span className="font-semibold">Self Description (Physical):</span> {selectedProfile?.selfDescriptionPhysical}</div>
+                </div>
+              </div>
+              {/* Health */}
+              <div>
+                <h3 className="font-semibold text-[#B22222] mb-1">Health</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1 text-sm">
+                  <div><span className="font-semibold">HIV Status:</span> {selectedProfile?.hivStatus}</div>
+                  <div><span className="font-semibold">Disability:</span> {selectedProfile?.disability} {selectedProfile?.disabilityDescription}</div>
+                  <div><span className="font-semibold">Chronic Illness:</span> {selectedProfile?.chronicIllness} {selectedProfile?.chronicIllnessDescription}</div>
+                  <div><span className="font-semibold">Allergies:</span> {selectedProfile?.allergies}</div>
+                  <div><span className="font-semibold">Blood Type:</span> {selectedProfile?.bloodType}</div>
+                  <div><span className="font-semibold">Snoring:</span> {selectedProfile?.snoring}</div>
+                </div>
+              </div>
+              {/* Work & Lifestyle */}
+              <div>
+                <h3 className="font-semibold text-[#B22222] mb-1">Work & Lifestyle</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1 text-sm">
+                  <div><span className="font-semibold">Employment Status:</span> {selectedProfile?.employmentStatus}</div>
+                  <div><span className="font-semibold">Occupation:</span> {selectedProfile?.occupation}</div>
+                  <div><span className="font-semibold">Work Location:</span> {selectedProfile?.workCountry}, {selectedProfile?.workCounty}, {selectedProfile?.workConstituency}, {selectedProfile?.workWard}, {selectedProfile?.workState}</div>
+                  <div><span className="font-semibold">Financial Stability:</span> {selectedProfile?.financialStability}</div>
+                  <div><span className="font-semibold">Alcohol:</span> {selectedProfile?.alcohol}</div>
+                  <div><span className="font-semibold">Smoking:</span> {selectedProfile?.smoking}</div>
+                  <div><span className="font-semibold">Dietary Preference:</span> {selectedProfile?.dietaryPreference}</div>
+                  <div><span className="font-semibold">Has Pets:</span> {selectedProfile?.hasPets} {selectedProfile?.petsDescription}</div>
+                  <div><span className="font-semibold">Exercise Frequency:</span> {selectedProfile?.exerciseFrequency}</div>
+                  <div><span className="font-semibold">Hobbies:</span> {selectedProfile?.hobbies}</div>
+                  <div><span className="font-semibold">Interests:</span> {selectedProfile?.interests}</div>
+                </div>
+              </div>
+              {/* Beliefs */}
+              <div>
+                <h3 className="font-semibold text-[#B22222] mb-1">Beliefs</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1 text-sm">
+                  <div><span className="font-semibold">Religion:</span> {selectedProfile?.religion}</div>
+                  <div><span className="font-semibold">Religiousness:</span> {selectedProfile?.religiousness}</div>
+                  <div><span className="font-semibold">Denomination:</span> {selectedProfile?.denomination}</div>
+                  <div><span className="font-semibold">Church Attendance:</span> {selectedProfile?.churchAttendance}</div>
+                </div>
+              </div>
+              {/* Family */}
+              <div>
+                <h3 className="font-semibold text-[#B22222] mb-1">Family</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1 text-sm">
+                  <div><span className="font-semibold">Marital Status:</span> {selectedProfile?.maritalStatus}</div>
+                  <div><span className="font-semibold">Has Children:</span> {selectedProfile?.hasChildren}</div>
+                  <div><span className="font-semibold">Number of Children:</span> {selectedProfile?.numberOfChildren}</div>
+                  <div><span className="font-semibold">Children Ages:</span> {selectedProfile?.childrenAges}</div>
+                  <div><span className="font-semibold">Children Live With User:</span> {selectedProfile?.childrenLiveWithUser}</div>
+                  <div><span className="font-semibold">Wants Children:</span> {selectedProfile?.wantsChildren}</div>
+                  <div><span className="font-semibold">Accepts Partner With Kids:</span> {selectedProfile?.acceptsPartnerWithKids} {selectedProfile?.acceptsPartnerWithKidsDescription}</div>
+                </div>
+              </div>
+              {/* Preferences */}
+              <div>
+                <h3 className="font-semibold text-[#B22222] mb-1">Preferences</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1 text-sm">
+                  <div><span className="font-semibold">Open to Relocate:</span> {selectedProfile?.openToRelocate}</div>
+                  <div><span className="font-semibold">Sexual Orientation:</span> {selectedProfile?.sexualOrientation}</div>
+                  <div><span className="font-semibold">Relationship Tradition:</span> {selectedProfile?.relationshipTradition}</div>
+                  <div><span className="font-semibold">Long Distance OK:</span> {selectedProfile?.longDistanceOk}</div>
+                  <div><span className="font-semibold">Dating Perspective:</span> {selectedProfile?.datingPerspective}</div>
+                  <div><span className="font-semibold">Deal Breakers:</span> {selectedProfile?.dealBreakers}</div>
+                  <div><span className="font-semibold">Relationship Hopes:</span> {selectedProfile?.relationshipHopes}</div>
+                  <div><span className="font-semibold">Partner Preferences:</span> {selectedProfile?.partnerPreferences}</div>
+                  <div><span className="font-semibold">Personality Type:</span> {selectedProfile?.personalityType}</div>
+                  <div><span className="font-semibold">Don’t Contact If:</span> {selectedProfile?.dontContactIf}</div>
+                  <div><span className="font-semibold">Imperfections:</span> {selectedProfile?.imperfections}</div>
+                  <div><span className="font-semibold">Political Views:</span> {selectedProfile?.politicalViews}</div>
+                  <div><span className="font-semibold">Date Different Politics:</span> {selectedProfile?.dateDifferentPolitics}</div>
+                  <div><span className="font-semibold">Believes in Marriage:</span> {selectedProfile?.believesInMarriage}</div>
+                </div>
+              </div>
+              {/* About Me */}
+              <div>
+                <h3 className="font-semibold text-[#B22222] mb-1">About Me</h3>
+                <div className="text-sm whitespace-pre-line">
+                  {selectedProfile?.selfDescription}
+                </div>
+              </div>
+            </div>
+          </div>
+          <DialogFooter className="mt-6">
+            <Button
+              className="w-full bg-[#B22222] hover:bg-[#8B0000] text-white rounded-xl"
+              onClick={() => handleConnect(selectedProfile)}
+            >
+              {connectedUsers.has(selectedProfile?.id) ? (<><MessageCircle size={16} className="mr-2" /> Chat</>) : "Connect"}
+            </Button>
+          </DialogFooter>
+          <DialogClose asChild>
+            <Button variant="ghost" className="absolute top-4 right-4">Close</Button>
+          </DialogClose>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
