@@ -63,6 +63,9 @@ export default function ProfileModal({ open, onOpenChange, profile }) {
               <div className="text-gray-500 dark:text-gray-400 text-xs lg:text-sm text-center break-words">
                 {safeProfile.location}
               </div>
+              <div className="text-[#B22222] font-semibold text-sm lg:text-base mt-1">
+                {safeProfile.gender || safeProfile.preferences?.gender || 'N/A'}
+              </div>
             </div>
             <div className="flex flex-wrap gap-1 justify-center w-full">
               {(safeProfile.interests || ['Art','Travel','Photography']).slice(0, 6).map((interest, i) => (

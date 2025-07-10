@@ -25,6 +25,10 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="manifest" href="/manifest.json" />
+        <link rel="icon" href="/images/heart-key-bg.png" type="image/png" sizes="32x32" />
+        <link rel="icon" href="/images/heart-key-bg.png" type="image/png" sizes="192x192" />
+        <link rel="icon" href="/images/heart-key-bg.png" type="image/png" sizes="512x512" />
+        <link rel="apple-touch-icon" href="/images/heart-key-bg.png" sizes="180x180" />
       </head>
       <body className={inter.className}>
         <PersistentLogin />

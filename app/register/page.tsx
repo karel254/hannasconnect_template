@@ -1135,7 +1135,6 @@ export default function RegisterPage() {
                 <SelectContent>
                   <SelectItem value="male">Male</SelectItem>
                   <SelectItem value="female">Female</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
                 </SelectContent>
               </Select>
               {formData.gender === "other" && (
@@ -1515,7 +1514,16 @@ export default function RegisterPage() {
                   </SelectContent>
                 </Select>
                 {formData.tattoos === 'yes' && (
-                  <Input value={formData.tattoosDescription} onChange={e => updateFormData('tattoosDescription', e.target.value)} placeholder="Describe your tattoos" />
+                  <>
+                    <Input value={formData.tattoosDescription}
+                      onChange={e => {
+                        const value = e.target.value.split(/\s+/).slice(0, 25).join(" ");
+                        updateFormData('tattoosDescription', value);
+                      }}
+                      placeholder="Describe your tattoos"
+                    />
+                    <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">{formData.tattoosDescription?.trim() ? formData.tattoosDescription.trim().split(/\s+/).length : 0}/25 words</div>
+                  </>
                 )}
               </div>
               {/* Piercings */}
@@ -1531,7 +1539,16 @@ export default function RegisterPage() {
                   </SelectContent>
                 </Select>
                 {formData.piercings === 'yes' && (
-                  <Input value={formData.piercingsDescription} onChange={e => updateFormData('piercingsDescription', e.target.value)} placeholder="Describe your piercings" />
+                  <>
+                    <Input value={formData.piercingsDescription}
+                      onChange={e => {
+                        const value = e.target.value.split(/\s+/).slice(0, 25).join(" ");
+                        updateFormData('piercingsDescription', value);
+                      }}
+                      placeholder="Describe your piercings"
+                    />
+                    <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">{formData.piercingsDescription?.trim() ? formData.piercingsDescription.trim().split(/\s+/).length : 0}/25 words</div>
+                  </>
                 )}
               </div>
               {/* Dimples */}
@@ -1547,7 +1564,16 @@ export default function RegisterPage() {
                   </SelectContent>
                 </Select>
                 {formData.dimples === 'yes' && (
-                  <Input value={formData.dimplesDescription} onChange={e => updateFormData('dimplesDescription', e.target.value)} placeholder="Describe your dimples" />
+                  <>
+                    <Input value={formData.dimplesDescription}
+                      onChange={e => {
+                        const value = e.target.value.split(/\s+/).slice(0, 25).join(" ");
+                        updateFormData('dimplesDescription', value);
+                      }}
+                      placeholder="Describe your dimples"
+                    />
+                    <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">{formData.dimplesDescription?.trim() ? formData.dimplesDescription.trim().split(/\s+/).length : 0}/25 words</div>
+                  </>
                 )}
               </div>
               {/* State of Teeth */}
@@ -1565,7 +1591,14 @@ export default function RegisterPage() {
             {/* Describe how you look like */}
             <div className="space-y-2">
               <Label>Describe how you look like</Label>
-              <Textarea value={formData.selfDescriptionPhysical || ''} onChange={e => updateFormData('selfDescriptionPhysical', e.target.value)} placeholder="Describe your physical appearance in your own words" />
+              <Textarea value={formData.selfDescriptionPhysical || ''}
+                onChange={e => {
+                  const value = e.target.value.split(/\s+/).slice(0, 25).join(" ");
+                  updateFormData('selfDescriptionPhysical', value);
+                }}
+                placeholder="Describe your physical appearance in your own words"
+              />
+              <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">{formData.selfDescriptionPhysical?.trim() ? formData.selfDescriptionPhysical.trim().split(/\s+/).length : 0}/25 words</div>
             </div>
           </div>
         );
@@ -1590,13 +1623,19 @@ export default function RegisterPage() {
                   </SelectContent>
                 </Select>
                 {formData.glasses === "yes" && (
-                  <Input
-                    value={formData.glassesDescription}
-                    onChange={e => updateFormData("glassesDescription", e.target.value)}
-                    placeholder="Describe your glasses"
-                    className="transition-all duration-200 mt-2"
-                    onFocus={handleFieldFocus}
-                  />
+                  <>
+                    <Input
+                      value={formData.glassesDescription}
+                      onChange={e => {
+                        const value = e.target.value.split(/\s+/).slice(0, 25).join(" ");
+                        updateFormData("glassesDescription", value);
+                      }}
+                      placeholder="Describe your glasses"
+                      className="transition-all duration-200 mt-2"
+                      onFocus={handleFieldFocus}
+                    />
+                    <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">{formData.glassesDescription?.trim() ? formData.glassesDescription.trim().split(/\s+/).length : 0}/25 words</div>
+                  </>
                 )}
               </div>
 
@@ -1627,13 +1666,19 @@ export default function RegisterPage() {
                   </SelectContent>
                 </Select>
                 {formData.disability === "yes" && (
-                  <Input
-                    value={formData.disabilityDescription}
-                    onChange={e => updateFormData("disabilityDescription", e.target.value)}
-                    placeholder="Describe your disability"
-                    className="transition-all duration-200 mt-2"
-                    onFocus={handleFieldFocus}
-                  />
+                  <>
+                    <Input
+                      value={formData.disabilityDescription}
+                      onChange={e => {
+                        const value = e.target.value.split(/\s+/).slice(0, 25).join(" ");
+                        updateFormData("disabilityDescription", value);
+                      }}
+                      placeholder="Describe your disability"
+                      className="transition-all duration-200 mt-2"
+                      onFocus={handleFieldFocus}
+                    />
+                    <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">{formData.disabilityDescription?.trim() ? formData.disabilityDescription.trim().split(/\s+/).length : 0}/25 words</div>
+                  </>
                 )}
               </div>
 
@@ -1650,13 +1695,19 @@ export default function RegisterPage() {
                   </SelectContent>
                 </Select>
                 {formData.chronicIllness === "yes" && (
-                  <Input
-                    value={formData.chronicIllnessDescription}
-                    onChange={e => updateFormData("chronicIllnessDescription", e.target.value)}
-                    placeholder="Describe your chronic illness"
-                    className="transition-all duration-200 mt-2"
-                    onFocus={handleFieldFocus}
-                  />
+                  <>
+                    <Input
+                      value={formData.chronicIllnessDescription}
+                      onChange={e => {
+                        const value = e.target.value.split(/\s+/).slice(0, 25).join(" ");
+                        updateFormData("chronicIllnessDescription", value);
+                      }}
+                      placeholder="Describe your chronic illness"
+                      className="transition-all duration-200 mt-2"
+                      onFocus={handleFieldFocus}
+                    />
+                    <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">{formData.chronicIllnessDescription?.trim() ? formData.chronicIllnessDescription.trim().split(/\s+/).length : 0}/25 words</div>
+                  </>
                 )}
               </div>
 
@@ -1664,11 +1715,15 @@ export default function RegisterPage() {
                 <Label>Allergies</Label>
                 <Input
                   value={formData.allergies}
-                  onChange={(e) => updateFormData("allergies", e.target.value)}
-                  placeholder="List any allergies"
+                  onChange={e => {
+                    const value = e.target.value.split(/\s+/).slice(0, 25).join(" ");
+                    updateFormData("allergies", value);
+                  }}
+                  placeholder="List any allergies you have"
                   className="transition-all duration-200"
                   onFocus={handleFieldFocus}
                 />
+                <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">{formData.allergies?.trim() ? formData.allergies.trim().split(/\s+/).length : 0}/25 words</div>
               </div>
 
               <div className="space-y-2">
@@ -1740,11 +1795,15 @@ export default function RegisterPage() {
               <Label>Occupation</Label>
               <Input
                 value={formData.occupation}
-                onChange={(e) => updateFormData("occupation", e.target.value)}
-                placeholder="What do you do for work?"
+                onChange={e => {
+                  const value = e.target.value.split(/\s+/).slice(0, 25).join(" ");
+                  updateFormData("occupation", value);
+                }}
+                placeholder="What is your occupation?"
                 className="transition-all duration-200"
                 onFocus={handleFieldFocus}
               />
+              <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">{formData.occupation?.trim() ? formData.occupation.trim().split(/\s+/).length : 0}/25 words</div>
             </div>
 
             <div className="space-y-4">
@@ -1913,22 +1972,30 @@ export default function RegisterPage() {
               <Label>Hobbies</Label>
               <Textarea
                 value={formData.hobbies}
-                onChange={(e) => updateFormData("hobbies", e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value.split(/\s+/).slice(0, 25).join(" ");
+                  updateFormData("hobbies", value);
+                }}
                 placeholder="What are your hobbies?"
                 className="transition-all duration-200"
                 onFocus={handleFieldFocus}
               />
+              <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">{formData.hobbies.trim() ? formData.hobbies.trim().split(/\s+/).length : 0}/25 words</div>
             </div>
 
             <div className="space-y-2">
               <Label>Interests</Label>
               <Textarea
                 value={formData.interests}
-                onChange={(e) => updateFormData("interests", e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value.split(/\s+/).slice(0, 25).join(" ");
+                  updateFormData("interests", value);
+                }}
                 placeholder="What interests you?"
                 className="transition-all duration-200"
                 onFocus={handleFieldFocus}
               />
+              <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">{formData.interests.trim() ? formData.interests.trim().split(/\s+/).length : 0}/25 words</div>
             </div>
 
             <div className="space-y-2">
@@ -2204,44 +2271,60 @@ export default function RegisterPage() {
               <Label>Dating Perspective</Label>
               <Textarea
                 value={formData.datingPerspective}
-                onChange={(e) => updateFormData("datingPerspective", e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value.split(/\s+/).slice(0, 25).join(" ");
+                  updateFormData("datingPerspective", value);
+                }}
                 placeholder="What's your perspective on dating?"
                 className="transition-all duration-200"
                 onFocus={handleFieldFocus}
               />
+              <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">{formData.datingPerspective?.trim() ? formData.datingPerspective.trim().split(/\s+/).length : 0}/25 words</div>
             </div>
 
             <div className="space-y-2">
               <Label>Deal Breakers</Label>
               <Textarea
                 value={formData.dealBreakers}
-                onChange={(e) => updateFormData("dealBreakers", e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value.split(/\s+/).slice(0, 25).join(" ");
+                  updateFormData("dealBreakers", value);
+                }}
                 placeholder="What are your deal breakers?"
                 className="transition-all duration-200"
                 onFocus={handleFieldFocus}
               />
+              <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">{formData.dealBreakers?.trim() ? formData.dealBreakers.trim().split(/\s+/).length : 0}/25 words</div>
             </div>
 
             <div className="space-y-2">
               <Label>What do you hope for in a relationship?</Label>
               <Textarea
                 value={formData.relationshipHopes}
-                onChange={(e) => updateFormData("relationshipHopes", e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value.split(/\s+/).slice(0, 25).join(" ");
+                  updateFormData("relationshipHopes", value);
+                }}
                 placeholder="Describe your relationship goals"
                 className="transition-all duration-200"
                 onFocus={handleFieldFocus}
               />
+              <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">{formData.relationshipHopes?.trim() ? formData.relationshipHopes.trim().split(/\s+/).length : 0}/25 words</div>
             </div>
 
             <div className="space-y-2">
               <Label>What are you looking for in a partner?</Label>
               <Textarea
                 value={formData.partnerPreferences}
-                onChange={(e) => updateFormData("partnerPreferences", e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value.split(/\s+/).slice(0, 25).join(" ");
+                  updateFormData("partnerPreferences", value);
+                }}
                 placeholder="Describe what you are looking for in a partner"
                 className="transition-all duration-200"
                 onFocus={handleFieldFocus}
               />
+              <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">{formData.partnerPreferences?.trim() ? formData.partnerPreferences.trim().split(/\s+/).length : 0}/25 words</div>
             </div>
 
             <div className="space-y-2">
@@ -2258,11 +2341,15 @@ export default function RegisterPage() {
               <Label>How traditional or modern are you in relationships?</Label>
               <Input
                 value={formData.relationshipTradition}
-                onChange={e => updateFormData("relationshipTradition", e.target.value)}
+                onChange={e => {
+                  const value = e.target.value.split(/\s+/).slice(0, 25).join(" ");
+                  updateFormData("relationshipTradition", value);
+                }}
                 placeholder="Describe your approach to relationships"
                 className="transition-all duration-200"
                 onFocus={handleFieldFocus}
               />
+              <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">{formData.relationshipTradition?.trim() ? formData.relationshipTradition.trim().split(/\s+/).length : 0}/25 words</div>
             </div>
           </div>
         )
@@ -2296,33 +2383,45 @@ export default function RegisterPage() {
               <Label>"Don't contact me if..."</Label>
               <Textarea
                 value={formData.dontContactIf}
-                onChange={(e) => updateFormData("dontContactIf", e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value.split(/\s+/).slice(0, 25).join(" ");
+                  updateFormData("dontContactIf", value);
+                }}
                 placeholder="What would make you not want to be contacted?"
                 className="transition-all duration-200"
                 onFocus={handleFieldFocus}
               />
+              <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">{formData.dontContactIf.trim() ? formData.dontContactIf.trim().split(/\s+/).length : 0}/25 words</div>
             </div>
 
             <div className="space-y-2">
               <Label>Imperfections</Label>
               <Textarea
                 value={formData.imperfections}
-                onChange={(e) => updateFormData("imperfections", e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value.split(/\s+/).slice(0, 25).join(" ");
+                  updateFormData("imperfections", value);
+                }}
                 placeholder="What are some of your imperfections?"
                 className="transition-all duration-200"
                 onFocus={handleFieldFocus}
               />
+              <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">{formData.imperfections.trim() ? formData.imperfections.trim().split(/\s+/).length : 0}/25 words</div>
             </div>
 
             <div className="space-y-2">
               <Label>Political Views</Label>
               <Input
                 value={formData.politicalViews}
-                onChange={(e) => updateFormData("politicalViews", e.target.value)}
+                onChange={e => {
+                  const value = e.target.value.split(/\s+/).slice(0, 25).join(" ");
+                  updateFormData("politicalViews", value);
+                }}
                 placeholder="Describe your political views"
                 className="transition-all duration-200"
                 onFocus={handleFieldFocus}
               />
+              <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">{formData.politicalViews?.trim() ? formData.politicalViews.trim().split(/\s+/).length : 0}/25 words</div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -2365,12 +2464,16 @@ export default function RegisterPage() {
               <Label>Describe Yourself</Label>
               <Textarea
                 value={formData.selfDescription}
-                onChange={(e) => updateFormData("selfDescription", e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value.split(/\s+/).slice(0, 25).join(" ");
+                  updateFormData("selfDescription", value);
+                }}
                 placeholder="Tell us about yourself in your own words"
                 rows={4}
                 className="transition-all duration-200"
                 onFocus={handleFieldFocus}
               />
+              <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">{formData.selfDescription.trim() ? formData.selfDescription.trim().split(/\s+/).length : 0}/25 words</div>
             </div>
           </div>
         )

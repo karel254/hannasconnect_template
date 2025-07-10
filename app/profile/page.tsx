@@ -809,15 +809,13 @@ export default function ProfilePage() {
   <div className="space-y-3 mt-2">
     {/* Gender */}
     <Label>Gender</Label>
-    <Select value={profile.preferences?.gender || "any"} onValueChange={value => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, gender: value } }))} disabled={!isEditing}>
+    <Select value={profile.preferences?.gender || "male"} onValueChange={value => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, gender: value } }))} disabled={!isEditing}>
       <SelectTrigger className="rounded-xl">
-        <SelectValue placeholder="Any Gender" />
+        <SelectValue placeholder="Gender" />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="any">Any Gender</SelectItem>
         <SelectItem value="male">Male</SelectItem>
         <SelectItem value="female">Female</SelectItem>
-        <SelectItem value="other">Other</SelectItem>
       </SelectContent>
     </Select>
     {/* Race */}

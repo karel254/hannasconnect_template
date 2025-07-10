@@ -1135,6 +1135,23 @@ export default function Browse() {
                     />
                   </div>
 
+                  {/* Gender (moved here) */}
+                  <div>
+                    <Label className="text-base font-medium text-gray-900 dark:text-gray-100">
+                      Gender
+                    </Label>
+                    <Select value={selectedGender} onValueChange={setSelectedGender}>
+                      <SelectTrigger className="rounded-xl">
+                        <SelectValue placeholder="Any Gender" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="any">Any Gender</SelectItem>
+                        <SelectItem value="male">Male</SelectItem>
+                        <SelectItem value="female">Female</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
                   {/* Relationship Goals */}
                   <div>
                     <Label htmlFor="goals-mobile" className="text-base font-medium text-gray-900 dark:text-gray-100">
@@ -1158,19 +1175,6 @@ export default function Browse() {
                   <details className="mb-4">
                     <summary className="font-semibold text-gray-900 dark:text-gray-100 cursor-pointer py-2">Demographics</summary>
                     <div className="space-y-3 mt-2">
-                      {/* Gender */}
-                      <Label>Gender</Label>
-                      <Select value={selectedGender} onValueChange={setSelectedGender}>
-                        <SelectTrigger className="rounded-xl">
-                          <SelectValue placeholder="Any Gender" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="any">Any Gender</SelectItem>
-                          <SelectItem value="male">Male</SelectItem>
-                          <SelectItem value="female">Female</SelectItem>
-                          <SelectItem value="other">Other</SelectItem>
-                        </SelectContent>
-                      </Select>
                       {/* Race */}
                       <Label>Race</Label>
                       <Select value={selectedRace} onValueChange={setSelectedRace}>
@@ -1406,6 +1410,23 @@ export default function Browse() {
                   />
                 </div>
 
+                {/* Gender (moved here) */}
+                <div>
+                  <Label className="text-base font-medium text-gray-900 dark:text-gray-100">
+                    Gender
+                  </Label>
+                  <Select value={selectedGender} onValueChange={setSelectedGender}>
+                    <SelectTrigger className="rounded-xl">
+                      <SelectValue placeholder="Any Gender" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="any">Any Gender</SelectItem>
+                      <SelectItem value="male">Male</SelectItem>
+                      <SelectItem value="female">Female</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
                 {/* Relationship Goals */}
                 <div>
                   <Label htmlFor="goals" className="text-base font-medium text-gray-900 dark:text-gray-100">
@@ -1429,19 +1450,6 @@ export default function Browse() {
                 <details className="mb-4">
                   <summary className="font-semibold text-gray-900 dark:text-gray-100 cursor-pointer py-2">Demographics</summary>
                   <div className="space-y-3 mt-2">
-                    {/* Gender */}
-                    <Label>Gender</Label>
-                    <Select value={selectedGender} onValueChange={setSelectedGender}>
-                      <SelectTrigger className="rounded-xl">
-                        <SelectValue placeholder="Any Gender" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="any">Any Gender</SelectItem>
-                        <SelectItem value="male">Male</SelectItem>
-                        <SelectItem value="female">Female</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
                     {/* Race */}
                     <Label>Race</Label>
                     <Select value={selectedRace} onValueChange={setSelectedRace}>
