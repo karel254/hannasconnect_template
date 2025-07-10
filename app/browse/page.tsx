@@ -1651,7 +1651,7 @@ export default function Browse() {
                 <p className="text-gray-500 dark:text-gray-400">Try adjusting your filters to see more profiles.</p>
               </div>
             ) : (
-              <div className="grid grid-cols-2 gap-4 lg:gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
                 {currentUsers.map((user) => (
                   <Card
                     key={user.id}
@@ -1660,37 +1660,38 @@ export default function Browse() {
                   >
                     <CardHeader className="p-4 pb-2">
                       <div className="relative">
-                        <Avatar className="h-20 w-20 mx-auto mb-3 ring-2 ring-white dark:ring-gray-600">
+                        <Avatar className="h-16 w-16 sm:h-20 sm:w-20 mx-auto mb-3 ring-2 ring-white dark:ring-gray-600">
                           <AvatarImage src={user.avatar || "/placeholder.svg"} alt={user.name} />
-                          <AvatarFallback className="bg-[#B22222] text-white text-lg">{user.name.charAt(0)}</AvatarFallback>
+                          <AvatarFallback className="bg-[#B22222] text-white text-sm sm:text-lg">{user.name.charAt(0)}</AvatarFallback>
                         </Avatar>
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleLike(user.id);
+                            // Add like functionality if needed
                           }}
                           className="absolute top-0 right-0 p-1.5 rounded-full bg-white dark:bg-gray-600 shadow-md hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                         >
-                          <Heart
-                            className={`h-4 w-4 ${
-                              likedUsers.has(user.id) ? "text-red-500 fill-red-500" : "text-gray-400"
-                            }`}
-                          />
+                          <Heart className="h-3 w-3 sm:h-4 sm:w-4 text-gray-400 hover:text-red-500" />
                         </button>
                       </div>
-                      <div className="text-center">
+                      <div className="text-center space-y-1">
                         <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm truncate">
-                          {user.name}, {user.age || calculateAge(user.dateOfBirth)}
+                          {user.name}, {user.age}
                         </h3>
                         <p className="text-gray-600 dark:text-gray-300 text-xs truncate">{user.occupation}</p>
                         <p className="text-gray-500 dark:text-gray-400 text-xs truncate">{user.location}</p>
+                        <div className="flex items-center justify-center gap-1">
+                          <Badge className="bg-[#B22222] text-white text-xs">
+                            {user.compatibility}% match
+                          </Badge>
+                        </div>
                       </div>
                     </CardHeader>
                     <CardFooter className="p-4 pt-0">
                       <div className="flex space-x-2 w-full">
                         <Button
                           size="sm"
-                          className="flex-1 bg-[#B22222] hover:bg-[#8B0000] text-white rounded-xl h-8 text-xs min-h-[36px]"
+                          className="flex-1 bg-[#B22222] hover:bg-[#8B0000] text-white rounded-xl h-8 text-xs min-h-[36px] max-w-[50%]"
                           onClick={(e) => {
                             e.stopPropagation();
                             handleConnect(user);
@@ -1702,7 +1703,7 @@ export default function Browse() {
                         <Button
                           size="sm"
                           variant="outline"
-                          className="flex-1 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl h-8 text-xs min-h-[36px] bg-transparent"
+                          className="flex-1 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl h-8 text-xs min-h-[36px] bg-transparent max-w-[50%]"
                           onClick={(e) => {
                             e.stopPropagation();
                             setSelectedProfile(user);

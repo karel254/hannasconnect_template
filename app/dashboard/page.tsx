@@ -1087,7 +1087,7 @@ export default function Dashboard() {
             </div>
           </CardHeader>
           <CardContent className="pt-0">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {suggestions.slice(0, 6).map((person) => (
                 <Card
                   key={person.id}
@@ -1096,9 +1096,9 @@ export default function Dashboard() {
                 >
                   <CardHeader className="p-4 pb-2">
                     <div className="relative">
-                      <Avatar className="h-20 w-20 mx-auto mb-3 ring-2 ring-white dark:ring-gray-600">
+                      <Avatar className="h-16 w-16 sm:h-20 sm:w-20 mx-auto mb-3 ring-2 ring-white dark:ring-gray-600">
                         <AvatarImage src={person.avatar || "/placeholder.svg"} alt={person.name} />
-                        <AvatarFallback className="bg-[#B22222] text-white text-lg">{person.name.charAt(0)}</AvatarFallback>
+                        <AvatarFallback className="bg-[#B22222] text-white text-sm sm:text-lg">{person.name.charAt(0)}</AvatarFallback>
                       </Avatar>
                       <button
                         onClick={(e) => {
@@ -1107,10 +1107,10 @@ export default function Dashboard() {
                         }}
                         className="absolute top-0 right-0 p-1.5 rounded-full bg-white dark:bg-gray-600 shadow-md hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                       >
-                        <Heart className="h-4 w-4 text-gray-400 hover:text-red-500" />
+                        <Heart className="h-3 w-3 sm:h-4 sm:w-4 text-gray-400 hover:text-red-500" />
                       </button>
                     </div>
-                    <div className="text-center">
+                    <div className="text-center space-y-1">
                       <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm truncate">
                         {person.name}, {person.age}
                       </h3>
@@ -1122,7 +1122,7 @@ export default function Dashboard() {
                     <div className="flex space-x-2 w-full">
                       <Button
                         size="sm"
-                        className="flex-1 bg-[#B22222] hover:bg-[#8B0000] text-white rounded-xl h-8 text-xs min-h-[36px]"
+                        className="flex-1 bg-[#B22222] hover:bg-[#8B0000] text-white rounded-xl h-8 text-xs min-h-[36px] max-w-[50%]"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleConnect(person);
@@ -1134,7 +1134,7 @@ export default function Dashboard() {
                       <Button
                         size="sm"
                         variant="outline"
-                        className="flex-1 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl h-8 text-xs min-h-[36px] bg-transparent"
+                        className="flex-1 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl h-8 text-xs min-h-[36px] bg-transparent max-w-[50%]"
                         onClick={(e) => {
                           e.stopPropagation();
                           setSelectedProfile(person);

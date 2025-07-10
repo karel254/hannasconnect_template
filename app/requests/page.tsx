@@ -836,58 +836,60 @@ export default function RequestsPage() {
               </Card>
             ) : (
               filteredRequests.map((request) => (
-                <Card key={request.id} className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-                  <CardContent className="p-6">
-                    <div className="flex items-start space-x-4">
-                      <Avatar className="h-16 w-16">
-                        <AvatarImage src={request.avatar} alt={request.name} />
-                        <AvatarFallback className="bg-[#B22222] text-white">
-                          {request.name.charAt(0)}
-                        </AvatarFallback>
+                <Card
+                  key={request.id}
+                  className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow"
+                >
+                  <CardContent className="p-4">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                      <Avatar className="h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0">
+                        <AvatarImage src={request.avatar || "/placeholder.svg"} alt={request.name} />
+                        <AvatarFallback className="bg-[#B22222] text-white text-sm sm:text-lg">{request.name.charAt(0)}</AvatarFallback>
                       </Avatar>
-                      
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between mb-2">
-                          <div>
-                            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                      <div className="flex-1 min-w-0 space-y-2">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                          <div className="space-y-1">
+                            <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm sm:text-base truncate">
                               {request.name}, {request.age || calculateAge(request.dateOfBirth)}
                             </h3>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">
-                              {request.occupation} • {request.location}
-                            </p>
+                            <p className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm truncate">{request.occupation}</p>
+                            <p className="text-gray-500 dark:text-gray-400 text-xs truncate">{request.location}</p>
                           </div>
-                          <div className="flex items-center space-x-2">
-                            <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                              {request.compatibility}% Match
+                          <div className="flex items-center gap-2">
+                            <Badge className={`text-xs ${
+                              request.status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400' :
+                              request.status === 'accepted' ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400' :
+                              'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
+                            }`}>
+                              {request.status}
                             </Badge>
-                            <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
-                              <Clock className="h-3 w-3 mr-1" />
-                              {formatTime(request.timestamp)}
-                            </div>
+                            <Badge className="bg-[#B22222] text-white text-xs">
+                              {request.compatibility}% match
+                            </Badge>
                           </div>
                         </div>
-                        
-                        {request.message && (
-                          <p className="text-gray-700 dark:text-gray-300 mb-4 italic">
-                            "{request.message}"
-                          </p>
-                        )}
-                        
-                        <div className="flex space-x-3">
+                        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mt-2">
                           <Button
-                            onClick={() => handleAcceptRequest(request.id)}
-                            className="flex-1 bg-[#B22222] hover:bg-[#8B0000] text-white min-h-[44px]"
+                            className="flex-1 bg-[#B22222] hover:bg-[#8B0000] text-white min-h-[44px] text-sm"
+                            disabled={sentRequests.has(request.userId) && request.status !== 'accepted'}
+                            onClick={() => {
+                              if (!sentRequests.has(request.userId) && request.status !== 'accepted') {
+                                setSentRequests(prev => new Set(prev).add(request.userId));
+                                // Simulate sending request
+                              }
+                              if (request.status === 'accepted') {
+                                router.push(`/messages?user=${request.userId}`)
+                              }
+                            }}
                           >
-                            <Check className="h-4 w-4 mr-2" />
-                            Accept
+                            {request.status === 'accepted' ? 'Chat' : sentRequests.has(request.userId) ? 'Sent' : 'Connect'}
                           </Button>
                           <Button
-                            onClick={() => handleRejectRequest(request.id)}
+                            onClick={() => { setSelectedProfile(request); setIsProfileModalOpen(true); }}
                             variant="outline"
-                            className="flex-1 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 min-h-[44px]"
+                            className="flex-1 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 min-h-[44px] text-sm"
                           >
-                            <X className="h-4 w-4 mr-2" />
-                            Reject
+                            View Profile
                           </Button>
                         </div>
                       </div>

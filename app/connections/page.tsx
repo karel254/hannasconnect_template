@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { User, UserX, MessageCircle, MoreVertical, Search, Filter, ArrowLeft } from "lucide-react"
+import { User, UserX, MessageCircle, MoreVertical, Search, Filter, ArrowLeft, Clock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -632,6 +632,16 @@ export default function ConnectionsPage() {
     return `${Math.floor(diffInMinutes / 1440)}d ago`
   }
 
+  const formatTime = (date: Date): string => {
+    const now = new Date();
+    const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
+
+    if (diffInMinutes < 1) return "Just now";
+    if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`;
+    return `${Math.floor(diffInMinutes / 1440)}d ago`;
+  };
+
   const filteredConnections = connections.filter(connection => {
     const matchesSearch = connection.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          connection.occupation.toLowerCase().includes(searchQuery.toLowerCase())
@@ -740,70 +750,63 @@ export default function ConnectionsPage() {
               </Card>
             ) : (
               filteredConnections.map((connection) => (
-                <Card key={connection.id} className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <div className="relative">
-                          <Avatar className="h-16 w-16">
-                            <AvatarImage src={connection.avatar} alt={connection.name} />
-                            <AvatarFallback className="bg-[#B22222] text-white">
-                              {connection.name.charAt(0)}
-                            </AvatarFallback>
-                          </Avatar>
-                          {connection.isOnline && (
-                            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full"></div>
-                          )}
-                        </div>
-                        
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-2 mb-1">
-                            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                <Card key={connection.id} className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
+                  <CardContent className="p-4">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                      <Avatar className="h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0">
+                        <AvatarImage src={connection.avatar} alt={connection.name} />
+                        <AvatarFallback className="bg-[#B22222] text-white text-sm sm:text-lg">{connection.name.charAt(0)}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0 space-y-2">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                          <div className="space-y-1">
+                            <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm sm:text-base truncate">
                               {connection.name}, {connection.age}
                             </h3>
-                            <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                              {connection.compatibility}% Match
-                            </Badge>
+                            <p className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm truncate">{connection.occupation}</p>
+                            <p className="text-gray-500 dark:text-gray-400 text-xs truncate">{connection.location}</p>
                           </div>
-                          <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-                            {connection.occupation} • {connection.location}
-                          </p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">
-                            {connection.isOnline ? "Online" : `Last seen ${formatLastSeen(connection.lastSeen)}`}
-                          </p>
+                          <div className="flex items-center gap-2">
+                            <Badge className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400 text-xs">
+                              Connected
+                            </Badge>
+                            <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
+                              <Clock className="h-3 w-3 mr-1" />
+                              {formatTime(connection.lastSeen)}
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                      
-                      <div className="flex items-center space-x-2">
-                        <Button
-                          onClick={() => router.push(`/messages?user=${connection.userId}`)}
-                          size="sm"
-                          className="bg-[#B22222] hover:bg-[#8B0000] text-white"
-                        >
-                          <MessageCircle className="h-4 w-4 mr-1" />
-                          Message
-                        </Button>
-                        
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm">
-                              <MoreVertical className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => { setSelectedProfile(connection); setIsProfileModalOpen(true); }}>
-                              View Profile
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleUnfriend(connection.id)}>
-                              <UserX className="h-4 w-4 mr-2" />
-                              Remove Connection
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleBlock(connection.id)}>
-                              <UserX className="h-4 w-4 mr-2" />
-                              Block User
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
+                        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                          <Button
+                            onClick={() => router.push(`/messages?user=${connection.userId}`)}
+                            size="sm"
+                            className="bg-[#B22222] hover:bg-[#8B0000] text-white text-sm min-h-[44px]"
+                          >
+                            <MessageCircle className="h-4 w-4 mr-1" />
+                            Message
+                          </Button>
+                          
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="sm" className="min-h-[44px]">
+                                <MoreVertical className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem onClick={() => { setSelectedProfile(connection); setIsProfileModalOpen(true); }}>
+                                View Profile
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleUnfriend(connection.id)}>
+                                <UserX className="h-4 w-4 mr-2" />
+                                Remove Connection
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleBlock(connection.id)}>
+                                <UserX className="h-4 w-4 mr-2" />
+                                Block User
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
                       </div>
                     </div>
                   </CardContent>

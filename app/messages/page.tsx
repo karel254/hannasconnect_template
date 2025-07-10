@@ -346,10 +346,10 @@ export default function Messages() {
                       <AvatarFallback className="bg-[#B22222] text-white">{conversation.name.charAt(0)}</AvatarFallback>
                     </Avatar>
                     {conversation.online && conversation.isConnected && (
-                      <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full"></div>
+                      <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full"></div>
                     )}
                     {!conversation.isConnected && (
-                      <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-gray-400 border-2 border-white dark:border-gray-800 rounded-full flex items-center justify-center">
+                      <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-gray-400 border-2 border-white dark:border-gray-800 rounded-full flex items-center justify-center">
                         <UserX className="h-2 w-2 text-white" />
                       </div>
                     )}
@@ -357,17 +357,17 @@ export default function Messages() {
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1">
-                      <h3 className="font-medium text-gray-900 dark:text-gray-100 truncate">{conversation.name}</h3>
+                      <h3 className="font-medium text-gray-900 dark:text-gray-100 truncate text-sm">{conversation.name}</h3>
                       <div className="flex items-center space-x-2 flex-shrink-0 ml-2">
                         <span className="text-xs text-gray-500 dark:text-gray-400">{formatTime(parseTimestamp(conversation.timestamp))}</span>
                         {conversation.unread > 0 && conversation.isConnected && (
-                          <Badge className="bg-[#B22222] text-white text-xs min-w-[20px] h-5 flex items-center justify-center rounded-full px-1">
-                            {conversation.unread}
+                          <Badge className="bg-[#B22222] text-white text-xs min-w-[16px] h-4 flex items-center justify-center rounded-full px-1">
+                            {conversation.unread > 99 ? '99+' : conversation.unread}
                           </Badge>
                         )}
                       </div>
                     </div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 truncate pr-2">
+                    <p className="text-xs text-gray-600 dark:text-gray-400 truncate pr-2">
                       {conversation.isConnected ? conversation.lastMessage : "Not connected - Send a connection request first"}
                     </p>
                     {!conversation.isConnected && (
