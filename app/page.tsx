@@ -1,16 +1,6 @@
 import Link from "next/link"
 
-// --- Featured blogs: backend devs, replace this with real data/fetch from API ---
-const featuredBlogs = [
-  {
-    id: 1,
-    title: "How to Build Meaningful Connections",
-    excerpt: "Discover tips and stories to help you build authentic relationships.",
-    image: "/images/blog1.jpg",
-    url: "/blog/meaningful-connections",
-  },
-  // Add more blogs as needed
-]
+// Remove the featured blog section entirely from the home page.
 
 export default function Home() {
   return (
@@ -36,28 +26,6 @@ export default function Home() {
             Welcome to Hanna's Connect
           </h1>
           <p className="text-xl sm:text-2xl text-white/90 font-light">Clarity Before Chemistry</p>
-        </div>
-
-        {/* --- Featured Blog Section: 1 per row --- */}
-        <div className="flex flex-col items-center w-full px-4 mt-6">
-          {featuredBlogs.map((blog) => (
-            <div key={blog.id} className="w-full max-w-xl bg-white/90 dark:bg-gray-900/90 rounded-xl shadow-lg mb-6 overflow-hidden flex flex-col md:flex-row">
-              {blog.image && (
-                <div className="md:w-1/3 w-full h-40 md:h-auto overflow-hidden">
-                  <img src={blog.image} alt={blog.title} className="object-cover w-full h-full" />
-                </div>
-              )}
-              <div className="flex-1 p-6 flex flex-col justify-between">
-                <div>
-                  <h2 className="text-2xl font-bold text-[#B22222] mb-2">{blog.title}</h2>
-                  <p className="text-gray-700 dark:text-gray-200 mb-4">{blog.excerpt}</p>
-                </div>
-                <Link href={blog.url} className="inline-block mt-auto">
-                  <span className="text-[#B22222] hover:underline font-semibold">Read More &rarr;</span>
-                </Link>
-              </div>
-            </div>
-          ))}
         </div>
 
         {/* Centered Blog Button */}

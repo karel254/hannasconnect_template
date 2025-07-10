@@ -49,6 +49,8 @@ export default function RequestsPage() {
   // Add state for modal open/close and selected profile
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState<ConnectionRequest | null>(null);
+  // 1. Add a sentRequests state to track sent connection requests if not already present
+  const [sentRequests, setSentRequests] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     // Check if user is logged in
@@ -944,11 +946,19 @@ export default function RequestsPage() {
                         
                         <div className="flex flex-nowrap gap-3 mt-2">
                           <Button
-                            onClick={() => router.push(`/messages?user=${request.userId}`)}
                             className="flex-1 bg-[#B22222] hover:bg-[#8B0000] text-white min-h-[44px]"
+                            disabled={sentRequests.has(request.userId) && request.status !== 'accepted'}
+                            onClick={() => {
+                              if (!sentRequests.has(request.userId) && request.status !== 'accepted') {
+                                setSentRequests(prev => new Set(prev).add(request.userId));
+                                // Simulate sending request
+                              }
+                              if (request.status === 'accepted') {
+                                router.push(`/messages?user=${request.userId}`)
+                              }
+                            }}
                           >
-                            <User className="h-4 w-4 mr-2" />
-                            Send Message
+                            {request.status === 'accepted' ? 'Chat' : sentRequests.has(request.userId) ? 'Sent' : 'Connect'}
                           </Button>
                           <Button
                             onClick={() => { setSelectedProfile(request); setIsProfileModalOpen(true); }}

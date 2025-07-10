@@ -963,24 +963,24 @@ export default function Dashboard() {
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false)
   // Simulate connection status (replace with real logic)
   const [connectedUsers, setConnectedUsers] = useState<Set<number>>(new Set([2, 4]))
+  // 1. Add a sentRequests state to track sent connection requests
+  const [sentRequests, setSentRequests] = useState<Set<number>>(new Set());
 
   const handleConnect = (user: any) => {
     if (connectedUsers.has(user.id)) {
-      // Simulate chat navigation
       router.push(`/messages?user=${encodeURIComponent(JSON.stringify({ id: user.id, name: user.name, icon: user.avatar, age: user.age, occupation: user.occupation }))}`)
-    } else {
-      // Simulate sending a connection request
-      setConnectedUsers(prev => new Set(prev).add(user.id))
+    } else if (!sentRequests.has(user.id)) {
+      setSentRequests(prev => new Set(prev).add(user.id));
       toast({
         title: "Connection request sent!",
         description: `Your request to connect with ${user.name} has been sent.`,
         action: (
           <ToastAction altText="Undo" onClick={() => {
-            setConnectedUsers(prev => {
-              const updated = new Set(prev)
-              updated.delete(user.id)
-              return updated
-            })
+            setSentRequests(prev => {
+              const updated = new Set(prev);
+              updated.delete(user.id);
+              return updated;
+            });
           }}>Undo</ToastAction>
         ),
       });
@@ -1127,8 +1127,9 @@ export default function Dashboard() {
                           e.stopPropagation();
                           handleConnect(person);
                         }}
+                        disabled={sentRequests.has(person.id) && !connectedUsers.has(person.id)}
                       >
-                        {connectedUsers.has(person.id) ? "Chat" : "Connect"}
+                        {connectedUsers.has(person.id) ? "Chat" : sentRequests.has(person.id) ? "Sent" : "Connect"}
                       </Button>
                       <Button
                         size="sm"

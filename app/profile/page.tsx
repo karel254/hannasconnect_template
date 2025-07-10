@@ -36,6 +36,7 @@ import { Slider } from "@/components/ui/slider"
 import { Checkbox } from "@/components/ui/checkbox"
 import { useToast } from "../../hooks/use-toast"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
+import { useTheme } from "@/contexts/theme-context"
 
 interface UserProfile {
   name: string
@@ -145,6 +146,7 @@ function calculateAge(dateOfBirth: string) {
 export default function ProfilePage() {
   const router = useRouter()
   const { toast } = useToast()
+  const { theme, effectiveTheme, toggleTheme } = useTheme()
   const [isEditing, setIsEditing] = useState(false)
   const [showAvatarSelection, setShowAvatarSelection] = useState(false)
   const [profile, setProfile] = useState<UserProfile>({
@@ -270,29 +272,28 @@ export default function ProfilePage() {
     router.push("/")
   }
 
-  const handleThemeChange = (theme: string) => {
+  const handleThemeChange = (newTheme: string) => {
     setProfile((prev) => ({
       ...prev,
       settings: {
         ...prev.settings,
-        theme,
+        theme: newTheme,
       },
     }))
 
-    // Apply theme immediately
-    const root = document.documentElement
-    if (theme === "dark") {
-      root.classList.add("dark")
-    } else if (theme === "light") {
-      root.classList.remove("dark")
-    } else {
-      // System theme
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches
-      if (prefersDark) {
-        root.classList.add("dark")
-      } else {
-        root.classList.remove("dark")
-      }
+    // Use the theme context's toggleTheme function
+    if (newTheme === "light" && theme !== "light") {
+      // Force light theme
+      localStorage.setItem("theme", "light")
+      window.location.reload() // Simple way to apply theme change
+    } else if (newTheme === "dark" && theme !== "dark") {
+      // Force dark theme
+      localStorage.setItem("theme", "dark")
+      window.location.reload() // Simple way to apply theme change
+    } else if (newTheme === "system" && theme !== "system") {
+      // Use system theme
+      localStorage.setItem("theme", "system")
+      window.location.reload() // Simple way to apply theme change
     }
   }
 
@@ -1031,10 +1032,10 @@ export default function ProfilePage() {
                   <Label className="text-gray-700 dark:text-gray-300 mb-3 block">Theme</Label>
                   <div className="grid grid-cols-3 gap-3">
                     <Button
-                      variant={profile.settings.theme === "light" ? "default" : "outline"}
+                      variant={effectiveTheme === "light" ? "default" : "outline"}
                       onClick={() => handleThemeChange("light")}
                       className={`flex items-center justify-center gap-2 ${
-                        profile.settings.theme === "light"
+                        effectiveTheme === "light"
                           ? "bg-[#B22222] hover:bg-[#8B0000] text-white"
                           : "border-gray-200 dark:border-gray-600"
                       }`}
@@ -1043,10 +1044,10 @@ export default function ProfilePage() {
                       Light
                     </Button>
                     <Button
-                      variant={profile.settings.theme === "dark" ? "default" : "outline"}
+                      variant={effectiveTheme === "dark" ? "default" : "outline"}
                       onClick={() => handleThemeChange("dark")}
                       className={`flex items-center justify-center gap-2 ${
-                        profile.settings.theme === "dark"
+                        effectiveTheme === "dark"
                           ? "bg-[#B22222] hover:bg-[#8B0000] text-white"
                           : "border-gray-200 dark:border-gray-600"
                       }`}
@@ -1055,10 +1056,10 @@ export default function ProfilePage() {
                       Dark
                     </Button>
                     <Button
-                      variant={profile.settings.theme === "system" ? "default" : "outline"}
+                      variant={theme === "system" ? "default" : "outline"}
                       onClick={() => handleThemeChange("system")}
                       className={`flex items-center justify-center gap-2 ${
-                        profile.settings.theme === "system"
+                        theme === "system"
                           ? "bg-[#B22222] hover:bg-[#8B0000] text-white"
                           : "border-gray-200 dark:border-gray-600"
                       }`}

@@ -833,13 +833,7 @@ export default function Browse() {
   // Simulate connection status (replace with real logic)
   const [connectedUsers, setConnectedUsers] = useState<Set<number>>(new Set([2, 4]))
   // Add a new state for sent requests
-  const [sentRequests, setSentRequests] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('sentRequests');
-      return stored ? JSON.parse(stored) : [];
-    }
-    return [];
-  });
+  const [sentRequests, setSentRequests] = useState<Set<number>>(new Set());
 
   // Add member type filter state
   const [memberType, setMemberType] = useState<"all" | "local" | "diaspora">("all")
@@ -980,33 +974,16 @@ export default function Browse() {
   const handleConnect = (user: any) => {
     if (connectedUsers.has(user.id)) {
       handleChat(user)
-    } else {
-      setSentRequests(prev => {
-        const newRequests = [...prev, {
-          id: String(user.id),
-          userId: user.username || user.id,
-          name: user.name,
-          age: user.age,
-          occupation: user.occupation,
-          location: user.location,
-          avatar: user.avatar,
-          message: '',
-          timestamp: new Date(),
-          status: 'sent',
-          compatibility: user.compatibility || 0,
-          dateOfBirth: user.dateOfBirth,
-        }];
-        localStorage.setItem('sentRequests', JSON.stringify(newRequests));
-        return newRequests;
-      });
+    } else if (!sentRequests.has(user.id)) {
+      setSentRequests(prev => new Set(prev).add(user.id));
       toast({
         title: "Connection request sent!",
         description: `Your request to connect with ${user.name} has been sent.`,
         action: (
           <ToastAction altText="Undo" onClick={() => {
             setSentRequests(prev => {
-              const updated = prev.filter(r => r.id !== String(user.id));
-              localStorage.setItem('sentRequests', JSON.stringify(updated));
+              const updated = new Set(prev);
+              updated.delete(user.id);
               return updated;
             });
           }}>Undo</ToastAction>
@@ -1718,8 +1695,9 @@ export default function Browse() {
                             e.stopPropagation();
                             handleConnect(user);
                           }}
+                          disabled={sentRequests.has(user.id) && !connectedUsers.has(user.id)}
                         >
-                          {connectedUsers.has(user.id) ? "Chat" : "Connect"}
+                          {connectedUsers.has(user.id) ? "Chat" : sentRequests.has(user.id) ? "Sent" : "Connect"}
                         </Button>
                         <Button
                           size="sm"
