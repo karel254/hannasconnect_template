@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useState } from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { Home, Heart, MessageCircle, User, Search } from "lucide-react"
+import { Home, Heart, MessageCircle, User, Search, Users } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 function MobileBottomNavigationContent() {
@@ -54,9 +54,9 @@ function MobileBottomNavigationContent() {
       active: pathname === "/dashboard",
     },
     {
-      name: "Browse",
+      name: "Members",
       href: "/browse",
-      icon: Search,
+      icon: Users,
       active: pathname === "/browse",
     },
     {

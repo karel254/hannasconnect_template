@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent } from "@/components/ui/card"
 import { Eye, EyeOff, ArrowLeft, Heart } from "lucide-react"
 import { useToast } from "../../hooks/use-toast"
+import Cookies from "js-cookie" // Add at the top
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -28,13 +29,21 @@ export default function LoginPage() {
     await new Promise((resolve) => setTimeout(resolve, 1000))
 
     if (email && password) {
+      // Extract username from email
+      const username = email.split("@")[0];
       // Store demo user data
       const demoUser = {
         email,
-        name: email.split("@")[0],
+        username,
         loginTime: new Date().toISOString(),
       }
       localStorage.setItem("demoUser", JSON.stringify(demoUser))
+      localStorage.setItem("userUsername", username)
+      // --- Persistent login using cookies ---
+      // This cookie keeps the user logged in even after closing the browser.
+      // Backend devs: You can use this cookie for authentication/session management.
+      // Set a long expiry (e.g., 30 days)
+      Cookies.set("demoUser", JSON.stringify(demoUser), { expires: 30, path: "/" })
 
       toast({
         title: "Welcome back!",

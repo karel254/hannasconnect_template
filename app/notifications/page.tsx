@@ -1,7 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { Bell, Heart, MessageCircle, Users, Star, Clock } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { Bell, Heart, MessageCircle, Users, Star, Clock, ArrowLeft } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -66,6 +67,7 @@ const notifications = [
 ]
 
 export default function NotificationsPage() {
+  const router = useRouter()
   const [notificationList, setNotificationList] = useState(notifications)
   const unreadCount = notificationList.filter((n) => !n.read).length
 
@@ -86,6 +88,14 @@ export default function NotificationsPage() {
         <div className="px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => router.push("/dashboard")}
+                className="text-gray-600 hover:text-gray-900"
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
               <Bell className="w-6 h-6 text-[#B22222]" />
               <h1 className="text-xl font-bold text-gray-900">Notifications</h1>
               {unreadCount > 0 && <Badge className="bg-[#B22222] text-white text-xs">{unreadCount}</Badge>}

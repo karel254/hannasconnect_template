@@ -21,6 +21,7 @@ import {
   Users,
   UserX,
   Clock,
+  ArrowLeft,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -34,6 +35,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Slider } from "@/components/ui/slider"
 import { Checkbox } from "@/components/ui/checkbox"
 import { useToast } from "../../hooks/use-toast"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 
 interface UserProfile {
   name: string
@@ -46,6 +48,7 @@ interface UserProfile {
   interests: string[]
   avatar: string
   photos: string[]
+  dateOfBirth?: string;
   preferences: {
     ageRange: [number, number]
     lookingFor: string
@@ -126,25 +129,40 @@ const interestOptions = [
   "Hiking",
 ]
 
+// Helper to calculate age from date of birth string (YYYY-MM-DD)
+function calculateAge(dateOfBirth: string) {
+  if (!dateOfBirth) return undefined;
+  const dob = new Date(dateOfBirth);
+  const today = new Date();
+  let age = today.getFullYear() - dob.getFullYear();
+  const m = today.getMonth() - dob.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+    age--;
+  }
+  return age;
+}
+
 export default function ProfilePage() {
   const router = useRouter()
   const { toast } = useToast()
   const [isEditing, setIsEditing] = useState(false)
   const [showAvatarSelection, setShowAvatarSelection] = useState(false)
   const [profile, setProfile] = useState<UserProfile>({
-    name: "",
-    username: "",
-    email: "",
-    age: 25,
-    location: "",
-    occupation: "",
-    bio: "",
-    interests: [],
+    name: "Akinyi",
+    username: "akinyi254",
+    email: "akinyi@example.com",
+    age: 28,
+    location: "Nairobi, Kenya",
+    occupation: "Graphic Designer",
+    bio: "Creative designer from Nairobi.",
+    interests: ["Art", "Travel", "Photography"],
     avatar: "/images/male1.jpg",
     photos: [],
     preferences: {
-      ageRange: [22, 35],
+      ageRange: [25, 35],
       lookingFor: "serious",
+      country: "Kenya",
+      county: "Nairobi",
     },
     settings: {
       theme: "system",
@@ -161,6 +179,23 @@ export default function ProfilePage() {
       },
     },
   })
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [deleteStep, setDeleteStep] = useState(1)
+  const [deleteReasons, setDeleteReasons] = useState<string[]>([])
+  const [otherReason, setOtherReason] = useState("")
+  const [deleteEmail, setDeleteEmail] = useState("")
+  const [deletePassword, setDeletePassword] = useState("")
+  const [isDeleting, setIsDeleting] = useState(false)
+
+  const reasonOptions = [
+    "I found a match",
+    "Not enough matches",
+    "Privacy concerns",
+    "Too many notifications",
+    "Technical issues",
+    "Taking a break",
+    "Other"
+  ]
 
   useEffect(() => {
     // Check if user is logged in
@@ -261,11 +296,31 @@ export default function ProfilePage() {
     }
   }
 
+  const handleDeleteAccount = () => {
+    setIsDeleting(true)
+    setTimeout(() => {
+      setIsDeleting(false)
+      setDeleteStep(4)
+      // Simulate account deletion: clear user data
+      localStorage.clear()
+    }, 2000)
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20 md:pb-0">
       {/* Mobile Header */}
       <div className="md:hidden bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 flex items-center justify-between">
-        <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Profile</h1>
+        <div className="flex items-center gap-3">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => router.push("/dashboard")}
+            className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Profile</h1>
+        </div>
         <Button
           variant="ghost"
           size="sm"
@@ -305,7 +360,7 @@ export default function ProfilePage() {
                     <div className="flex flex-wrap justify-center md:justify-start gap-4 text-sm text-gray-600 dark:text-gray-400">
                       <div className="flex items-center">
                         <Calendar className="h-4 w-4 mr-1" />
-                        {profile.age} years old
+                        {profile.age || (profile.dateOfBirth ? calculateAge(profile.dateOfBirth) : "")} years old
                       </div>
                       <div className="flex items-center">
                         <MapPin className="h-4 w-4 mr-1" />
@@ -1101,50 +1156,6 @@ export default function ProfilePage() {
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <Shield className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-                    <div>
-                      <Label className="text-gray-700 dark:text-gray-300">Show Age</Label>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">Display your age on your profile</p>
-                    </div>
-                  </div>
-                  <Checkbox
-                    checked={profile.settings.privacy.showAge}
-                    onCheckedChange={(checked) =>
-                      setProfile((prev) => ({
-                        ...prev,
-                        settings: {
-                          ...prev.settings,
-                          privacy: { ...prev.settings.privacy, showAge: checked as boolean },
-                        },
-                      }))
-                    }
-                    className="border-[#B22222] data-[state=checked]:bg-[#B22222] data-[state=checked]:border-[#B22222]"
-                  />
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <MapPin className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-                    <div>
-                      <Label className="text-gray-700 dark:text-gray-300">Show Location</Label>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">Display your location on your profile</p>
-                    </div>
-                  </div>
-                  <Checkbox
-                    checked={profile.settings.privacy.showLocation}
-                    onCheckedChange={(checked) =>
-                      setProfile((prev) => ({
-                        ...prev,
-                        settings: {
-                          ...prev.settings,
-                          privacy: { ...prev.settings.privacy, showLocation: checked as boolean },
-                        },
-                      }))
-                    }
-                    className="border-[#B22222] data-[state=checked]:bg-[#B22222] data-[state=checked]:border-[#B22222]"
-                  />
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
                     <User className="h-5 w-5 text-gray-600 dark:text-gray-400" />
                     <div>
                       <Label className="text-gray-700 dark:text-gray-300">Show Online Status</Label>
@@ -1274,11 +1285,11 @@ export default function ProfilePage() {
                     </Button>
                     <Button
                       variant="outline"
-                      onClick={handleLogout}
+                      onClick={() => { setIsDeleteModalOpen(true); setDeleteStep(1); }}
                       className="w-full justify-start border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 bg-transparent"
                     >
-                      <LogOut className="h-4 w-4 mr-2" />
-                      Logout
+                      <UserX className="h-4 w-4 mr-2" />
+                      Delete Account
                     </Button>
                   </div>
                 </div>
@@ -1287,6 +1298,107 @@ export default function ProfilePage() {
           </TabsContent>
         </Tabs>
       </div>
+      <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
+        <DialogContent className="max-w-lg w-full">
+          {deleteStep === 1 && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="text-[#B22222]">Sorry to see you leave!</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-3 mt-2">
+                <p className="text-gray-700 dark:text-gray-300">Please let us know why you're leaving (select all that apply):</p>
+                <div className="space-y-2">
+                  {reasonOptions.map((reason) => (
+                    <label key={reason} className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={deleteReasons.includes(reason)}
+                        onChange={e => {
+                          if (e.target.checked) setDeleteReasons([...deleteReasons, reason])
+                          else setDeleteReasons(deleteReasons.filter(r => r !== reason))
+                        }}
+                        className="accent-[#B22222]"
+                      />
+                      {reason}
+                    </label>
+                  ))}
+                  {deleteReasons.includes("Other") && (
+                    <textarea
+                      className="w-full border rounded p-2 mt-2 text-sm"
+                      placeholder="Please describe..."
+                      value={otherReason}
+                      onChange={e => setOtherReason(e.target.value)}
+                      rows={2}
+                    />
+                  )}
+                </div>
+              </div>
+              <DialogFooter className="mt-4">
+                <Button onClick={() => setDeleteStep(2)} disabled={deleteReasons.length === 0} className="bg-[#B22222] text-white">Continue</Button>
+                <Button variant="ghost" onClick={() => setIsDeleteModalOpen(false)}>Cancel</Button>
+              </DialogFooter>
+            </>
+          )}
+          {deleteStep === 2 && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="text-[#B22222]">Confirm Your Identity</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-3 mt-2">
+                <p className="text-gray-700 dark:text-gray-300">For your security, please re-enter your login details:</p>
+                <input
+                  type="email"
+                  className="w-full border rounded p-2"
+                  placeholder="Email"
+                  value={deleteEmail}
+                  onChange={e => setDeleteEmail(e.target.value)}
+                />
+                <input
+                  type="password"
+                  className="w-full border rounded p-2"
+                  placeholder="Password"
+                  value={deletePassword}
+                  onChange={e => setDeletePassword(e.target.value)}
+                />
+              </div>
+              <DialogFooter className="mt-4">
+                <Button onClick={() => setDeleteStep(3)} disabled={!deleteEmail || !deletePassword} className="bg-[#B22222] text-white">Continue</Button>
+                <Button variant="ghost" onClick={() => setIsDeleteModalOpen(false)}>Cancel</Button>
+              </DialogFooter>
+            </>
+          )}
+          {deleteStep === 3 && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="text-[#B22222]">Delete Account</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-3 mt-2">
+                <p className="text-red-700 dark:text-red-400 font-semibold">This action is <b>irreversible</b>. All your data, matches, and messages will be permanently deleted.</p>
+                <p className="text-gray-700 dark:text-gray-300">Are you sure you want to proceed?</p>
+              </div>
+              <DialogFooter className="mt-4">
+                <Button onClick={handleDeleteAccount} className="bg-red-700 hover:bg-red-800 text-white" disabled={isDeleting}>
+                  {isDeleting ? "Deleting..." : "Delete Account Permanently"}
+                </Button>
+                <Button variant="ghost" onClick={() => setIsDeleteModalOpen(false)} disabled={isDeleting}>Cancel</Button>
+              </DialogFooter>
+            </>
+          )}
+          {deleteStep === 4 && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="text-[#B22222]">Goodbye!</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-3 mt-2">
+                <p className="text-gray-700 dark:text-gray-300">Your account has been deleted. We're truly sorry to see you go, but remember, you're always welcome back at Hanna's Connect. If you ever change your mind, we'd love to have you join our community again. Take care, and we hope to see you soon!</p>
+              </div>
+              <DialogFooter className="mt-4">
+                <Button className="bg-[#B22222] text-white" onClick={() => { setIsDeleteModalOpen(false); router.push("/") }}>Return to Home</Button>
+              </DialogFooter>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

@@ -8,400 +8,841 @@ import { Slider } from "@/components/ui/slider"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Filter, Heart, ChevronLeft, ChevronRight, Loader2, MessageCircle } from "lucide-react"
+import { Filter, Heart, ChevronLeft, ChevronRight, Loader2, MessageCircle, User, Calendar, Info, Settings, Heart as HeartIcon, Users, MessagePlus, UserPlus, Search, ArrowLeft } from "lucide-react"
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { Input } from "@/components/ui/input"
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogClose, DialogFooter } from "@/components/ui/dialog"
+import { useToast } from "@/hooks/use-toast"
+import { ToastAction } from "@/components/ui/toast"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import ProfileModal from "@/components/ProfileModal";
 
 // Extended sample user data for pagination
-const generateUsers = () => {
-  const baseUsers = [
-    {
-      id: 1,
-      name: "Alex Johnson",
-      username: "alexj",
-      age: 32,
-      gender: "Male",
-      customGender: "",
-      dateOfBirth: "1992-01-01",
-      race: "African",
-      country: "Kenya",
-      county: "Nairobi",
-      tribe: "Kikuyu",
-      languages: ["English", "Swahili"],
-      weight: "75",
-      weightUnit: "kg",
-      height: "180",
-      heightUnit: "cm",
-      heightFt: "5",
-      heightIn: "11",
-      bodyType: "Athletic",
-      complexion: "Dark",
-      eyeColor: "Brown",
-      dimples: "Yes",
-      dimplesDescription: "Deep dimples on both cheeks",
-      teethFeatures: "White, straight",
-      tattoos: "No",
-      tattoosDescription: "",
-      piercings: "No",
-      piercingsDescription: "",
-      glasses: "Yes",
-      glassesDescription: "Wears glasses for reading",
-      hivStatus: "Negative",
-      disability: "No",
-      disabilityDescription: "",
-      chronicIllness: "No",
-      chronicIllnessDescription: "",
-      allergies: "None",
-      bloodType: "O+",
-      employmentStatus: "Employed",
-      occupation: "Software Engineer",
-      workCountry: "Kenya",
-      workCounty: "Nairobi",
-      workConstituency: "Westlands",
-      workWard: "Parklands",
-      workState: "Nairobi",
-      financialStability: "Stable",
-      alcohol: "Occasionally",
-      smoking: "No",
-      hobbies: "Reading, Hiking",
-      interests: "Technology, AI, Cooking",
-      religion: "Christianity",
-      religiousness: 7,
-      denomination: "Protestant",
-      churchAttendance: "Weekly",
-      exerciseFrequency: "3 times/week",
-      maritalStatus: "Single",
-      hasChildren: "No",
-      numberOfChildren: "0",
-      childrenAges: "",
-      childrenLiveWithUser: "No",
-      wantsChildren: "Yes",
-      acceptsPartnerWithKids: "Yes",
-      acceptsPartnerWithKidsDescription: "Open to it",
-      longDistanceOk: "Yes",
-      datingPerspective: "Serious",
-      dealBreakers: "Smoking",
-      relationshipHopes: "Marriage",
-      partnerPreferences: "Kind, Ambitious",
-      personalityType: "INTJ",
-      dontContactIf: "Not serious",
-      imperfections: "Sometimes stubborn",
-      politicalViews: "Moderate",
-      dateDifferentPolitics: "Yes",
-      believesInMarriage: "Yes",
-      selfDescription: "Passionate about technology and building meaningful relationships. Looking for someone who shares my values.",
-      snoring: "No",
-      dietaryPreference: "Vegetarian",
-      hasPets: "No",
-      petsDescription: "",
-      openToRelocate: "Yes",
-      sexualOrientation: "Heterosexual",
-      relationshipTradition: "Modern",
-      selfDescriptionPhysical: "Tall, athletic build, short hair.",
-      icon: "/images/male1.jpg",
-      relationshipGoals: "Marriage",
-      skills: "Full-stack development, AI/ML",
-      interestsArr: ["Technology", "Reading", "Hiking", "Cooking"],
-      bio: "Passionate about technology and building meaningful relationships. Looking for someone who shares my values.",
-    },
-    {
-      id: 2,
-      name: "Amina Okafor",
-      username: "aminao",
-      age: 28,
-      gender: "Female",
-      customGender: "",
-      dateOfBirth: "1996-05-15",
-      race: "African",
-      country: "Nigeria",
-      county: "Lagos",
-      tribe: "Yoruba",
-      languages: ["English", "Igbo"],
-      weight: "60",
-      weightUnit: "kg",
-      height: "165",
-      heightUnit: "cm",
-      heightFt: "5",
-      heightIn: "5",
-      bodyType: "Slim",
-      complexion: "Fair",
-      eyeColor: "Brown",
-      dimples: "No",
-      dimplesDescription: "",
-      teethFeatures: "White, slightly crooked",
-      tattoos: "Yes",
-      tattoosDescription: "Small heart on the left shoulder",
-      piercings: "Yes",
-      piercingsDescription: "One ear lobe",
-      glasses: "No",
-      glassesDescription: "",
-      hivStatus: "Negative",
-      disability: "No",
-      disabilityDescription: "",
-      chronicIllness: "No",
-      chronicIllnessDescription: "",
-      allergies: "Pollen, dust",
-      bloodType: "O-",
-      employmentStatus: "Freelance",
-      occupation: "Content Creator",
-      workCountry: "Nigeria",
-      workCounty: "Lagos",
-      workConstituency: "Ikeja",
-      workWard: "Lekki",
-      workState: "Lagos",
-      financialStability: "Stable",
-      alcohol: "No",
-      smoking: "No",
-      hobbies: "Reading, Writing, Traveling",
-      interests: "Writing, Travel, Photography",
-      religion: "Christianity",
-      religiousness: 8,
-      denomination: "Catholic",
-      churchAttendance: "Weekly",
-      exerciseFrequency: "4 times/week",
-      maritalStatus: "Single",
-      hasChildren: "No",
-      numberOfChildren: "0",
-      childrenAges: "",
-      childrenLiveWithUser: "No",
-      wantsChildren: "Yes",
-      acceptsPartnerWithKids: "Yes",
-      acceptsPartnerWithKidsDescription: "Open to it",
-      longDistanceOk: "Yes",
-      datingPerspective: "Serious",
-      dealBreakers: "Smoking, Alcohol",
-      relationshipHopes: "Marriage",
-      partnerPreferences: "Kind, Intelligent, Adventurous",
-      personalityType: "ENFP",
-      dontContactIf: "Not serious, No chemistry",
-      imperfections: "Sometimes forgetful",
-      politicalViews: "Liberal",
-      dateDifferentPolitics: "Yes",
-      believesInMarriage: "Yes",
-      selfDescription: "Ambitious professional seeking a partner who values growth, family, and spiritual connection.",
-      snoring: "No",
-      dietaryPreference: "Vegetarian",
-      hasPets: "Yes",
-      petsDescription: "Cat named Whiskers",
-      openToRelocate: "No",
-      sexualOrientation: "Heterosexual",
-      relationshipTradition: "Traditional",
-      selfDescriptionPhysical: "Slim, fair complexion, brown eyes.",
-      icon: "/images/female1.jpg",
-      relationshipGoals: "Long-term relationship",
-      skills: "Investment analysis, Risk management",
-      interestsArr: ["Finance", "Fitness", "Travel", "Faith"],
-      bio: "Ambitious professional seeking a partner who values growth, family, and spiritual connection.",
-    },
-    {
-      id: 3,
-      name: "David Mensah",
-      username: "davidm",
-      age: 35,
-      gender: "Male",
-      customGender: "",
-      dateOfBirth: "1989-11-20",
-      race: "African",
-      country: "Ghana",
-      county: "Accra",
-      tribe: "Ashanti",
-      languages: ["English", "Twi"],
-      weight: "85",
-      weightUnit: "kg",
-      height: "175",
-      heightUnit: "cm",
-      heightFt: "5",
-      heightIn: "9",
-      bodyType: "Athletic",
-      complexion: "Light",
-      eyeColor: "Blue",
-      dimples: "No",
-      dimplesDescription: "",
-      teethFeatures: "White, slightly crooked",
-      tattoos: "No",
-      tattoosDescription: "",
-      piercings: "No",
-      piercingsDescription: "",
-      glasses: "Yes",
-      glassesDescription: "Wears glasses for reading",
-      hivStatus: "Negative",
-      disability: "No",
-      disabilityDescription: "",
-      chronicIllness: "No",
-      chronicIllnessDescription: "",
-      allergies: "None",
-      bloodType: "A+",
-      employmentStatus: "Employed",
-      occupation: "Doctor",
-      workCountry: "Ghana",
-      workCounty: "Accra",
-      workConstituency: "Central",
-      workWard: "Osu",
-      workState: "Accra",
-      financialStability: "Stable",
-      alcohol: "No",
-      smoking: "No",
-      hobbies: "Music, Community Service, Sports",
-      interests: "Healthcare, Music, Community Service",
-      religion: "Christianity",
-      religiousness: 6,
-      denomination: "Protestant",
-      churchAttendance: "Weekly",
-      exerciseFrequency: "5 times/week",
-      maritalStatus: "Single",
-      hasChildren: "No",
-      numberOfChildren: "0",
-      childrenAges: "",
-      childrenLiveWithUser: "No",
-      wantsChildren: "Yes",
-      acceptsPartnerWithKids: "Yes",
-      acceptsPartnerWithKidsDescription: "Open to it",
-      longDistanceOk: "Yes",
-      datingPerspective: "Serious",
-      dealBreakers: "Alcohol, Smoking",
-      relationshipHopes: "Marriage",
-      partnerPreferences: "Kind, Intelligent, Adventurous",
-      personalityType: "INTJ",
-      dontContactIf: "Not serious, No chemistry",
-      imperfections: "Sometimes stubborn",
-      politicalViews: "Moderate",
-      dateDifferentPolitics: "Yes",
-      believesInMarriage: "Yes",
-      selfDescription: "Healthcare professional with passion for helping others. Looking for a supportive partner.",
-      snoring: "No",
-      dietaryPreference: "Vegetarian",
-      hasPets: "No",
-      petsDescription: "",
-      openToRelocate: "Yes",
-      sexualOrientation: "Heterosexual",
-      relationshipTradition: "Traditional",
-      selfDescriptionPhysical: "Athletic build, short hair, blue eyes.",
-      icon: "/images/male2.jpg",
-      relationshipGoals: "Marriage",
-      skills: "Emergency medicine, Patient care",
-      interestsArr: ["Healthcare", "Music", "Community Service", "Sports"],
-      bio: "Healthcare professional with passion for helping others. Looking for a supportive partner.",
-    },
-    {
-      id: 4,
-      name: "Sarah Osei",
-      username: "sarahosei",
-      age: 30,
-      gender: "Female",
-      customGender: "",
-      dateOfBirth: "1994-07-10",
-      race: "African",
-      country: "Nigeria",
-      county: "Lagos",
-      tribe: "Akan",
-      languages: ["English", "Ewe"],
-      weight: "65",
-      weightUnit: "kg",
-      height: "160",
-      heightUnit: "cm",
-      heightFt: "5",
-      heightIn: "3",
-      bodyType: "Slim",
-      complexion: "Fair",
-      eyeColor: "Brown",
-      dimples: "No",
-      dimplesDescription: "",
-      teethFeatures: "White, straight",
-      tattoos: "No",
-      tattoosDescription: "",
-      piercings: "No",
-      piercingsDescription: "",
-      glasses: "No",
-      glassesDescription: "",
-      hivStatus: "Negative",
-      disability: "No",
-      disabilityDescription: "",
-      chronicIllness: "No",
-      chronicIllnessDescription: "",
-      allergies: "None",
-      bloodType: "B+",
-      employmentStatus: "Employed",
-      occupation: "Corporate Lawyer",
-      workCountry: "Nigeria",
-      workCounty: "Lagos",
-      workConstituency: "Ikeja",
-      workWard: "Lekki",
-      workState: "Lagos",
-      financialStability: "Stable",
-      alcohol: "No",
-      smoking: "No",
-      hobbies: "Art, Politics, Culinary Arts",
-      interests: "Law, Art, Politics",
-      religion: "Christianity",
-      religiousness: 9,
-      denomination: "Catholic",
-      churchAttendance: "Weekly",
-      exerciseFrequency: "3 times/week",
-      maritalStatus: "Single",
-      hasChildren: "No",
-      numberOfChildren: "0",
-      childrenAges: "",
-      childrenLiveWithUser: "No",
-      wantsChildren: "Yes",
-      acceptsPartnerWithKids: "Yes",
-      acceptsPartnerWithKidsDescription: "Open to it",
-      longDistanceOk: "Yes",
-      datingPerspective: "Serious",
-      dealBreakers: "Alcohol, Smoking",
-      relationshipHopes: "Long-term relationship",
-      partnerPreferences: "Kind, Intelligent, Adventurous",
-      personalityType: "ENFP",
-      dontContactIf: "Not serious, No chemistry",
-      imperfections: "Sometimes forgetful",
-      politicalViews: "Liberal",
-      dateDifferentPolitics: "Yes",
-      believesInMarriage: "Yes",
-      selfDescription: "Driven professional seeking someone who values intellectual conversations and shared goals.",
-      snoring: "No",
-      dietaryPreference: "Vegetarian",
-      hasPets: "No",
-      petsDescription: "",
-      openToRelocate: "Yes",
-      sexualOrientation: "Heterosexual",
-      relationshipTradition: "Traditional",
-      selfDescriptionPhysical: "Slim, fair complexion, brown eyes.",
-      icon: "/images/female2.jpg",
-      relationshipGoals: "Long-term relationship",
-      skills: "Corporate law, Contract negotiation",
-      interestsArr: ["Law", "Art", "Politics", "Culinary Arts"],
-      bio: "Driven professional seeking someone who values intellectual conversations and shared goals.",
-    },
-  ]
+const baseUsers = [
+  // Kenyan users
+  {
+    id: 1,
+    name: "Brian Otieno",
+    username: "brianotieno",
+    age: 34,
+    gender: "Male",
+    dateOfBirth: "1990-02-10",
+    occupation: "Engineer",
+    location: "Kisumu, Kenya",
+    county: "Kisumu",
+    country: "Kenya",
+    tribe: "Luo",
+    languages: ["English", "Swahili", "Dholuo"],
+    avatar: "/images/male3.jpg",
+    interests: ["Technology", "Football", "Travel"],
+    bio: "Engineer from Kisumu.",
+    // Personal Info
+    race: "African",
+    // Physical Appearance
+    height: "5'10\"",
+    weight: "75kg",
+    bodyType: "Athletic",
+    complexion: "Dark",
+    eyeColor: "Brown",
+    dimples: "No",
+    teethFeatures: "Straight",
+    tattoos: "No",
+    piercings: "No",
+    glasses: "No",
+    selfDescriptionPhysical: "Athletic build with a warm smile",
+    // Health
+    hivStatus: "Negative",
+    disability: "None",
+    chronicIllness: "None",
+    allergies: "None",
+    bloodType: "O+",
+    snoring: "Occasionally",
+    // Work & Lifestyle
+    employmentStatus: "Employed",
+    workCountry: "Kenya",
+    workCounty: "Kisumu",
+    workConstituency: "Kisumu Central",
+    workWard: "Kisumu Central",
+    workState: "Kisumu",
+    financialStability: "Stable",
+    alcohol: "Occasionally",
+    smoking: "No",
+    dietaryPreference: "No restrictions",
+    hasPets: "No",
+    exerciseFrequency: "3-4 times per week",
+    hobbies: "Reading, hiking, cooking",
+    // Beliefs
+    religion: "Christian",
+    religiousness: 7,
+    denomination: "Protestant",
+    churchAttendance: "Regular",
+    // Family
+    maritalStatus: "Single",
+    hasChildren: "No",
+    numberOfChildren: 0,
+    childrenAges: "N/A",
+    childrenLiveWithUser: "N/A",
+    wantsChildren: "Yes",
+    acceptsPartnerWithKids: "Yes",
+    // Preferences
+    openToRelocate: "Yes",
+    sexualOrientation: "Straight",
+    relationshipTradition: "Traditional",
+    longDistanceOk: "Yes",
+    datingPerspective: "Serious",
+    dealBreakers: "Dishonesty, lack of ambition",
+    relationshipHopes: "Marriage and family",
+    partnerPreferences: "Kind, ambitious, family-oriented",
+    personalityType: "INTJ",
+    dontContactIf: "Not interested in serious relationships",
+    imperfections: "I'm not perfect, and I don't expect perfection",
+    politicalViews: "Moderate",
+    dateDifferentPolitics: "Yes",
+    believesInMarriage: "Yes",
+    // About Me
+    selfDescription: "I'm a dedicated engineer who loves solving problems and building things that make a difference. When I'm not coding, you'll find me playing football or exploring new places. I believe in the power of community and am always looking for ways to give back."
+  },
+  {
+    id: 2,
+    name: "Faith Wambui",
+    username: "faithwambui",
+    age: 27,
+    gender: "Female",
+    dateOfBirth: "1997-06-18",
+    occupation: "Banker",
+    location: "Nairobi, Kenya",
+    county: "Nairobi",
+    country: "Kenya",
+    tribe: "Kikuyu",
+    languages: ["English", "Swahili", "Kikuyu"],
+    avatar: "/images/female3.jpg",
+    interests: ["Finance", "Cooking", "Reading"],
+    bio: "Banker in Nairobi.",
+    // Personal Info
+    race: "African",
+    // Physical Appearance
+    height: "5'6\"",
+    weight: "60kg",
+    bodyType: "Slim",
+    complexion: "Medium",
+    eyeColor: "Brown",
+    dimples: "Yes",
+    teethFeatures: "Straight",
+    tattoos: "No",
+    piercings: "Earrings only",
+    glasses: "No",
+    selfDescriptionPhysical: "Slim build with a bright smile and dimples",
+    // Health
+    hivStatus: "Negative",
+    disability: "None",
+    chronicIllness: "None",
+    allergies: "None",
+    bloodType: "A+",
+    snoring: "No",
+    // Work & Lifestyle
+    employmentStatus: "Employed",
+    workCountry: "Kenya",
+    workCounty: "Nairobi",
+    workConstituency: "Nairobi Central",
+    workWard: "Nairobi Central",
+    workState: "Nairobi",
+    financialStability: "Stable",
+    alcohol: "No",
+    smoking: "No",
+    dietaryPreference: "Vegetarian",
+    hasPets: "Yes",
+    exerciseFrequency: "2-3 times per week",
+    hobbies: "Baking, yoga, reading novels",
+    // Beliefs
+    religion: "Christian",
+    religiousness: 8,
+    denomination: "Catholic",
+    churchAttendance: "Regular",
+    // Family
+    maritalStatus: "Single",
+    hasChildren: "No",
+    numberOfChildren: 0,
+    childrenAges: "N/A",
+    childrenLiveWithUser: "N/A",
+    wantsChildren: "Yes",
+    acceptsPartnerWithKids: "Yes",
+    // Preferences
+    openToRelocate: "Within Kenya",
+    sexualOrientation: "Straight",
+    relationshipTradition: "Traditional",
+    longDistanceOk: "No",
+    datingPerspective: "Serious",
+    dealBreakers: "Smoking, dishonesty",
+    relationshipHopes: "Marriage and family",
+    partnerPreferences: "Honest, family-oriented, ambitious",
+    personalityType: "ENFJ",
+    dontContactIf: "Not looking for serious relationships",
+    imperfections: "I'm a work in progress, just like everyone else",
+    politicalViews: "Conservative",
+    dateDifferentPolitics: "Yes",
+    believesInMarriage: "Yes",
+    // About Me
+    selfDescription: "I'm a passionate banker who believes in financial literacy and helping others achieve their dreams. I love experimenting with new recipes and getting lost in good books. I value honesty, family, and building meaningful connections."
+  },
+  {
+    id: 3,
+    name: "Janet Mwikali",
+    username: "janetmwikali",
+    age: 29,
+    gender: "Female",
+    dateOfBirth: "1995-04-12",
+    occupation: "Teacher",
+    location: "Machakos, Kenya",
+    county: "Machakos",
+    country: "Kenya",
+    tribe: "Kamba",
+    languages: ["English", "Swahili", "Kikamba"],
+    avatar: "/images/female4.jpg",
+    interests: ["Education", "Music", "Volunteering"],
+    bio: "Teacher from Machakos.",
+    // Personal Info
+    race: "African",
+    // Physical Appearance
+    height: "5'7\"",
+    weight: "65kg",
+    bodyType: "Average",
+    complexion: "Medium",
+    eyeColor: "Brown",
+    dimples: "No",
+    teethFeatures: "Straight",
+    tattoos: "No",
+    piercings: "No",
+    glasses: "Yes",
+    selfDescriptionPhysical: "Average build with glasses and a warm smile",
+    // Health
+    hivStatus: "Negative",
+    disability: "None",
+    chronicIllness: "None",
+    allergies: "Dust",
+    bloodType: "B+",
+    snoring: "No",
+    // Work & Lifestyle
+    employmentStatus: "Employed",
+    workCountry: "Kenya",
+    workCounty: "Machakos",
+    workConstituency: "Machakos Town",
+    workWard: "Machakos Town",
+    workState: "Machakos",
+    financialStability: "Stable",
+    alcohol: "No",
+    smoking: "No",
+    dietaryPreference: "No restrictions",
+    hasPets: "No",
+    exerciseFrequency: "Daily walks",
+    hobbies: "Singing, community service, reading",
+    // Beliefs
+    religion: "Christian",
+    religiousness: 9,
+    denomination: "Protestant",
+    churchAttendance: "Regular",
+    // Family
+    maritalStatus: "Single",
+    hasChildren: "No",
+    numberOfChildren: 0,
+    childrenAges: "N/A",
+    childrenLiveWithUser: "N/A",
+    wantsChildren: "Yes",
+    acceptsPartnerWithKids: "Yes",
+    // Preferences
+    openToRelocate: "Within Kenya",
+    sexualOrientation: "Straight",
+    relationshipTradition: "Traditional",
+    longDistanceOk: "No",
+    datingPerspective: "Serious",
+    dealBreakers: "Lack of values, dishonesty",
+    relationshipHopes: "Marriage and family",
+    partnerPreferences: "Values-driven, family-oriented, kind",
+    personalityType: "INFJ",
+    dontContactIf: "Not interested in serious relationships",
+    imperfections: "I'm perfectly imperfect and embrace it",
+    politicalViews: "Moderate",
+    dateDifferentPolitics: "Yes",
+    believesInMarriage: "Yes",
+    // About Me
+    selfDescription: "I'm a dedicated teacher who believes in the power of education to transform lives. I love music and find joy in helping others through community service. I'm looking for someone who shares my values and commitment to making a positive impact."
+  },
+  {
+    id: 4,
+    name: "Peter Mwangi",
+    username: "petermwangi",
+    age: 44,
+    gender: "Male",
+    dateOfBirth: "1980-09-03",
+    occupation: "Businessman",
+    location: "Nakuru, Kenya",
+    county: "Nakuru",
+    country: "Kenya",
+    tribe: "Kikuyu",
+    languages: ["English", "Swahili", "Kikuyu"],
+    avatar: "/images/male4.jpeg",
+    interests: ["Business", "Golf", "Travel"],
+    bio: "Businessman in Nakuru.",
+    // Personal Info
+    race: "African",
+    // Physical Appearance
+    height: "6'0\"",
+    weight: "85kg",
+    bodyType: "Athletic",
+    complexion: "Medium",
+    eyeColor: "Brown",
+    dimples: "No",
+    teethFeatures: "Straight",
+    tattoos: "No",
+    piercings: "No",
+    glasses: "No",
+    selfDescriptionPhysical: "Athletic build with a confident presence",
+    // Health
+    hivStatus: "Negative",
+    disability: "None",
+    chronicIllness: "None",
+    allergies: "None",
+    bloodType: "O+",
+    snoring: "Occasionally",
+    // Work & Lifestyle
+    employmentStatus: "Self-employed",
+    workCountry: "Kenya",
+    workCounty: "Nakuru",
+    workConstituency: "Nakuru Town East",
+    workWard: "Nakuru Town East",
+    workState: "Nakuru",
+    financialStability: "Very stable",
+    alcohol: "Occasionally",
+    smoking: "No",
+    dietaryPreference: "No restrictions",
+    hasPets: "Yes",
+    exerciseFrequency: "3 times per week",
+    hobbies: "Golf, business networking, travel",
+    // Beliefs
+    religion: "Christian",
+    religiousness: 6,
+    denomination: "Protestant",
+    churchAttendance: "Occasional",
+    // Family
+    maritalStatus: "Divorced",
+    hasChildren: "Yes",
+    numberOfChildren: 2,
+    childrenAges: "12, 15",
+    childrenLiveWithUser: "Part-time",
+    wantsChildren: "Open to more",
+    acceptsPartnerWithKids: "Yes",
+    // Preferences
+    openToRelocate: "No",
+    sexualOrientation: "Straight",
+    relationshipTradition: "Traditional",
+    longDistanceOk: "No",
+    datingPerspective: "Serious",
+    dealBreakers: "Dishonesty, lack of ambition",
+    relationshipHopes: "Companionship and partnership",
+    partnerPreferences: "Independent, ambitious, family-oriented",
+    personalityType: "ENTJ",
+    dontContactIf: "Not interested in serious relationships",
+    imperfections: "I'm human and embrace my flaws",
+    politicalViews: "Conservative",
+    dateDifferentPolitics: "Yes",
+    believesInMarriage: "Yes",
+    // About Me
+    selfDescription: "I'm a successful businessman who values hard work and family. I enjoy golf and traveling to new places. I'm looking for someone who is independent, ambitious, and shares my values of family and success."
+  },
+  // Other Kenyans
+  {
+    id: 5,
+    name: "Akinyi",
+    username: "akinyi254",
+    age: 28,
+    gender: "Female",
+    dateOfBirth: "1996-03-15",
+    occupation: "Graphic Designer",
+    location: "Nairobi, Kenya",
+    county: "Nairobi",
+    country: "Kenya",
+    tribe: "Luo",
+    languages: ["English", "Swahili", "Dholuo"],
+    avatar: "/images/female1.jpg",
+    interests: ["Art", "Travel", "Photography"],
+    bio: "Creative designer from Nairobi.",
+    // Personal Info
+    race: "African",
+    // Physical Appearance
+    height: "5'8\"",
+    weight: "62kg",
+    bodyType: "Slim",
+    complexion: "Dark",
+    eyeColor: "Brown",
+    dimples: "Yes",
+    teethFeatures: "Straight",
+    tattoos: "Small one on wrist",
+    piercings: "Earrings only",
+    glasses: "No",
+    selfDescriptionPhysical: "Slim build with artistic flair and a creative spirit",
+    // Health
+    hivStatus: "Negative",
+    disability: "None",
+    chronicIllness: "None",
+    allergies: "None",
+    bloodType: "A+",
+    snoring: "No",
+    // Work & Lifestyle
+    employmentStatus: "Self-employed",
+    workCountry: "Kenya",
+    workCounty: "Nairobi",
+    workConstituency: "Nairobi Central",
+    workWard: "Nairobi Central",
+    workState: "Nairobi",
+    financialStability: "Stable",
+    alcohol: "Occasionally",
+    smoking: "No",
+    dietaryPreference: "No restrictions",
+    hasPets: "Yes",
+    exerciseFrequency: "Yoga and walking",
+    hobbies: "Painting, photography, exploring new places",
+    // Beliefs
+    religion: "Christian",
+    religiousness: 5,
+    denomination: "Protestant",
+    churchAttendance: "Occasional",
+    // Family
+    maritalStatus: "Single",
+    hasChildren: "No",
+    numberOfChildren: 0,
+    childrenAges: "N/A",
+    childrenLiveWithUser: "N/A",
+    wantsChildren: "Yes",
+    acceptsPartnerWithKids: "Yes",
+    // Preferences
+    openToRelocate: "Yes",
+    sexualOrientation: "Straight",
+    relationshipTradition: "Modern",
+    longDistanceOk: "Yes",
+    datingPerspective: "Serious",
+    dealBreakers: "Lack of creativity, closed-mindedness",
+    relationshipHopes: "Partnership and growth",
+    partnerPreferences: "Creative, open-minded, adventurous",
+    personalityType: "ENFP",
+    dontContactIf: "Not interested in serious relationships",
+    imperfections: "I embrace my quirks and imperfections",
+    politicalViews: "Liberal",
+    dateDifferentPolitics: "Yes",
+    believesInMarriage: "Yes",
+    // About Me
+    selfDescription: "I'm a creative soul who finds beauty in everything around me. I love expressing myself through art and capturing moments through photography. I'm looking for someone who appreciates creativity and shares my love for adventure and growth."
+  },
+  {
+    id: 6,
+    name: "Kiptoo",
+    username: "kiptoo",
+    age: 26,
+    gender: "Male",
+    dateOfBirth: "1998-07-22",
+    occupation: "Marketing Manager",
+    location: "Eldoret, Kenya",
+    county: "Uasin Gishu",
+    country: "Kenya",
+    tribe: "Kalenjin",
+    languages: ["English", "Swahili", "Kalenjin"],
+    avatar: "/images/male1.jpg",
+    interests: ["Fitness", "Cooking", "Music"],
+    bio: "Marketing manager in Eldoret.",
+    // Personal Info
+    race: "African",
+    // Physical Appearance
+    height: "5'11\"",
+    weight: "78kg",
+    bodyType: "Athletic",
+    complexion: "Dark",
+    eyeColor: "Brown",
+    dimples: "No",
+    teethFeatures: "Straight",
+    tattoos: "No",
+    piercings: "No",
+    glasses: "No",
+    selfDescriptionPhysical: "Athletic build with a friendly smile",
+    // Health
+    hivStatus: "Negative",
+    disability: "None",
+    chronicIllness: "None",
+    allergies: "None",
+    bloodType: "O+",
+    snoring: "No",
+    // Work & Lifestyle
+    employmentStatus: "Employed",
+    workCountry: "Kenya",
+    workCounty: "Uasin Gishu",
+    workConstituency: "Eldoret North",
+    workWard: "Eldoret North",
+    workState: "Uasin Gishu",
+    financialStability: "Stable",
+    alcohol: "Occasionally",
+    smoking: "No",
+    dietaryPreference: "No restrictions",
+    hasPets: "No",
+    exerciseFrequency: "Daily",
+    hobbies: "Running, cooking, playing guitar",
+    // Beliefs
+    religion: "Christian",
+    religiousness: 7,
+    denomination: "Protestant",
+    churchAttendance: "Regular",
+    // Family
+    maritalStatus: "Single",
+    hasChildren: "No",
+    numberOfChildren: 0,
+    childrenAges: "N/A",
+    childrenLiveWithUser: "N/A",
+    wantsChildren: "Yes",
+    acceptsPartnerWithKids: "Yes",
+    // Preferences
+    openToRelocate: "Within Kenya",
+    sexualOrientation: "Straight",
+    relationshipTradition: "Traditional",
+    longDistanceOk: "No",
+    datingPerspective: "Serious",
+    dealBreakers: "Lack of ambition, dishonesty",
+    relationshipHopes: "Marriage and family",
+    partnerPreferences: "Ambitious, family-oriented, active",
+    personalityType: "ESTJ",
+    dontContactIf: "Not interested in serious relationships",
+    imperfections: "I'm perfectly imperfect and proud of it",
+    politicalViews: "Moderate",
+    dateDifferentPolitics: "Yes",
+    believesInMarriage: "Yes",
+    // About Me
+    selfDescription: "I'm a driven marketing professional who loves staying active and creating delicious meals. I believe in hard work, family values, and building meaningful relationships. I'm looking for someone who shares my passion for life and commitment to growth."
+  },
+  // International users
+  {
+    id: 7,
+    name: "Emily Smith",
+    username: "emilysmith",
+    age: 31,
+    gender: "Female",
+    dateOfBirth: "1993-11-10",
+    occupation: "Software Engineer",
+    location: "London, UK",
+    county: "Greater London",
+    country: "UK",
+    tribe: "N/A",
+    languages: ["English", "French"],
+    avatar: "/images/female5.jpg",
+    interests: ["Tech", "Travel", "Yoga"],
+    bio: "Engineer from London.",
+    // Personal Info
+    race: "Caucasian",
+    // Physical Appearance
+    height: "5'7\"",
+    weight: "65kg",
+    bodyType: "Slim",
+    complexion: "Fair",
+    eyeColor: "Blue",
+    dimples: "No",
+    teethFeatures: "Straight",
+    tattoos: "No",
+    piercings: "Earrings only",
+    glasses: "No",
+    selfDescriptionPhysical: "Slim build with blue eyes and a warm smile",
+    // Health
+    hivStatus: "Negative",
+    disability: "None",
+    chronicIllness: "None",
+    allergies: "None",
+    bloodType: "A+",
+    snoring: "No",
+    // Work & Lifestyle
+    employmentStatus: "Employed",
+    workCountry: "UK",
+    workCounty: "Greater London",
+    workConstituency: "N/A",
+    workWard: "N/A",
+    workState: "London",
+    financialStability: "Stable",
+    alcohol: "Occasionally",
+    smoking: "No",
+    dietaryPreference: "Vegetarian",
+    hasPets: "Yes",
+    exerciseFrequency: "Yoga and gym",
+    hobbies: "Coding, yoga, exploring new cities",
+    // Beliefs
+    religion: "Agnostic",
+    religiousness: 3,
+    denomination: "N/A",
+    churchAttendance: "Never",
+    // Family
+    maritalStatus: "Single",
+    hasChildren: "No",
+    numberOfChildren: 0,
+    childrenAges: "N/A",
+    childrenLiveWithUser: "N/A",
+    wantsChildren: "Maybe",
+    acceptsPartnerWithKids: "Yes",
+    // Preferences
+    openToRelocate: "Yes",
+    sexualOrientation: "Straight",
+    relationshipTradition: "Modern",
+    longDistanceOk: "Yes",
+    datingPerspective: "Casual to serious",
+    dealBreakers: "Lack of ambition, closed-mindedness",
+    relationshipHopes: "Partnership and growth",
+    partnerPreferences: "Ambitious, open-minded, adventurous",
+    personalityType: "INTJ",
+    dontContactIf: "Not interested in relationships",
+    imperfections: "I embrace my imperfections and quirks",
+    politicalViews: "Liberal",
+    dateDifferentPolitics: "Yes",
+    believesInMarriage: "Maybe",
+    // About Me
+    selfDescription: "I'm a tech enthusiast who loves solving complex problems and exploring new places. I value independence, growth, and meaningful connections. I'm looking for someone who shares my curiosity and passion for life."
+  },
+  {
+    id: 8,
+    name: "Raj Patel",
+    username: "rajpatel",
+    age: 36,
+    gender: "Male",
+    dateOfBirth: "1988-05-22",
+    occupation: "Doctor",
+    location: "Mumbai, India",
+    county: "Maharashtra",
+    country: "India",
+    tribe: "N/A",
+    languages: ["English", "Hindi", "Gujarati"],
+    avatar: "/images/male2.jpg",
+    interests: ["Medicine", "Cricket", "Cooking"],
+    bio: "Doctor from Mumbai.",
+    // Personal Info
+    race: "Asian",
+    // Physical Appearance
+    height: "5'9\"",
+    weight: "72kg",
+    bodyType: "Average",
+    complexion: "Medium",
+    eyeColor: "Brown",
+    dimples: "No",
+    teethFeatures: "Straight",
+    tattoos: "No",
+    piercings: "No",
+    glasses: "No",
+    selfDescriptionPhysical: "Average build with a professional appearance",
+    // Health
+    hivStatus: "Negative",
+    disability: "None",
+    chronicIllness: "None",
+    allergies: "None",
+    bloodType: "B+",
+    snoring: "Occasionally",
+    // Work & Lifestyle
+    employmentStatus: "Employed",
+    workCountry: "India",
+    workCounty: "Maharashtra",
+    workConstituency: "Mumbai Central",
+    workWard: "Mumbai Central",
+    workState: "Maharashtra",
+    financialStability: "Very stable",
+    alcohol: "No",
+    smoking: "No",
+    dietaryPreference: "Vegetarian",
+    hasPets: "No",
+    exerciseFrequency: "3 times per week",
+    hobbies: "Cricket, cooking, reading medical journals",
+    // Beliefs
+    religion: "Hindu",
+    religiousness: 8,
+    denomination: "N/A",
+    churchAttendance: "Regular temple visits",
+    // Family
+    maritalStatus: "Single",
+    hasChildren: "No",
+    numberOfChildren: 0,
+    childrenAges: "N/A",
+    childrenLiveWithUser: "N/A",
+    wantsChildren: "Yes",
+    acceptsPartnerWithKids: "Yes",
+    // Preferences
+    openToRelocate: "Within India",
+    sexualOrientation: "Straight",
+    relationshipTradition: "Traditional",
+    longDistanceOk: "No",
+    datingPerspective: "Serious",
+    dealBreakers: "Dishonesty, lack of family values",
+    relationshipHopes: "Marriage and family",
+    partnerPreferences: "Family-oriented, educated, kind",
+    personalityType: "ISFJ",
+    dontContactIf: "Not interested in serious relationships",
+    imperfections: "I'm human and embrace my flaws",
+    politicalViews: "Moderate",
+    dateDifferentPolitics: "Yes",
+    believesInMarriage: "Yes",
+    // About Me
+    selfDescription: "I'm a dedicated doctor who believes in serving others and maintaining strong family values. I love cricket and cooking traditional Indian dishes. I'm looking for someone who shares my values of family, education, and service to others."
+  },
+  {
+    id: 9,
+    name: "Jessica Brown",
+    username: "jessicabrown",
+    age: 29,
+    gender: "Female",
+    dateOfBirth: "1995-08-30",
+    occupation: "Artist",
+    location: "New York, USA",
+    county: "New York",
+    country: "USA",
+    tribe: "N/A",
+    languages: ["English", "Spanish"],
+    avatar: "/images/female6.jpg",
+    interests: ["Art", "Music", "Travel"],
+    bio: "Artist in New York.",
+    // Personal Info
+    race: "Caucasian",
+    // Physical Appearance
+    height: "5'6\"",
+    weight: "58kg",
+    bodyType: "Slim",
+    complexion: "Fair",
+    eyeColor: "Green",
+    dimples: "Yes",
+    teethFeatures: "Straight",
+    tattoos: "Several artistic pieces",
+    piercings: "Multiple ear piercings",
+    glasses: "No",
+    selfDescriptionPhysical: "Slim build with artistic tattoos and a creative spirit",
+    // Health
+    hivStatus: "Negative",
+    disability: "None",
+    chronicIllness: "None",
+    allergies: "None",
+    bloodType: "O+",
+    snoring: "No",
+    // Work & Lifestyle
+    employmentStatus: "Self-employed",
+    workCountry: "USA",
+    workCounty: "New York",
+    workConstituency: "N/A",
+    workWard: "N/A",
+    workState: "New York",
+    financialStability: "Stable",
+    alcohol: "Occasionally",
+    smoking: "No",
+    dietaryPreference: "Vegan",
+    hasPets: "Yes",
+    exerciseFrequency: "Yoga and dancing",
+    hobbies: "Painting, playing guitar, exploring galleries",
+    // Beliefs
+    religion: "Spiritual",
+    religiousness: 4,
+    denomination: "N/A",
+    churchAttendance: "Never",
+    // Family
+    maritalStatus: "Single",
+    hasChildren: "No",
+    numberOfChildren: 0,
+    childrenAges: "N/A",
+    childrenLiveWithUser: "N/A",
+    wantsChildren: "Maybe",
+    acceptsPartnerWithKids: "Yes",
+    // Preferences
+    openToRelocate: "Yes",
+    sexualOrientation: "Straight",
+    relationshipTradition: "Modern",
+    longDistanceOk: "Yes",
+    datingPerspective: "Casual to serious",
+    dealBreakers: "Lack of creativity, closed-mindedness",
+    relationshipHopes: "Partnership and growth",
+    partnerPreferences: "Creative, open-minded, adventurous",
+    personalityType: "ENFP",
+    dontContactIf: "Not interested in relationships",
+    imperfections: "I celebrate my imperfections and quirks",
+    politicalViews: "Liberal",
+    dateDifferentPolitics: "Yes",
+    believesInMarriage: "Maybe",
+    // About Me
+    selfDescription: "I'm a free-spirited artist who finds beauty in everything around me. I love expressing myself through various art forms and connecting with people who appreciate creativity. I'm looking for someone who shares my passion for art and life."
+  },
+];
 
-  // Generate more users for pagination demo
-  const users = []
-  for (let i = 0; i < 50; i++) {
-    const baseUser = baseUsers[i % baseUsers.length]
-    users.push({
-      ...baseUser,
-      id: i + 1,
-      name: `${baseUser.name.split(" ")[0]} ${String.fromCharCode(65 + (i % 26))}${baseUser.name.split(" ")[1]}`,
-      age: 25 + (i % 15),
-    })
+const USERS_PER_PAGE = 6 // Show 2x3 grid per page
+
+// Helper to calculate age from date of birth string (YYYY-MM-DD)
+function calculateAge(dateOfBirth: string) {
+  if (!dateOfBirth) return undefined;
+  const dob = new Date(dateOfBirth);
+  const today = new Date();
+  let age = today.getFullYear() - dob.getFullYear();
+  const m = today.getMonth() - dob.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+    age--;
   }
-  return users
+  return age;
 }
 
-const USERS_PER_PAGE = 12
+// Generate users for pagination (mix of Kenyans and international, prioritizing Kenyans)
+function generateUsers() {
+  const users = [];
+  const kenyanUsers = baseUsers.slice(0, 6); // First 6 are Kenyans
+  const internationalUsers = baseUsers.slice(6); // Last 3 are international
+  
+  for (let i = 0; i < 60; i++) {
+    // 70% chance of Kenyan user, 30% chance of international user
+    const isKenyan = Math.random() < 0.7;
+    
+    if (isKenyan) {
+      const baseUser = kenyanUsers[i % kenyanUsers.length];
+      users.push({
+        ...baseUser,
+        id: i + 1,
+        name: `${baseUser.name.split(" ")[0]} ${String.fromCharCode(65 + (i % 26))}${baseUser.name.split(" ")[1]}`,
+        age: baseUser.age + (Math.random() > 0.5 ? 1 : -1) * Math.floor(Math.random() * 3),
+        gender: baseUser.gender,
+        avatar: baseUser.avatar,
+        country: "Kenya",
+        county: baseUser.county,
+        location: baseUser.location,
+      });
+    } else {
+      const baseUser = internationalUsers[i % internationalUsers.length];
+      users.push({
+        ...baseUser,
+        id: i + 1,
+        name: baseUser.name,
+        age: baseUser.age + (Math.random() > 0.5 ? 1 : -1) * Math.floor(Math.random() * 3),
+        gender: baseUser.gender,
+        avatar: baseUser.avatar,
+        country: baseUser.location.split(", ")[1] || "Unknown",
+        county: baseUser.county,
+        location: baseUser.location,
+      });
+    }
+  }
+  return users;
+}
 
 export default function Browse() {
   const router = useRouter()
+  const { toast } = useToast();
   const [allUsers] = useState(generateUsers())
   const [currentPage, setCurrentPage] = useState(1)
   const [ageRange, setAgeRange] = useState([25, 45])
   const [selectedGoals, setSelectedGoals] = useState<string>("any")
   const [isLoading, setIsLoading] = useState(false)
   const [likedUsers, setLikedUsers] = useState<Set<number>>(new Set())
-  const [selectedProfile, setSelectedProfile] = useState<any | null>(null)
-  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false)
+  // Find the state for modal open/close and selected profile
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [selectedProfile, setSelectedProfile] = useState<any | null>(null);
   // Simulate connection status (replace with real logic)
   const [connectedUsers, setConnectedUsers] = useState<Set<number>>(new Set([2, 4]))
+  // Add a new state for sent requests
+  const [sentRequests, setSentRequests] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('sentRequests');
+      return stored ? JSON.parse(stored) : [];
+    }
+    return [];
+  });
+
+  // Add member type filter state
+  const [memberType, setMemberType] = useState<"all" | "local" | "diaspora">("all")
 
   // 1. Add state for all new filters at the top of the Browse component
   const [selectedGender, setSelectedGender] = useState<string>("any");
@@ -427,9 +868,16 @@ export default function Browse() {
   const [selectedSexualOrientation, setSelectedSexualOrientation] = useState<string>("any");
   const [selectedRelationshipTradition, setSelectedRelationshipTradition] = useState<string>("any");
 
+  // Get user's country from localStorage or default to Kenya
+  const userCountry = localStorage.getItem("userCountry") || "Kenya"
+
   // Filter users based on criteria
   const filteredUsers = useMemo(() => {
     return allUsers.filter((user) => {
+      // Member type filter
+      if (memberType === "local" && user.country !== "Kenya") return false;
+      if (memberType === "diaspora" && user.country === "Kenya") return false;
+      
       // Age Range
       if (user.age < ageRange[0] || user.age > ageRange[1]) return false;
       // Relationship Goals
@@ -480,7 +928,7 @@ export default function Browse() {
       if (selectedRelationshipTradition && selectedRelationshipTradition !== "any" && user.relationshipTradition !== selectedRelationshipTradition) return false;
       return true;
     });
-  }, [allUsers, ageRange, selectedGoals, selectedGender, selectedRace, selectedCountry, selectedCounty, selectedTribe, selectedLanguages, selectedReligion, selectedDenomination, selectedReligiousness, selectedChurchAttendance, selectedMaritalStatus, selectedHasChildren, selectedWantsChildren, selectedAcceptsPartnerWithKids, selectedSmoking, selectedAlcohol, selectedDietaryPreference, selectedPets, selectedSnoring, selectedOpenToRelocate, selectedSexualOrientation, selectedRelationshipTradition]);
+  }, [allUsers, memberType, userCountry, ageRange, selectedGoals, selectedGender, selectedRace, selectedCountry, selectedCounty, selectedTribe, selectedLanguages, selectedReligion, selectedDenomination, selectedReligiousness, selectedChurchAttendance, selectedMaritalStatus, selectedHasChildren, selectedWantsChildren, selectedAcceptsPartnerWithKids, selectedSmoking, selectedAlcohol, selectedDietaryPreference, selectedPets, selectedSnoring, selectedOpenToRelocate, selectedSexualOrientation, selectedRelationshipTradition]);
 
   // Calculate pagination
   const totalPages = Math.ceil(filteredUsers.length / USERS_PER_PAGE)
@@ -533,8 +981,37 @@ export default function Browse() {
     if (connectedUsers.has(user.id)) {
       handleChat(user)
     } else {
-      // Simulate sending a connection request
-      setConnectedUsers(prev => new Set(prev).add(user.id))
+      setSentRequests(prev => {
+        const newRequests = [...prev, {
+          id: String(user.id),
+          userId: user.username || user.id,
+          name: user.name,
+          age: user.age,
+          occupation: user.occupation,
+          location: user.location,
+          avatar: user.avatar,
+          message: '',
+          timestamp: new Date(),
+          status: 'sent',
+          compatibility: user.compatibility || 0,
+          dateOfBirth: user.dateOfBirth,
+        }];
+        localStorage.setItem('sentRequests', JSON.stringify(newRequests));
+        return newRequests;
+      });
+      toast({
+        title: "Connection request sent!",
+        description: `Your request to connect with ${user.name} has been sent.`,
+        action: (
+          <ToastAction altText="Undo" onClick={() => {
+            setSentRequests(prev => {
+              const updated = prev.filter(r => r.id !== String(user.id));
+              localStorage.setItem('sentRequests', JSON.stringify(updated));
+              return updated;
+            });
+          }}>Undo</ToastAction>
+        ),
+      });
     }
   }
 
@@ -557,10 +1034,20 @@ export default function Browse() {
 
   return (
     <div className="min-h-screen w-full bg-white dark:bg-gray-900 pb-20">
-      {/* Mobile App Header */}
+      {/* Mobile App Header with Back Navigation */}
       <div className="bg-gradient-to-r from-[#B22222] to-[#8B0000] text-white p-4 shadow-lg">
         <div className="flex items-center justify-between">
-          <h1 className="text-xl font-bold">Browse Profiles</h1>
+          <div className="flex items-center gap-3">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => router.push("/dashboard")}
+              className="text-white hover:bg-white/20"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <h1 className="text-xl font-bold">Browse Profiles</h1>
+          </div>
           <div className="text-sm text-white/80">{filteredUsers.length} profiles</div>
         </div>
       </div>
@@ -569,9 +1056,39 @@ export default function Browse() {
         <div className="flex flex-col lg:flex-row h-full">
           {/* Filters - Mobile */}
           <div className="lg:hidden w-full p-4 bg-white dark:bg-gray-900 border-b dark:border-gray-700">
+            {/* Member Type Filter */}
+            <div className="mb-4">
+              <div className="grid grid-cols-3 gap-2">
+                <Button
+                  variant={memberType === "all" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setMemberType("all")}
+                  className={`text-xs ${memberType === "all" ? "bg-[#B22222] hover:bg-[#8B0000] text-white" : "border-gray-300 dark:border-gray-600"}`}
+                >
+                  All Members
+                </Button>
+                <Button
+                  variant={memberType === "local" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setMemberType("local")}
+                  className={`text-xs ${memberType === "local" ? "bg-[#B22222] hover:bg-[#8B0000] text-white" : "border-gray-300 dark:border-gray-600"}`}
+                >
+                  Local Members
+                </Button>
+                <Button
+                  variant={memberType === "diaspora" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setMemberType("diaspora")}
+                  className={`text-xs ${memberType === "diaspora" ? "bg-[#B22222] hover:bg-[#8B0000] text-white" : "border-gray-300 dark:border-gray-600"}`}
+                >
+                  Members in Diaspora
+                </Button>
+              </div>
+            </div>
+
             <Sheet>
               <SheetTrigger asChild>
-                <Button className="w-full flex items-center justify-center gap-2 bg-[#B22222] hover:bg-[#8B0000] rounded-xl py-3">
+                <Button className="w-full flex items-center justify-center gap-2 bg-[#B22222] hover:bg-[#8B0000] rounded-xl py-3 min-h-[44px]">
                   <Filter size={16} /> Filter Profiles
                 </Button>
               </SheetTrigger>
@@ -852,6 +1369,7 @@ export default function Browse() {
             <div className="p-6 fixed top-0 w-80 bg-white dark:bg-gray-800 z-40">
               <h2 className="text-xl font-bold text-[#B22222] dark:text-red-400 mb-6">Filter Profiles</h2>
 
+              {/* Member Type filter removed from sidebar for desktop */}
               <div className="space-y-6 max-h-[70vh] overflow-y-auto scrollbar-thin scrollbar-thumb-[#B22222] scrollbar-track-gray-200 dark:scrollbar-thumb-red-400 dark:scrollbar-track-gray-800">
                 {/* Age Range */}
                 <div>
@@ -1116,340 +1634,156 @@ export default function Browse() {
             </div>
           </div>
 
-          {/* Profile Grid */}
-          <div className="flex-1 h-full overflow-y-auto bg-gray-50 dark:bg-gray-900">
-            <div className="p-4 lg:p-6 pt-24">
-              {/* Loading State */}
-              {isLoading && (
-                <div className="flex justify-center items-center py-12">
-                  <Loader2 className="h-8 w-8 animate-spin text-[#B22222]" />
-                  <span className="ml-2 text-gray-600 dark:text-gray-400">Loading profiles...</span>
-                </div>
-              )}
-
-              {/* Profile Grid */}
-              {!isLoading && (
-                <>
-                  {currentUsers.length === 0 ? (
-                    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 text-center">
-                      <p className="text-lg text-gray-600 dark:text-gray-400">
-                        No profiles match your current filters.
-                      </p>
-                      <Button
-                        variant="outline"
-                        className="mt-4 border-[#B22222] text-[#B22222] hover:bg-[#B22222] hover:text-white rounded-xl bg-transparent"
-                        onClick={() => {
-                          setAgeRange([25, 45])
-                          setSelectedGoals("any")
-                          setCurrentPage(1)
-                        }}
-                      >
-                        Reset Filters
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 lg:gap-6">
-                      {currentUsers.map((user) => (
-                        <Card
-                          key={user.id}
-                          className="group overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 bg-white dark:bg-gray-800 border-0 shadow-lg rounded-2xl relative h-fit"
-                        >
-                          {/* Heart/Like Button - Fixed positioning with proper spacing */}
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className={`absolute top-4 right-4 z-20 w-9 h-9 rounded-full shadow-lg transition-all duration-200 ${
-                              likedUsers.has(user.id)
-                                ? "bg-red-500 text-white hover:bg-red-600"
-                                : "bg-white/95 text-gray-600 hover:bg-white hover:text-red-500 backdrop-blur-sm"
-                            }`}
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              handleLike(user.id)
-                            }}
-                          >
-                            <Heart className={`w-4 h-4 ${likedUsers.has(user.id) ? "fill-current" : ""}`} />
-                          </Button>
-
-                          <CardHeader className="p-0">
-                            <div className="bg-gradient-to-br from-[#DAA520]/20 to-[#B22222]/10 p-6 pt-8 flex justify-center">
-                              <img
-                                src={user.icon || "/placeholder.svg?height=120&width=120"}
-                                alt={`${user.name}'s profile`}
-                                className="w-20 h-20 object-cover rounded-full border-4 border-white shadow-lg group-hover:scale-110 transition-transform duration-300"
-                                loading="lazy"
-                              />
-                            </div>
-                          </CardHeader>
-
-                          <CardContent className="p-4 pb-2">
-                            <div className="text-center mb-3">
-                              <CardTitle className="text-lg font-bold text-[#B22222] dark:text-red-400 group-hover:text-[#8B0000] transition-colors">
-                                {user.name}, {user.age}
-                              </CardTitle>
-                              <CardDescription className="text-gray-600 dark:text-gray-400 font-medium mt-1 text-sm">
-                                {user.occupation}
-                              </CardDescription>
-                            </div>
-
-                            <div className="space-y-2 mb-3">
-                              <p className="text-xs text-gray-700 dark:text-gray-300 text-center">
-                                <span className="font-semibold">Skills:</span> {user.skills}
-                              </p>
-                              <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2 text-center">
-                                {user.bio}
-                              </p>
-                            </div>
-
-                            <div className="flex justify-center mb-3">
-                              <Badge className="bg-[#DAA520] hover:bg-[#B8860B] text-white font-medium px-2 py-1 text-xs">
-                                {user.relationshipGoals}
-                              </Badge>
-                            </div>
-
-                            <div className="flex flex-wrap gap-1 justify-center">
-                              {(Array.isArray(user.interests) ? user.interests : (typeof user.interests === 'string' ? user.interests.split(',').map(s => s.trim()) : [])).slice(0, 2).map((interest, index) => (
-                                <Badge
-                                  key={index}
-                                  variant="outline"
-                                  className="text-xs bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 px-2 py-0.5"
-                                >
-                                  {interest}
-                                </Badge>
-                              ))}
-                              {((Array.isArray(user.interests) ? user.interests : (typeof user.interests === 'string' ? user.interests.split(',').map(s => s.trim()) : [])).length > 2) && (
-                                <Badge
-                                  variant="outline"
-                                  className="text-xs bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 px-2 py-0.5"
-                                >
-                                  +{(Array.isArray(user.interests) ? user.interests : (typeof user.interests === 'string' ? user.interests.split(',').map(s => s.trim()) : [])).length - 2}
-                                </Badge>
-                              )}
-                            </div>
-                          </CardContent>
-
-                          {/* Fixed footer with proper button sizing */}
-                          <CardFooter className="border-t border-gray-100 dark:border-gray-700 p-3 flex gap-2">
-                            <Button
-                              variant="outline"
-                              className="flex-1 border-[#B22222] text-[#B22222] hover:bg-[#B22222] hover:text-white transition-all duration-200 rounded-xl py-2 text-sm bg-transparent min-h-[36px]"
-                              size="sm"
-                              onClick={() => { setSelectedProfile(user); setIsProfileModalOpen(true); }}
-                            >
-                              View Profile
-                            </Button>
-                            <Button
-                              className="flex-1 bg-[#B22222] hover:bg-[#8B0000] text-white transition-all duration-200 rounded-xl py-2 text-sm min-h-[36px]"
-                              size="sm"
-                              onClick={() => handleConnect(user)}
-                            >
-                              {connectedUsers.has(user.id) ? (<><MessageCircle size={14} className="mr-1.5" /> Chat</>) : "Connect"}
-                            </Button>
-                          </CardFooter>
-                        </Card>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Pagination */}
-                  {totalPages > 1 && (
-                    <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-lg">
-                      <div className="text-sm text-gray-600 dark:text-gray-400">
-                        Page {currentPage} of {totalPages}
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        {/* Previous Button */}
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handlePageChange(currentPage - 1)}
-                          disabled={currentPage === 1}
-                          className="border-[#B22222] text-[#B22222] hover:bg-[#B22222] hover:text-white disabled:opacity-50 disabled:cursor-not-allowed rounded-xl"
-                        >
-                          <ChevronLeft size={16} />
-                          Previous
-                        </Button>
-
-                        {/* Page Numbers */}
-                        <div className="hidden sm:flex items-center gap-1">
-                          {getPageNumbers().map((page) => (
-                            <Button
-                              key={page}
-                              variant={currentPage === page ? "default" : "outline"}
-                              size="sm"
-                              onClick={() => handlePageChange(page)}
-                              className={
-                                currentPage === page
-                                  ? "bg-[#B22222] hover:bg-[#8B0000] text-white rounded-xl"
-                                  : "border-[#B22222] text-[#B22222] hover:bg-[#B22222] hover:text-white rounded-xl"
-                              }
-                            >
-                              {page}
-                            </Button>
-                          ))}
-                        </div>
-
-                        {/* Next Button */}
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handlePageChange(currentPage + 1)}
-                          disabled={currentPage === totalPages}
-                          className="border-[#B22222] text-[#B22222] hover:bg-[#B22222] hover:text-white disabled:opacity-50 disabled:cursor-not-allowed rounded-xl"
-                        >
-                          Next
-                          <ChevronRight size={16} />
-                        </Button>
-                      </div>
-                    </div>
-                  )}
-                </>
-              )}
+          {/* Main Content */}
+          <div className="flex-1 p-4">
+            {/* Member Type Filter for Desktop only, above profiles grid */}
+            <div className="hidden lg:flex w-full mb-6">
+              <Button
+                variant={memberType === "all" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setMemberType("all")}
+                className={`text-sm flex-1 rounded-l-lg rounded-r-none h-10 py-0 ${memberType === "all" ? "bg-[#B22222] hover:bg-[#8B0000] text-white" : "border-gray-300 dark:border-gray-600"}`}
+              >
+                All Members
+              </Button>
+              <Button
+                variant={memberType === "local" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setMemberType("local")}
+                className={`text-sm flex-1 rounded-none h-10 py-0 ${memberType === "local" ? "bg-[#B22222] hover:bg-[#8B0000] text-white" : "border-gray-300 dark:border-gray-600"}`}
+              >
+                Local Members
+              </Button>
+              <Button
+                variant={memberType === "diaspora" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setMemberType("diaspora")}
+                className={`text-sm flex-1 rounded-r-lg rounded-l-none h-10 py-0 ${memberType === "diaspora" ? "bg-[#B22222] hover:bg-[#8B0000] text-white" : "border-gray-300 dark:border-gray-600"}`}
+              >
+                Members in Diaspora
+              </Button>
             </div>
+            {isLoading ? (
+              <div className="flex items-center justify-center h-64">
+                <Loader2 className="h-8 w-8 animate-spin text-[#B22222]" />
+              </div>
+            ) : filteredUsers.length === 0 ? (
+              <div className="text-center py-12">
+                <Heart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">No profiles found</h3>
+                <p className="text-gray-500 dark:text-gray-400">Try adjusting your filters to see more profiles.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-4 lg:gap-6">
+                {currentUsers.map((user) => (
+                  <Card
+                    key={user.id}
+                    className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow cursor-pointer"
+                    onClick={() => { setSelectedProfile(user); setIsProfileModalOpen(true); }}
+                  >
+                    <CardHeader className="p-4 pb-2">
+                      <div className="relative">
+                        <Avatar className="h-20 w-20 mx-auto mb-3 ring-2 ring-white dark:ring-gray-600">
+                          <AvatarImage src={user.avatar || "/placeholder.svg"} alt={user.name} />
+                          <AvatarFallback className="bg-[#B22222] text-white text-lg">{user.name.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleLike(user.id);
+                          }}
+                          className="absolute top-0 right-0 p-1.5 rounded-full bg-white dark:bg-gray-600 shadow-md hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                        >
+                          <Heart
+                            className={`h-4 w-4 ${
+                              likedUsers.has(user.id) ? "text-red-500 fill-red-500" : "text-gray-400"
+                            }`}
+                          />
+                        </button>
+                      </div>
+                      <div className="text-center">
+                        <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm truncate">
+                          {user.name}, {user.age || calculateAge(user.dateOfBirth)}
+                        </h3>
+                        <p className="text-gray-600 dark:text-gray-300 text-xs truncate">{user.occupation}</p>
+                        <p className="text-gray-500 dark:text-gray-400 text-xs truncate">{user.location}</p>
+                      </div>
+                    </CardHeader>
+                    <CardFooter className="p-4 pt-0">
+                      <div className="flex space-x-2 w-full">
+                        <Button
+                          size="sm"
+                          className="flex-1 bg-[#B22222] hover:bg-[#8B0000] text-white rounded-xl h-8 text-xs min-h-[36px]"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleConnect(user);
+                          }}
+                        >
+                          {connectedUsers.has(user.id) ? "Chat" : "Connect"}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="flex-1 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl h-8 text-xs min-h-[36px] bg-transparent"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedProfile(user);
+                            setIsProfileModalOpen(true);
+                          }}
+                        >
+                          View Profile
+                        </Button>
+                      </div>
+                    </CardFooter>
+                  </Card>
+                ))}
+              </div>
+            )}
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-center space-x-2 mt-8">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="min-h-[44px]"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                {getPageNumbers().map((page) => (
+                  <Button
+                    key={page}
+                    variant={currentPage === page ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => handlePageChange(page)}
+                    className={`min-h-[44px] ${
+                      currentPage === page
+                        ? "bg-[#B22222] hover:bg-[#8B0000] text-white"
+                        : "border-gray-300 dark:border-gray-600"
+                    }`}
+                  >
+                    {page}
+                  </Button>
+                ))}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="min-h-[44px]"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
       {/* Profile Modal */}
-      <Dialog open={isProfileModalOpen} onOpenChange={setIsProfileModalOpen}>
-        <DialogContent className="max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="text-[#B22222] text-2xl font-bold">{selectedProfile?.name || selectedProfile?.username}, {selectedProfile?.age || selectedProfile?.dateOfBirth}</DialogTitle>
-          </DialogHeader>
-          <div className="flex flex-col md:flex-row gap-6 mt-2">
-            <div className="flex-shrink-0 flex flex-col items-center">
-              <img src={selectedProfile?.icon || selectedProfile?.avatar} alt="Profile" className="w-32 h-32 rounded-full border-4 border-[#B22222] shadow-lg" />
-              <div className="mt-3 text-center">
-                <Badge className="bg-[#DAA520] text-white font-medium px-2 py-1 text-xs">{selectedProfile?.relationshipGoals}</Badge>
-              </div>
-            </div>
-            <div className="flex-1 space-y-4">
-              {/* Personal Info */}
-              <div>
-                <h3 className="font-semibold text-[#B22222] mb-1">Personal Info</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1 text-sm">
-                  <div><span className="font-semibold">Username:</span> {selectedProfile?.username}</div>
-                  <div><span className="font-semibold">Gender:</span> {selectedProfile?.gender} {selectedProfile?.customGender && `(${selectedProfile.customGender})`}</div>
-                  <div><span className="font-semibold">Date of Birth:</span> {selectedProfile?.dateOfBirth}</div>
-                  <div><span className="font-semibold">Race:</span> {selectedProfile?.race}</div>
-                  <div><span className="font-semibold">Country:</span> {selectedProfile?.country}</div>
-                  <div><span className="font-semibold">County:</span> {selectedProfile?.county}</div>
-                  <div><span className="font-semibold">Tribe:</span> {selectedProfile?.tribe}</div>
-                  <div><span className="font-semibold">Languages:</span> {selectedProfile?.languages?.join(", ")}</div>
-                </div>
-              </div>
-              {/* Physical Appearance */}
-              <div>
-                <h3 className="font-semibold text-[#B22222] mb-1">Physical Appearance</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1 text-sm">
-                  <div><span className="font-semibold">Height:</span> {selectedProfile?.height} {selectedProfile?.heightUnit} {selectedProfile?.heightFt && `${selectedProfile.heightFt}ft`} {selectedProfile?.heightIn && `${selectedProfile.heightIn}in`}</div>
-                  <div><span className="font-semibold">Weight:</span> {selectedProfile?.weight} {selectedProfile?.weightUnit}</div>
-                  <div><span className="font-semibold">Body Type:</span> {selectedProfile?.bodyType}</div>
-                  <div><span className="font-semibold">Complexion:</span> {selectedProfile?.complexion}</div>
-                  <div><span className="font-semibold">Eye Color:</span> {selectedProfile?.eyeColor}</div>
-                  <div><span className="font-semibold">Dimples:</span> {selectedProfile?.dimples} {selectedProfile?.dimplesDescription}</div>
-                  <div><span className="font-semibold">Teeth Features:</span> {selectedProfile?.teethFeatures}</div>
-                  <div><span className="font-semibold">Tattoos:</span> {selectedProfile?.tattoos} {selectedProfile?.tattoosDescription}</div>
-                  <div><span className="font-semibold">Piercings:</span> {selectedProfile?.piercings} {selectedProfile?.piercingsDescription}</div>
-                  <div><span className="font-semibold">Glasses:</span> {selectedProfile?.glasses} {selectedProfile?.glassesDescription}</div>
-                  <div><span className="font-semibold">Self Description (Physical):</span> {selectedProfile?.selfDescriptionPhysical}</div>
-                </div>
-              </div>
-              {/* Health */}
-              <div>
-                <h3 className="font-semibold text-[#B22222] mb-1">Health</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1 text-sm">
-                  <div><span className="font-semibold">HIV Status:</span> {selectedProfile?.hivStatus}</div>
-                  <div><span className="font-semibold">Disability:</span> {selectedProfile?.disability} {selectedProfile?.disabilityDescription}</div>
-                  <div><span className="font-semibold">Chronic Illness:</span> {selectedProfile?.chronicIllness} {selectedProfile?.chronicIllnessDescription}</div>
-                  <div><span className="font-semibold">Allergies:</span> {selectedProfile?.allergies}</div>
-                  <div><span className="font-semibold">Blood Type:</span> {selectedProfile?.bloodType}</div>
-                  <div><span className="font-semibold">Snoring:</span> {selectedProfile?.snoring}</div>
-                </div>
-              </div>
-              {/* Work & Lifestyle */}
-              <div>
-                <h3 className="font-semibold text-[#B22222] mb-1">Work & Lifestyle</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1 text-sm">
-                  <div><span className="font-semibold">Employment Status:</span> {selectedProfile?.employmentStatus}</div>
-                  <div><span className="font-semibold">Occupation:</span> {selectedProfile?.occupation}</div>
-                  <div><span className="font-semibold">Work Location:</span> {selectedProfile?.workCountry}, {selectedProfile?.workCounty}, {selectedProfile?.workConstituency}, {selectedProfile?.workWard}, {selectedProfile?.workState}</div>
-                  <div><span className="font-semibold">Financial Stability:</span> {selectedProfile?.financialStability}</div>
-                  <div><span className="font-semibold">Alcohol:</span> {selectedProfile?.alcohol}</div>
-                  <div><span className="font-semibold">Smoking:</span> {selectedProfile?.smoking}</div>
-                  <div><span className="font-semibold">Dietary Preference:</span> {selectedProfile?.dietaryPreference}</div>
-                  <div><span className="font-semibold">Has Pets:</span> {selectedProfile?.hasPets} {selectedProfile?.petsDescription}</div>
-                  <div><span className="font-semibold">Exercise Frequency:</span> {selectedProfile?.exerciseFrequency}</div>
-                  <div><span className="font-semibold">Hobbies:</span> {selectedProfile?.hobbies}</div>
-                  <div><span className="font-semibold">Interests:</span> {selectedProfile?.interests}</div>
-                </div>
-              </div>
-              {/* Beliefs */}
-              <div>
-                <h3 className="font-semibold text-[#B22222] mb-1">Beliefs</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1 text-sm">
-                  <div><span className="font-semibold">Religion:</span> {selectedProfile?.religion}</div>
-                  <div><span className="font-semibold">Religiousness:</span> {selectedProfile?.religiousness}</div>
-                  <div><span className="font-semibold">Denomination:</span> {selectedProfile?.denomination}</div>
-                  <div><span className="font-semibold">Church Attendance:</span> {selectedProfile?.churchAttendance}</div>
-                </div>
-              </div>
-              {/* Family */}
-              <div>
-                <h3 className="font-semibold text-[#B22222] mb-1">Family</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1 text-sm">
-                  <div><span className="font-semibold">Marital Status:</span> {selectedProfile?.maritalStatus}</div>
-                  <div><span className="font-semibold">Has Children:</span> {selectedProfile?.hasChildren}</div>
-                  <div><span className="font-semibold">Number of Children:</span> {selectedProfile?.numberOfChildren}</div>
-                  <div><span className="font-semibold">Children Ages:</span> {selectedProfile?.childrenAges}</div>
-                  <div><span className="font-semibold">Children Live With User:</span> {selectedProfile?.childrenLiveWithUser}</div>
-                  <div><span className="font-semibold">Wants Children:</span> {selectedProfile?.wantsChildren}</div>
-                  <div><span className="font-semibold">Accepts Partner With Kids:</span> {selectedProfile?.acceptsPartnerWithKids} {selectedProfile?.acceptsPartnerWithKidsDescription}</div>
-                </div>
-              </div>
-              {/* Preferences */}
-              <div>
-                <h3 className="font-semibold text-[#B22222] mb-1">Preferences</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1 text-sm">
-                  <div><span className="font-semibold">Open to Relocate:</span> {selectedProfile?.openToRelocate}</div>
-                  <div><span className="font-semibold">Sexual Orientation:</span> {selectedProfile?.sexualOrientation}</div>
-                  <div><span className="font-semibold">Relationship Tradition:</span> {selectedProfile?.relationshipTradition}</div>
-                  <div><span className="font-semibold">Long Distance OK:</span> {selectedProfile?.longDistanceOk}</div>
-                  <div><span className="font-semibold">Dating Perspective:</span> {selectedProfile?.datingPerspective}</div>
-                  <div><span className="font-semibold">Deal Breakers:</span> {selectedProfile?.dealBreakers}</div>
-                  <div><span className="font-semibold">Relationship Hopes:</span> {selectedProfile?.relationshipHopes}</div>
-                  <div><span className="font-semibold">Partner Preferences:</span> {selectedProfile?.partnerPreferences}</div>
-                  <div><span className="font-semibold">Personality Type:</span> {selectedProfile?.personalityType}</div>
-                  <div><span className="font-semibold">Don’t Contact If:</span> {selectedProfile?.dontContactIf}</div>
-                  <div><span className="font-semibold">Imperfections:</span> {selectedProfile?.imperfections}</div>
-                  <div><span className="font-semibold">Political Views:</span> {selectedProfile?.politicalViews}</div>
-                  <div><span className="font-semibold">Date Different Politics:</span> {selectedProfile?.dateDifferentPolitics}</div>
-                  <div><span className="font-semibold">Believes in Marriage:</span> {selectedProfile?.believesInMarriage}</div>
-                </div>
-              </div>
-              {/* About Me */}
-              <div>
-                <h3 className="font-semibold text-[#B22222] mb-1">About Me</h3>
-                <div className="text-sm whitespace-pre-line">
-                  {selectedProfile?.selfDescription}
-                </div>
-              </div>
-            </div>
-          </div>
-          <DialogFooter className="mt-6">
-            <Button
-              className="w-full bg-[#B22222] hover:bg-[#8B0000] text-white rounded-xl"
-              onClick={() => handleConnect(selectedProfile)}
-            >
-              {connectedUsers.has(selectedProfile?.id) ? (<><MessageCircle size={16} className="mr-2" /> Chat</>) : "Connect"}
-            </Button>
-          </DialogFooter>
-          <DialogClose asChild>
-            <Button variant="ghost" className="absolute top-4 right-4">Close</Button>
-          </DialogClose>
-        </DialogContent>
-      </Dialog>
+      <ProfileModal open={isProfileModalOpen} onOpenChange={setIsProfileModalOpen} profile={selectedProfile} />
     </div>
   )
 }

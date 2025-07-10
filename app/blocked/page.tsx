@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { UserX, User, Search } from "lucide-react"
+import { UserX, User, Search, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -20,6 +20,8 @@ interface BlockedUser {
   avatar: string
   blockedDate: Date
   reason?: string
+  dateOfBirth?: string // Added for age calculation
+  gender?: string // Added for gender
 }
 
 export default function BlockedUsersPage() {
@@ -45,27 +47,85 @@ export default function BlockedUsersPage() {
   const loadBlockedUsers = () => {
     // Sample blocked users data
     const sampleBlockedUsers: BlockedUser[] = [
+      // Kenyan users
       {
         id: "1",
-        userId: "funmi101",
-        name: "Funmi",
-        age: 29,
-        occupation: "Doctor",
-        location: "Ibadan, Nigeria",
-        avatar: "/images/female2.jpg",
-        blockedDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
+        userId: "brianotieno",
+        name: "Brian Otieno",
+        age: 34,
+        gender: "Male",
+        occupation: "Engineer",
+        location: "Kisumu, Kenya",
+        avatar: "/images/male3.jpg",
+        blockedDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
         reason: "Inappropriate behavior",
+        dateOfBirth: "1990-02-10",
       },
       {
         id: "2",
-        userId: "john123",
-        name: "John",
-        age: 31,
-        occupation: "Teacher",
-        location: "Kano, Nigeria",
-        avatar: "/images/male4.jpeg",
-        blockedDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 1 week ago
+        userId: "faithwambui",
+        name: "Faith Wambui",
+        age: 27,
+        gender: "Female",
+        occupation: "Banker",
+        location: "Nairobi, Kenya",
+        avatar: "/images/female3.jpg",
+        blockedDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
         reason: "Spam messages",
+        dateOfBirth: "1997-06-18",
+      },
+      {
+        id: "3",
+        userId: "janetmwikali",
+        name: "Janet Mwikali",
+        age: 29,
+        gender: "Female",
+        occupation: "Teacher",
+        location: "Machakos, Kenya",
+        avatar: "/images/female4.jpg",
+        blockedDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
+        reason: "Unwanted messages",
+        dateOfBirth: "1995-04-12",
+      },
+      {
+        id: "4",
+        userId: "petermwangi",
+        name: "Peter Mwangi",
+        age: 44,
+        gender: "Male",
+        occupation: "Businessman",
+        location: "Nakuru, Kenya",
+        avatar: "/images/male4.jpeg",
+        blockedDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
+        reason: "Harassment",
+        dateOfBirth: "1980-09-03",
+      },
+      // International users
+      {
+        id: "5",
+        userId: "emilysmith",
+        name: "Emily Smith",
+        age: 31,
+        gender: "Female",
+        occupation: "Software Engineer",
+        location: "London, UK",
+        avatar: "/images/female5.jpg",
+        blockedDate: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000),
+        reason: "Inappropriate content",
+        dateOfBirth: "1993-11-10",
+      },
+      {
+        id: "6",
+        userId: "rajpatel",
+        name: "Raj Patel",
+        age: 36,
+        gender: "Male",
+        occupation: "Doctor",
+        location: "Mumbai, India",
+        avatar: "/images/male2.jpg",
+        blockedDate: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000),
+        reason: "Spam",
+        dateOfBirth: "1988-05-22",
       },
     ]
     setBlockedUsers(sampleBlockedUsers)
@@ -91,6 +151,19 @@ export default function BlockedUsersPage() {
     return `${Math.floor(diffInDays / 30)} months ago`
   }
 
+  // Helper to calculate age from date of birth string (YYYY-MM-DD)
+  function calculateAge(dateOfBirth: string) {
+    if (!dateOfBirth) return undefined;
+    const dob = new Date(dateOfBirth);
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const m = today.getMonth() - dob.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+      age--;
+    }
+    return age;
+  }
+
   const filteredBlockedUsers = blockedUsers.filter(blockedUser =>
     blockedUser.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     blockedUser.occupation.toLowerCase().includes(searchQuery.toLowerCase())
@@ -109,12 +182,41 @@ export default function BlockedUsersPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-[#B22222] to-[#8B0000] text-white p-6 shadow-lg">
+      {/* Mobile Header with Back Navigation */}
+      <div className="md:hidden bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => router.push("/dashboard")}
+            className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Blocked Users</h1>
+        </div>
+        <div className="text-sm text-gray-500 dark:text-gray-400">
+          {blockedUsers.length} blocked
+        </div>
+      </div>
+
+      {/* Desktop Header */}
+      <div className="hidden md:block bg-gradient-to-r from-[#B22222] to-[#8B0000] text-white p-6 shadow-lg">
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold">Blocked Users</h1>
-            <p className="text-white/80 mt-1">Manage your privacy and blocked users</p>
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => router.push("/dashboard")}
+              className="text-white hover:bg-white/20"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Dashboard
+            </Button>
+            <div>
+              <h1 className="text-2xl font-bold">Blocked Users</h1>
+              <p className="text-white/80 mt-1">Manage your privacy and blocked users</p>
+            </div>
           </div>
           <div className="flex items-center space-x-2">
             <UserX className="h-6 w-6" />
@@ -167,7 +269,7 @@ export default function BlockedUsersPage() {
                       <div className="flex-1">
                         <div className="flex items-center space-x-2 mb-1">
                           <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                            {blockedUser.name}, {blockedUser.age}
+                            {blockedUser.name}, {blockedUser.age || calculateAge(blockedUser.dateOfBirth)}
                           </h3>
                           <Badge className="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
                             Blocked

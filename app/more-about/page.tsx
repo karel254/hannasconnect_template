@@ -12,6 +12,12 @@ export default function MoreAboutPage() {
       description: "Learn about our mission, story, and team."
     },
     {
+      label: "How to use this app",
+      icon: HelpCircle,
+      href: "/more-about/how-to-use",
+      description: "A complete user guide to every feature and page."
+    },
+    {
       label: "FAQ",
       icon: HelpCircle,
       href: "/faq",
