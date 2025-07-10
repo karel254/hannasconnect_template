@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Users, HelpCircle, Mail, FileText, Shield, AlertTriangle } from "lucide-react"
+import { Users, HelpCircle, Mail, FileText, Shield, AlertTriangle, ArrowLeft } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 
@@ -52,7 +52,14 @@ export default function MoreAboutPage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
       <div className="max-w-xl mx-auto px-4 space-y-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6 text-center">More about this App</h1>
+        <div className="flex items-center mb-4">
+          <Link href="/dashboard">
+            <Button variant="ghost" size="icon" className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100">
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+          </Link>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 ml-2">More about this App</h1>
+        </div>
         <div className="space-y-4">
           {items.map((item) => (
             <Link href={item.href} key={item.label}>

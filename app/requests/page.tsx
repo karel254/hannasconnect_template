@@ -79,12 +79,17 @@ export default function RequestsPage() {
     
     // Load sample requests
     loadRequests()
-    // Load sent requests from localStorage
+    // Load sent requests from localStorage and merge
     const sent = localStorage.getItem('sentRequests');
     if (sent) {
       try {
-        const sentParsed = JSON.parse(sent).map((r: any) => ({ ...r, timestamp: new Date(r.timestamp) }));
-        setRequests(prev => [...prev, ...sentParsed]);
+        const sentParsed = JSON.parse(sent).map((r: any) => ({ ...r, timestamp: new Date(r.timestamp), status: 'sent' }));
+        setRequests(prev => {
+          // Avoid duplicates by id
+          const existingIds = new Set(prev.map(r => r.id));
+          const merged = [...prev, ...sentParsed.filter((r: any) => !existingIds.has(r.id))];
+          return merged;
+        });
       } catch {}
     }
   }, [router])
@@ -709,10 +714,10 @@ export default function RequestsPage() {
           : req
       )
     )
-    
     toast({
       title: "Request Accepted!",
       description: "You can now start chatting with this person.",
+      duration: 2000,
     })
   }
 
@@ -724,10 +729,10 @@ export default function RequestsPage() {
           : req
       )
     )
-    
     toast({
       title: "Request Rejected",
       description: "The request has been declined.",
+      duration: 2000,
     })
   }
 
@@ -995,6 +1000,7 @@ export default function RequestsPage() {
                             toast({
                               title: "Request undone",
                               description: `Your connection request to ${request.name} has been cancelled.`,
+                              duration: 2000,
                             });
                           }}
                         >

@@ -105,7 +105,7 @@ export default function HowToUsePage() {
         </section>
 
         <div className="text-center mt-10">
-          <Link href="/">
+          <Link href="/dashboard">
             <span className="inline-flex items-center gap-2 px-6 py-3 bg-[#B22222] hover:bg-[#8B0000] text-white rounded-xl font-semibold text-lg transition-colors">
               <Home className="h-5 w-5" /> Go to Home
             </span>

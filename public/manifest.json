@@ -1,0 +1,21 @@
+{
+  "name": "Hanna's Connect",
+  "short_name": "HannaConnect",
+  "description": "Connect and build meaningful relationships.",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#B22222",
+  "theme_color": "#B22222",
+  "icons": [
+    {
+      "src": "/images/hero-couple.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "/images/hero-couple.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+} 

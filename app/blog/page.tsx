@@ -51,7 +51,7 @@ export default function BlogPage() {
       <div className="bg-gradient-to-r from-[#B22222] to-[#8B0000] text-white">
         <div className="container mx-auto px-4 py-8">
           <div className="flex items-center mb-6">
-            <Link href="/">
+            <Link href="/dashboard">
               <Button variant="ghost" size="sm" className="text-white hover:bg-white/20 mr-4">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Home

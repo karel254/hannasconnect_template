@@ -1035,19 +1035,19 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20">
       {/* Mobile Header - No Back Navigation */}
-      <div className="md:hidden bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3">
+      <div className="md:hidden bg-[#B22222] text-white border-b border-[#B22222] px-4 py-3">
         <div className="flex flex-col items-start gap-1">
-          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Welcome back, {getCurrentUsername(user)}!</h1>
-          <span className="text-xs text-gray-500 dark:text-gray-400 font-normal">Ready to make new connections today?</span>
+          <h1 className="text-xl font-bold text-white">Welcome back, {getCurrentUsername(user)}!</h1>
+          <span className="text-xs text-white/90 font-normal">Ready to make new connections today?</span>
         </div>
       </div>
 
       {/* Desktop Header - No Back Navigation */}
-      <div className="hidden md:block bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+      <div className="hidden md:block bg-[#B22222] text-white border-b border-[#B22222] px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex flex-col items-start gap-1">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Welcome back, {getCurrentUsername(user)}!</h1>
-            <span className="text-sm text-gray-500 dark:text-gray-400 font-normal">Ready to make new connections today?</span>
+            <h1 className="text-2xl font-bold text-white">Welcome back, {getCurrentUsername(user)}!</h1>
+            <span className="text-sm text-white/90 font-normal">Ready to make new connections today?</span>
           </div>
         </div>
       </div>
@@ -1113,13 +1113,13 @@ export default function Dashboard() {
                         <AvatarImage src={person.avatar || "/placeholder.svg"} alt={person.name} />
                         <AvatarFallback className="bg-[#B22222] text-white text-xs sm:text-sm">{person.name.charAt(0)}</AvatarFallback>
                       </Avatar>
-                      <button
-                        onClick={(e) => { e.stopPropagation(); }}
-                        className="absolute top-0 right-0 p-1 rounded-full bg-white dark:bg-gray-600 shadow-md hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                      <span
+                        className="absolute top-0 right-0 p-0 m-0 bg-transparent shadow-none pointer-events-none"
                         style={{ width: '1.5rem', height: '1.5rem' }}
+                        aria-hidden="true"
                       >
-                        <Heart className="h-3 w-3 sm:h-4 sm:w-4 text-gray-400 hover:text-red-500" />
-                      </button>
+                        <Heart className="h-3 w-3 sm:h-4 sm:w-4 text-gray-400" />
+                      </span>
                     </div>
                     <div className="text-center space-y-1 mt-1">
                       <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-xs sm:text-sm truncate">

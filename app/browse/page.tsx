@@ -1000,15 +1000,30 @@ export default function Browse() {
     if (connectedUsers.has(user.id)) {
       handleChat(user)
     } else if (!sentRequests.has(user.id)) {
-      setSentRequests(prev => new Set(prev).add(user.id));
+      setSentRequests(prev => {
+        const newSet = new Set(prev).add(user.id);
+        // Persist sent requests in localStorage
+        const sentRequestsArr = Array.from(newSet);
+        // Save full user object with status 'sent'
+        const sentProfiles = JSON.parse(localStorage.getItem('sentRequests') || '[]');
+        if (!sentProfiles.some((p: any) => p.id === user.id)) {
+          sentProfiles.push({ ...user, status: 'sent', timestamp: new Date().toISOString() });
+          localStorage.setItem('sentRequests', JSON.stringify(sentProfiles));
+        }
+        return newSet;
+      });
       toast({
         title: "Connection request sent!",
         description: `Your request to connect with ${user.name} has been sent.`,
+        duration: 2000,
         action: (
           <ToastAction altText="Undo" onClick={() => {
             setSentRequests(prev => {
               const updated = new Set(prev);
               updated.delete(user.id);
+              // Remove from localStorage
+              const sentProfiles = JSON.parse(localStorage.getItem('sentRequests') || '[]').filter((p: any) => p.id !== user.id);
+              localStorage.setItem('sentRequests', JSON.stringify(sentProfiles));
               return updated;
             });
           }}>Undo</ToastAction>
@@ -1359,10 +1374,10 @@ export default function Browse() {
                   </details>
 
                   <Button
-                    className="w-full bg-[#B22222] hover:bg-[#8B0000] mt-6 rounded-xl py-3"
+                    className="bg-[#B22222] hover:bg-[#8B0000] mt-6 rounded-xl py-2 text-sm max-w-xs w-full mx-auto block"
                     onClick={handleFilterChange}
                   >
-                    Apply Filters
+                    Done
                   </Button>
                 </div>
               </SheetContent>
@@ -1630,10 +1645,10 @@ export default function Browse() {
                 </details>
 
                 <Button
-                  className="w-full bg-[#B22222] hover:bg-[#8B0000] mt-6 rounded-xl py-3"
+                  className="bg-[#B22222] hover:bg-[#8B0000] mt-6 rounded-xl py-2 text-sm max-w-xs w-full mx-auto block"
                   onClick={handleFilterChange}
                 >
-                  Apply Filters
+                  Done
                 </Button>
               </div>
             </div>
@@ -1694,13 +1709,13 @@ export default function Browse() {
                           <AvatarImage src={user.avatar || "/placeholder.svg"} alt={user.name} />
                           <AvatarFallback className="bg-[#B22222] text-white text-xs sm:text-sm">{user.name.charAt(0)}</AvatarFallback>
                         </Avatar>
-                        <button
-                          onClick={(e) => { e.stopPropagation(); }}
-                          className="absolute top-0 right-0 p-1 rounded-full bg-white dark:bg-gray-600 shadow-md hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                        <span
+                          className="absolute top-0 right-0 p-0 m-0 bg-transparent shadow-none pointer-events-none"
                           style={{ width: '1.5rem', height: '1.5rem' }}
+                          aria-hidden="true"
                         >
-                          <Heart className="h-3 w-3 sm:h-4 sm:w-4 text-gray-400 hover:text-red-500" />
-                        </button>
+                          <Heart className="h-3 w-3 sm:h-4 sm:w-4 text-gray-400" />
+                        </span>
                       </div>
                       <div className="text-center space-y-1 mt-1">
                         <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-xs sm:text-sm truncate">
