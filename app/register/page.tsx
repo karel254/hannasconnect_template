@@ -16,6 +16,7 @@ import { ArrowLeft, ArrowRight, CheckCircle, Eye, EyeOff } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { useDebounce } from "@/hooks/use-debounce"
 import { useRef } from "react"
+import { useEffect } from "react"
 
 function scrollIntoViewIfNeeded(element: HTMLElement | null) {
   if (!element) return;
@@ -2482,6 +2483,14 @@ export default function RegisterPage() {
         return null
     }
   }
+
+  useEffect(() => {
+    const handlePopState = () => {
+      window.location.href = "/";
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-4 px-2 sm:py-8 sm:px-4">
