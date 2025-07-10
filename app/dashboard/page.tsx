@@ -1040,9 +1040,6 @@ export default function Dashboard() {
           <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Welcome back, {getCurrentUsername(user)}!</h1>
           <span className="text-xs text-gray-500 dark:text-gray-400 font-normal">Ready to make new connections today?</span>
         </div>
-        <div className="text-sm text-gray-500 dark:text-gray-400 absolute right-4 top-4">
-          {getCurrentUsername(user)}
-        </div>
       </div>
 
       {/* Desktop Header - No Back Navigation */}
@@ -1051,9 +1048,6 @@ export default function Dashboard() {
           <div className="flex flex-col items-start gap-1">
             <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Welcome back, {getCurrentUsername(user)}!</h1>
             <span className="text-sm text-gray-500 dark:text-gray-400 font-normal">Ready to make new connections today?</span>
-          </div>
-          <div className="text-sm text-gray-500 dark:text-gray-400">
-            {getCurrentUsername(user)}
           </div>
         </div>
       </div>
