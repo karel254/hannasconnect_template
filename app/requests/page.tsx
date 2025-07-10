@@ -1,3 +1,17 @@
+// =========================
+// BACKEND MIGRATION NOTES
+// =========================
+// This file currently uses mock data, frontend state, and localStorage for connection requests and user info.
+// All data fetching, status changes, and filtering are done on the frontend.
+//
+// For backend migration:
+// - Replace all mock request data and status changes with API calls to the backend.
+// - Replace localStorage usage for current user with secure authentication/session management.
+// - All request status changes (accept, reject, undo) should be persisted via backend endpoints.
+// - If using websockets for real-time updates (e.g., new requests, status changes), add websocket hooks here.
+// - All UI/UX must remain unchanged.
+// - See README.md for more details and API contract.
+// =========================
 "use client"
 
 import { useState, useEffect } from "react"
@@ -43,7 +57,9 @@ function calculateAge(dateOfBirth: string) {
 export default function RequestsPage() {
   const router = useRouter()
   const { toast } = useToast()
+  // MOCK: current user is loaded from localStorage. Replace with real auth/session.
   const [user, setUser] = useState<any>(null)
+  // MOCK DATA: requests and statuses are placeholders. Replace with API calls to fetch and update real request data from backend.
   const [requests, setRequests] = useState<ConnectionRequest[]>([])
   const [activeTab, setActiveTab] = useState("pending")
   // Add state for modal open/close and selected profile
@@ -835,68 +851,49 @@ export default function RequestsPage() {
                 </CardContent>
               </Card>
             ) : (
-              filteredRequests.map((request) => (
-                <Card
-                  key={request.id}
-                  className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow"
-                >
-                  <CardContent className="p-4">
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                      <Avatar className="h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0">
-                        <AvatarImage src={request.avatar || "/placeholder.svg"} alt={request.name} />
-                        <AvatarFallback className="bg-[#B22222] text-white text-sm sm:text-lg">{request.name.charAt(0)}</AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 min-w-0 space-y-2">
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                          <div className="space-y-1">
-                            <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm sm:text-base truncate">
-                              {request.name}, {request.age || calculateAge(request.dateOfBirth)}
-                            </h3>
-                            <p className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm truncate">{request.occupation}</p>
-                            <p className="text-gray-500 dark:text-gray-400 text-xs truncate">{request.location}</p>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Badge className={`text-xs ${
-                              request.status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400' :
-                              request.status === 'accepted' ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400' :
-                              'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
-                            }`}>
-                              {request.status}
-                            </Badge>
-                            <Badge className="bg-[#B22222] text-white text-xs">
-                              {request.compatibility}% match
-                            </Badge>
-                          </div>
-                        </div>
-                        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mt-2">
-                          <Button
-                            className="flex-1 bg-[#B22222] hover:bg-[#8B0000] text-white min-h-[44px] text-sm"
-                            disabled={sentRequests.has(request.userId) && request.status !== 'accepted'}
-                            onClick={() => {
-                              if (!sentRequests.has(request.userId) && request.status !== 'accepted') {
-                                setSentRequests(prev => new Set(prev).add(request.userId));
-                                // Simulate sending request
-                              }
-                              if (request.status === 'accepted') {
-                                router.push(`/messages?user=${request.userId}`)
-                              }
-                            }}
-                          >
-                            {request.status === 'accepted' ? 'Chat' : sentRequests.has(request.userId) ? 'Sent' : 'Connect'}
-                          </Button>
-                          <Button
-                            onClick={() => { setSelectedProfile(request); setIsProfileModalOpen(true); }}
-                            variant="outline"
-                            className="flex-1 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 min-h-[44px] text-sm"
-                          >
-                            View Profile
-                          </Button>
-                        </div>
+              <div className="flex flex-col gap-3">
+                {filteredRequests.map((request) => (
+                  <div key={request.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm px-4 py-3 flex items-center gap-3">
+                    <Avatar className="h-12 w-12 flex-shrink-0">
+                      <AvatarImage src={request.avatar || '/placeholder.svg'} alt={request.name} />
+                      <AvatarFallback className="bg-[#B22222] text-white text-sm">{request.name.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between">
+                        <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm truncate">{request.name}, {request.age || calculateAge(request.dateOfBirth)}</h3>
+                        <Badge className="bg-[#B22222] text-white text-xs ml-2">{request.compatibility}% match</Badge>
+                      </div>
+                      {request.message && (
+                        <p className="text-xs text-gray-600 dark:text-gray-300 mt-1 line-clamp-2">{request.message}</p>
+                      )}
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="mt-2 w-full border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-xs py-1"
+                        onClick={() => { setSelectedProfile(request); setIsProfileModalOpen(true); }}
+                      >
+                        View Profile
+                      </Button>
+                      <div className="flex gap-2 mt-2">
+                        <Button
+                          size="sm"
+                          className="flex-1 bg-green-600 hover:bg-green-700 text-white text-xs py-1"
+                          onClick={() => handleAcceptRequest(request.id)}
+                        >
+                          Accept
+                        </Button>
+                        <Button
+                          size="sm"
+                          className="flex-1 bg-red-600 hover:bg-red-700 text-white text-xs py-1"
+                          onClick={() => handleRejectRequest(request.id)}
+                        >
+                          Reject
+                        </Button>
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
-              ))
+                  </div>
+                ))}
+              </div>
             )}
           </TabsContent>
 
@@ -914,67 +911,42 @@ export default function RequestsPage() {
                 </CardContent>
               </Card>
             ) : (
-              filteredRequests.map((request) => (
-                <Card key={request.id} className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-                  <CardContent className="p-6">
-                    <div className="flex items-start space-x-4">
-                      <Avatar className="h-16 w-16">
-                        <AvatarImage src={request.avatar} alt={request.name} />
-                        <AvatarFallback className="bg-[#B22222] text-white">
-                          {request.name.charAt(0)}
-                        </AvatarFallback>
-                      </Avatar>
-                      
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between mb-2">
-                          <div>
-                            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                              {request.name}, {request.age || calculateAge(request.dateOfBirth)}
-                            </h3>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">
-                              {request.occupation} • {request.location}
-                            </p>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                              Connected
-                            </Badge>
-                            <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
-                              <Clock className="h-3 w-3 mr-1" />
-                              {formatTime(request.timestamp)}
-                            </div>
-                          </div>
-                        </div>
-                        
-                        <div className="flex flex-nowrap gap-3 mt-2">
-                          <Button
-                            className="flex-1 bg-[#B22222] hover:bg-[#8B0000] text-white min-h-[44px]"
-                            disabled={sentRequests.has(request.userId) && request.status !== 'accepted'}
-                            onClick={() => {
-                              if (!sentRequests.has(request.userId) && request.status !== 'accepted') {
-                                setSentRequests(prev => new Set(prev).add(request.userId));
-                                // Simulate sending request
-                              }
-                              if (request.status === 'accepted') {
-                                router.push(`/messages?user=${request.userId}`)
-                              }
-                            }}
-                          >
-                            {request.status === 'accepted' ? 'Chat' : sentRequests.has(request.userId) ? 'Sent' : 'Connect'}
-                          </Button>
-                          <Button
-                            onClick={() => { setSelectedProfile(request); setIsProfileModalOpen(true); }}
-                            variant="outline"
-                            className="flex-1 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 min-h-[44px]"
-                          >
-                            View Profile
-                          </Button>
-                        </div>
+              <div className="flex flex-col gap-3">
+                {filteredRequests.map((request) => (
+                  <div key={request.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm px-4 py-3 flex items-center gap-3">
+                    <Avatar className="h-12 w-12 flex-shrink-0">
+                      <AvatarImage src={request.avatar || '/placeholder.svg'} alt={request.name} />
+                      <AvatarFallback className="bg-[#B22222] text-white text-sm">{request.name.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between">
+                        <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm truncate">{request.name}, {request.age || calculateAge(request.dateOfBirth)}</h3>
+                        <Badge className="bg-[#B22222] text-white text-xs ml-2">{request.compatibility}% match</Badge>
+                      </div>
+                      {request.message && (
+                        <p className="text-xs text-gray-600 dark:text-gray-300 mt-1 line-clamp-2">{request.message}</p>
+                      )}
+                      <div className="flex gap-2 mt-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="flex-1 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-xs py-1"
+                          onClick={() => { setSelectedProfile(request); setIsProfileModalOpen(true); }}
+                        >
+                          View
+                        </Button>
+                        <Button
+                          size="sm"
+                          className="flex-1 bg-[#B22222] hover:bg-[#8B0000] text-white text-xs py-1"
+                          onClick={() => router.push(`/messages?user=${request.userId}`)}
+                        >
+                          Chat
+                        </Button>
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
-              ))
+                  </div>
+                ))}
+              </div>
             )}
           </TabsContent>
 
@@ -988,32 +960,25 @@ export default function RequestsPage() {
                 </CardContent>
               </Card>
             ) : (
-              filteredRequests.map((request) => (
-                <Card key={request.id} className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-                  <CardContent className="p-6">
-                    <div className="flex items-start space-x-4">
-                      <Avatar className="h-16 w-16">
-                        <AvatarImage src={request.avatar} alt={request.name} />
-                        <AvatarFallback className="bg-[#B22222] text-white">{request.name.charAt(0)}</AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between mb-2">
-                          <div>
-                            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{request.name}, {request.age || calculateAge(request.dateOfBirth)}</h3>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">{request.occupation} • {request.location}</p>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">Sent</Badge>
-                            <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
-                              <Clock className="h-3 w-3 mr-1" />
-                              {formatTime(request.timestamp)}
-                            </div>
-                          </div>
-                        </div>
-                        <p className="text-gray-700 dark:text-gray-300 mb-4 italic">Request sent. Waiting for response.</p>
+              <div className="flex flex-col gap-3">
+                {filteredRequests.map((request) => (
+                  <div key={request.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm px-4 py-3 flex items-center gap-3">
+                    <Avatar className="h-12 w-12 flex-shrink-0">
+                      <AvatarImage src={request.avatar || '/placeholder.svg'} alt={request.name} />
+                      <AvatarFallback className="bg-[#B22222] text-white text-sm">{request.name.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between">
+                        <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm truncate">{request.name}, {request.age || calculateAge(request.dateOfBirth)}</h3>
+                        <Badge className="bg-[#B22222] text-white text-xs ml-2">{request.compatibility}% match</Badge>
+                      </div>
+                      {request.message && (
+                        <p className="text-xs text-gray-600 dark:text-gray-300 mt-1 line-clamp-2">{request.message}</p>
+                      )}
+                      <div className="flex gap-2 mt-2">
                         <Button
-                          variant="outline"
-                          className="mt-2 border-red-300 text-red-700 hover:bg-red-50"
+                          size="sm"
+                          className="flex-1 bg-yellow-600 hover:bg-yellow-700 text-white text-xs py-1"
                           onClick={() => {
                             setRequests(prev => {
                               const updated = prev.filter(r => r.id !== request.id);
@@ -1035,11 +1000,19 @@ export default function RequestsPage() {
                         >
                           Undo
                         </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="flex-1 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-xs py-1"
+                          onClick={() => { setSelectedProfile(request); setIsProfileModalOpen(true); }}
+                        >
+                          View
+                        </Button>
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
-              ))
+                  </div>
+                ))}
+              </div>
             )}
           </TabsContent>
 
@@ -1057,48 +1030,42 @@ export default function RequestsPage() {
                 </CardContent>
               </Card>
             ) : (
-              filteredRequests.map((request) => (
-                <Card key={request.id} className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-                  <CardContent className="p-6">
-                    <div className="flex items-start space-x-4">
-                      <Avatar className="h-16 w-16">
-                        <AvatarImage src={request.avatar} alt={request.name} />
-                        <AvatarFallback className="bg-[#B22222] text-white">
-                          {request.name.charAt(0)}
-                        </AvatarFallback>
-                      </Avatar>
-                      
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between mb-2">
-                          <div>
-                            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                              {request.name}, {request.age || calculateAge(request.dateOfBirth)}
-                            </h3>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">
-                              {request.occupation} • {request.location}
-                            </p>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Badge className="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
-                              Rejected
-                            </Badge>
-                            <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
-                              <Clock className="h-3 w-3 mr-1" />
-                              {formatTime(request.timestamp)}
-                            </div>
-                          </div>
-                        </div>
-                        
-                        {request.message && (
-                          <p className="text-gray-700 dark:text-gray-300 mb-4 italic">
-                            "{request.message}"
-                          </p>
-                        )}
+              <div className="flex flex-col gap-3">
+                {filteredRequests.map((request) => (
+                  <div key={request.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm px-4 py-3 flex items-center gap-3">
+                    <Avatar className="h-12 w-12 flex-shrink-0">
+                      <AvatarImage src={request.avatar || '/placeholder.svg'} alt={request.name} />
+                      <AvatarFallback className="bg-[#B22222] text-white text-sm">{request.name.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between">
+                        <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm truncate">{request.name}, {request.age || calculateAge(request.dateOfBirth)}</h3>
+                        <Badge className="bg-[#B22222] text-white text-xs ml-2">{request.compatibility}% match</Badge>
+                      </div>
+                      {request.message && (
+                        <p className="text-xs text-gray-600 dark:text-gray-300 mt-1 line-clamp-2">{request.message}</p>
+                      )}
+                      <div className="flex gap-2 mt-2">
+                        <Button
+                          size="sm"
+                          className="flex-1 bg-gray-400 hover:bg-gray-500 text-white text-xs py-1"
+                          disabled
+                        >
+                          Rejected
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="flex-1 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-xs py-1"
+                          onClick={() => { setSelectedProfile(request); setIsProfileModalOpen(true); }}
+                        >
+                          View
+                        </Button>
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
-              ))
+                  </div>
+                ))}
+              </div>
             )}
           </TabsContent>
         </Tabs>

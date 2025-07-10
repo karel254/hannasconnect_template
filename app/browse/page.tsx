@@ -16,6 +16,22 @@ import { useToast } from "@/hooks/use-toast"
 import { ToastAction } from "@/components/ui/toast"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import ProfileModal from "@/components/ProfileModal";
+import { calculateCompatibility } from "@/lib/compatibility";
+
+// =========================
+// BACKEND MIGRATION NOTES
+// =========================
+// This file currently uses mock data and localStorage for user profiles, preferences, and current user info.
+// All data fetching, filtering, and compatibility logic is done on the frontend.
+//
+// For backend migration:
+// - Replace all mock user/profile data (baseUsers, generateUsers, etc.) with API calls to the backend.
+// - Replace localStorage usage for current user with secure authentication/session management.
+// - Filtering, pagination, and compatibility calculation should be moved to the backend for scalability.
+// - If using websockets for real-time updates (e.g., new profiles, live status), add websocket hooks here.
+// - All UI/UX must remain unchanged.
+// - See README.md for more details and API contract.
+// =========================
 
 // Extended sample user data for pagination
 const baseUsers = [
@@ -100,7 +116,8 @@ const baseUsers = [
     dateDifferentPolitics: "Yes",
     believesInMarriage: "Yes",
     // About Me
-    selfDescription: "I'm a dedicated engineer who loves solving problems and building things that make a difference. When I'm not coding, you'll find me playing football or exploring new places. I believe in the power of community and am always looking for ways to give back."
+    selfDescription: "I'm a dedicated engineer who loves solving problems and building things that make a difference. When I'm not coding, you'll find me playing football or exploring new places. I believe in the power of community and am always looking for ways to give back.",
+    mockCompatibility: 85,
   },
   {
     id: 2,
@@ -182,7 +199,8 @@ const baseUsers = [
     dateDifferentPolitics: "Yes",
     believesInMarriage: "Yes",
     // About Me
-    selfDescription: "I'm a passionate banker who believes in financial literacy and helping others achieve their dreams. I love experimenting with new recipes and getting lost in good books. I value honesty, family, and building meaningful connections."
+    selfDescription: "I'm a passionate banker who believes in financial literacy and helping others achieve their dreams. I love experimenting with new recipes and getting lost in good books. I value honesty, family, and building meaningful connections.",
+    mockCompatibility: 78,
   },
   {
     id: 3,
@@ -264,7 +282,8 @@ const baseUsers = [
     dateDifferentPolitics: "Yes",
     believesInMarriage: "Yes",
     // About Me
-    selfDescription: "I'm a dedicated teacher who believes in the power of education to transform lives. I love music and find joy in helping others through community service. I'm looking for someone who shares my values and commitment to making a positive impact."
+    selfDescription: "I'm a dedicated teacher who believes in the power of education to transform lives. I love music and find joy in helping others through community service. I'm looking for someone who shares my values and commitment to making a positive impact.",
+    mockCompatibility: 82,
   },
   {
     id: 4,
@@ -346,7 +365,8 @@ const baseUsers = [
     dateDifferentPolitics: "Yes",
     believesInMarriage: "Yes",
     // About Me
-    selfDescription: "I'm a successful businessman who values hard work and family. I enjoy golf and traveling to new places. I'm looking for someone who is independent, ambitious, and shares my values of family and success."
+    selfDescription: "I'm a successful businessman who values hard work and family. I enjoy golf and traveling to new places. I'm looking for someone who is independent, ambitious, and shares my values of family and success.",
+    mockCompatibility: 75,
   },
   // Other Kenyans
   {
@@ -429,7 +449,8 @@ const baseUsers = [
     dateDifferentPolitics: "Yes",
     believesInMarriage: "Yes",
     // About Me
-    selfDescription: "I'm a creative soul who finds beauty in everything around me. I love expressing myself through art and capturing moments through photography. I'm looking for someone who appreciates creativity and shares my love for adventure and growth."
+    selfDescription: "I'm a creative soul who finds beauty in everything around me. I love expressing myself through art and capturing moments through photography. I'm looking for someone who appreciates creativity and shares my love for adventure and growth.",
+    mockCompatibility: 79,
   },
   {
     id: 6,
@@ -511,7 +532,8 @@ const baseUsers = [
     dateDifferentPolitics: "Yes",
     believesInMarriage: "Yes",
     // About Me
-    selfDescription: "I'm a driven marketing professional who loves staying active and creating delicious meals. I believe in hard work, family values, and building meaningful relationships. I'm looking for someone who shares my passion for life and commitment to growth."
+    selfDescription: "I'm a driven marketing professional who loves staying active and creating delicious meals. I believe in hard work, family values, and building meaningful relationships. I'm looking for someone who shares my passion for life and commitment to growth.",
+    mockCompatibility: 81,
   },
   // International users
   {
@@ -594,7 +616,8 @@ const baseUsers = [
     dateDifferentPolitics: "Yes",
     believesInMarriage: "Maybe",
     // About Me
-    selfDescription: "I'm a tech enthusiast who loves solving complex problems and exploring new places. I value independence, growth, and meaningful connections. I'm looking for someone who shares my curiosity and passion for life."
+    selfDescription: "I'm a tech enthusiast who loves solving complex problems and exploring new places. I value independence, growth, and meaningful connections. I'm looking for someone who shares my curiosity and passion for life.",
+    mockCompatibility: 77,
   },
   {
     id: 8,
@@ -676,7 +699,8 @@ const baseUsers = [
     dateDifferentPolitics: "Yes",
     believesInMarriage: "Yes",
     // About Me
-    selfDescription: "I'm a dedicated doctor who believes in serving others and maintaining strong family values. I love cricket and cooking traditional Indian dishes. I'm looking for someone who shares my values of family, education, and service to others."
+    selfDescription: "I'm a dedicated doctor who believes in serving others and maintaining strong family values. I love cricket and cooking traditional Indian dishes. I'm looking for someone who shares my values of family, education, and service to others.",
+    mockCompatibility: 76,
   },
   {
     id: 9,
@@ -758,7 +782,8 @@ const baseUsers = [
     dateDifferentPolitics: "Yes",
     believesInMarriage: "Maybe",
     // About Me
-    selfDescription: "I'm a free-spirited artist who finds beauty in everything around me. I love expressing myself through various art forms and connecting with people who appreciate creativity. I'm looking for someone who shares my passion for art and life."
+    selfDescription: "I'm a free-spirited artist who finds beauty in everything around me. I love expressing myself through various art forms and connecting with people who appreciate creativity. I'm looking for someone who shares my passion for art and life.",
+    mockCompatibility: 74,
   },
 ];
 
@@ -1009,6 +1034,9 @@ export default function Browse() {
     return pages
   }
 
+  // Get current user from localStorage or context
+  const currentUser = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem("demoUser") || '{}') : {};
+
   return (
     <div className="min-h-screen w-full bg-white dark:bg-gray-900 pb-20">
       {/* Mobile App Header with Back Navigation */}
@@ -1056,9 +1084,9 @@ export default function Browse() {
                   variant={memberType === "diaspora" ? "default" : "outline"}
                   size="sm"
                   onClick={() => setMemberType("diaspora")}
-                  className={`text-xs ${memberType === "diaspora" ? "bg-[#B22222] hover:bg-[#8B0000] text-white" : "border-gray-300 dark:border-gray-600"}`}
+                  className={`text-xs flex-1 rounded-r-lg rounded-l-none h-8 px-2 py-1 whitespace-nowrap ${memberType === "diaspora" ? "bg-[#B22222] hover:bg-[#8B0000] text-white" : "border-gray-300 dark:border-gray-600"}`}
                 >
-                  Members in Diaspora
+                  Diaspora Members
                 </Button>
               </div>
             </div>
@@ -1615,30 +1643,32 @@ export default function Browse() {
           <div className="flex-1 p-4">
             {/* Member Type Filter for Desktop only, above profiles grid */}
             <div className="hidden lg:flex w-full mb-6">
-              <Button
-                variant={memberType === "all" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setMemberType("all")}
-                className={`text-sm flex-1 rounded-l-lg rounded-r-none h-10 py-0 ${memberType === "all" ? "bg-[#B22222] hover:bg-[#8B0000] text-white" : "border-gray-300 dark:border-gray-600"}`}
-              >
-                All Members
-              </Button>
-              <Button
-                variant={memberType === "local" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setMemberType("local")}
-                className={`text-sm flex-1 rounded-none h-10 py-0 ${memberType === "local" ? "bg-[#B22222] hover:bg-[#8B0000] text-white" : "border-gray-300 dark:border-gray-600"}`}
-              >
-                Local Members
-              </Button>
-              <Button
-                variant={memberType === "diaspora" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setMemberType("diaspora")}
-                className={`text-sm flex-1 rounded-r-lg rounded-l-none h-10 py-0 ${memberType === "diaspora" ? "bg-[#B22222] hover:bg-[#8B0000] text-white" : "border-gray-300 dark:border-gray-600"}`}
-              >
-                Members in Diaspora
-              </Button>
+              <div className="flex w-full min-w-0">
+                <Button
+                  variant={memberType === "all" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setMemberType("all")}
+                  className={`flex-1 min-w-0 h-10 px-2 py-0 text-base rounded-l-lg rounded-r-none border border-gray-300 dark:border-gray-600 flex items-center justify-center font-semibold truncate ${memberType === "all" ? "bg-[#B22222] hover:bg-[#8B0000] text-white" : "bg-white text-black"}`}
+                >
+                  <span className="truncate">All Members</span>
+                </Button>
+                <Button
+                  variant={memberType === "local" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setMemberType("local")}
+                  className={`flex-1 min-w-0 h-10 px-2 py-0 text-base rounded-none border border-gray-300 dark:border-gray-600 flex items-center justify-center font-semibold truncate ${memberType === "local" ? "bg-[#B22222] hover:bg-[#8B0000] text-white" : "bg-white text-black"}`}
+                >
+                  <span className="truncate">Local Members</span>
+                </Button>
+                <Button
+                  variant={memberType === "diaspora" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setMemberType("diaspora")}
+                  className={`flex-1 min-w-0 h-10 px-2 py-0 text-base rounded-r-lg rounded-l-none border border-gray-300 dark:border-gray-600 flex items-center justify-center font-semibold truncate ${memberType === "diaspora" ? "bg-[#B22222] hover:bg-[#8B0000] text-white" : "bg-white text-black"}`}
+                >
+                  <span className="truncate">Diaspora Members</span>
+                </Button>
+              </div>
             </div>
             {isLoading ? (
               <div className="flex items-center justify-center h-64">
@@ -1651,51 +1681,46 @@ export default function Browse() {
                 <p className="text-gray-500 dark:text-gray-400">Try adjusting your filters to see more profiles.</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
+              <div className="grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
                 {currentUsers.map((user) => (
                   <Card
                     key={user.id}
-                    className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow cursor-pointer"
+                    className="w-full bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow cursor-pointer flex flex-col"
                     onClick={() => { setSelectedProfile(user); setIsProfileModalOpen(true); }}
                   >
-                    <CardHeader className="p-4 pb-2">
-                      <div className="relative">
-                        <Avatar className="h-16 w-16 sm:h-20 sm:w-20 mx-auto mb-3 ring-2 ring-white dark:ring-gray-600">
+                    <CardHeader className="p-3 sm:p-4 pb-2">
+                      <div className="relative flex flex-col items-center">
+                        <Avatar className="h-14 w-14 sm:h-16 sm:w-16 mb-2 ring-2 ring-white dark:ring-gray-600">
                           <AvatarImage src={user.avatar || "/placeholder.svg"} alt={user.name} />
-                          <AvatarFallback className="bg-[#B22222] text-white text-sm sm:text-lg">{user.name.charAt(0)}</AvatarFallback>
+                          <AvatarFallback className="bg-[#B22222] text-white text-xs sm:text-sm">{user.name.charAt(0)}</AvatarFallback>
                         </Avatar>
                         <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            // Add like functionality if needed
-                          }}
-                          className="absolute top-0 right-0 p-1.5 rounded-full bg-white dark:bg-gray-600 shadow-md hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                          onClick={(e) => { e.stopPropagation(); }}
+                          className="absolute top-0 right-0 p-1 rounded-full bg-white dark:bg-gray-600 shadow-md hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                          style={{ width: '1.5rem', height: '1.5rem' }}
                         >
                           <Heart className="h-3 w-3 sm:h-4 sm:w-4 text-gray-400 hover:text-red-500" />
                         </button>
                       </div>
-                      <div className="text-center space-y-1">
-                        <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm truncate">
+                      <div className="text-center space-y-1 mt-1">
+                        <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-xs sm:text-sm truncate">
                           {user.name}, {user.age}
                         </h3>
                         <p className="text-gray-600 dark:text-gray-300 text-xs truncate">{user.occupation}</p>
                         <p className="text-gray-500 dark:text-gray-400 text-xs truncate">{user.location}</p>
                         <div className="flex items-center justify-center gap-1">
-                          <Badge className="bg-[#B22222] text-white text-xs">
-                            {user.compatibility}% match
+                          <Badge className="bg-[#B22222] text-white text-[10px] sm:text-xs ml-2">
+                            {user.mockCompatibility !== undefined ? user.mockCompatibility : calculateCompatibility(currentUser, user)}% match
                           </Badge>
                         </div>
                       </div>
                     </CardHeader>
-                    <CardFooter className="p-4 pt-0">
+                    <CardFooter className="p-3 sm:p-4 pt-0">
                       <div className="flex space-x-2 w-full">
                         <Button
                           size="sm"
                           className="flex-1 bg-[#B22222] hover:bg-[#8B0000] text-white rounded-xl h-8 text-xs min-h-[36px] max-w-[50%]"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleConnect(user);
-                          }}
+                          onClick={(e) => { e.stopPropagation(); handleConnect(user); }}
                           disabled={sentRequests.has(user.id) && !connectedUsers.has(user.id)}
                         >
                           {connectedUsers.has(user.id) ? "Chat" : sentRequests.has(user.id) ? "Sent" : "Connect"}
@@ -1704,13 +1729,9 @@ export default function Browse() {
                           size="sm"
                           variant="outline"
                           className="flex-1 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl h-8 text-xs min-h-[36px] bg-transparent max-w-[50%]"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedProfile(user);
-                            setIsProfileModalOpen(true);
-                          }}
+                          onClick={(e) => { e.stopPropagation(); setSelectedProfile(user); setIsProfileModalOpen(true); }}
                         >
-                          View Profile
+                          View
                         </Button>
                       </div>
                     </CardFooter>

@@ -1,3 +1,17 @@
+// =========================
+// BACKEND MIGRATION NOTES
+// =========================
+// This file currently uses mock data and localStorage for user suggestions, stats, and current user info.
+// All data fetching, filtering, and compatibility logic is done on the frontend.
+//
+// For backend migration:
+// - Replace all mock user/profile data (suggestions, stats, etc.) with API calls to the backend.
+// - Replace localStorage usage for current user with secure authentication/session management.
+// - Filtering, pagination, and compatibility calculation should be moved to the backend for scalability.
+// - If using websockets for real-time updates (e.g., new matches, live stats), add websocket hooks here.
+// - All UI/UX must remain unchanged.
+// - See README.md for more details and API contract.
+// =========================
 "use client"
 
 import { useState, useEffect } from "react"
@@ -12,6 +26,7 @@ import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, Dialog
 import { useToast } from "@/hooks/use-toast"
 import { ToastAction } from "@/components/ui/toast"
 import ProfileModal from "@/components/ProfileModal";
+import { calculateCompatibility } from "@/lib/compatibility";
 
 // Add these helper functions for badge counts
 // Sample conversations data (copied from messages/page.tsx for badge count)
@@ -134,7 +149,11 @@ export default function Dashboard() {
     },
   ];
 
+  // MOCK: current user is loaded from localStorage. Replace with real auth/session.
+  const currentUser = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem("demoUser") || '{}') : {};
+
   // People you might be interested in
+  // MOCK DATA: suggestions and stats are placeholders. Replace with API calls to fetch real user data from backend.
   const suggestions = [
     // Kenyan users
     {
@@ -1087,46 +1106,41 @@ export default function Dashboard() {
             </div>
           </CardHeader>
           <CardContent className="pt-0">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
               {suggestions.slice(0, 6).map((person) => (
                 <Card
                   key={person.id}
-                  className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow cursor-pointer"
+                  className="w-full bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow cursor-pointer flex flex-col"
                   onClick={() => { setSelectedProfile(person); setIsProfileModalOpen(true); }}
                 >
-                  <CardHeader className="p-4 pb-2">
-                    <div className="relative">
-                      <Avatar className="h-16 w-16 sm:h-20 sm:w-20 mx-auto mb-3 ring-2 ring-white dark:ring-gray-600">
+                  <CardHeader className="p-3 sm:p-4 pb-2">
+                    <div className="relative flex flex-col items-center">
+                      <Avatar className="h-14 w-14 sm:h-16 sm:w-16 mb-2 ring-2 ring-white dark:ring-gray-600">
                         <AvatarImage src={person.avatar || "/placeholder.svg"} alt={person.name} />
-                        <AvatarFallback className="bg-[#B22222] text-white text-sm sm:text-lg">{person.name.charAt(0)}</AvatarFallback>
+                        <AvatarFallback className="bg-[#B22222] text-white text-xs sm:text-sm">{person.name.charAt(0)}</AvatarFallback>
                       </Avatar>
                       <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          // Add like functionality if needed
-                        }}
-                        className="absolute top-0 right-0 p-1.5 rounded-full bg-white dark:bg-gray-600 shadow-md hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                        onClick={(e) => { e.stopPropagation(); }}
+                        className="absolute top-0 right-0 p-1 rounded-full bg-white dark:bg-gray-600 shadow-md hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                        style={{ width: '1.5rem', height: '1.5rem' }}
                       >
                         <Heart className="h-3 w-3 sm:h-4 sm:w-4 text-gray-400 hover:text-red-500" />
                       </button>
                     </div>
-                    <div className="text-center space-y-1">
-                      <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm truncate">
+                    <div className="text-center space-y-1 mt-1">
+                      <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-xs sm:text-sm truncate">
                         {person.name}, {person.age}
                       </h3>
                       <p className="text-gray-600 dark:text-gray-300 text-xs truncate">{person.occupation}</p>
                       <p className="text-gray-500 dark:text-gray-400 text-xs truncate">{person.location}</p>
                     </div>
                   </CardHeader>
-                  <CardFooter className="p-4 pt-0">
+                  <CardFooter className="p-3 sm:p-4 pt-0">
                     <div className="flex space-x-2 w-full">
                       <Button
                         size="sm"
                         className="flex-1 bg-[#B22222] hover:bg-[#8B0000] text-white rounded-xl h-8 text-xs min-h-[36px] max-w-[50%]"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleConnect(person);
-                        }}
+                        onClick={(e) => { e.stopPropagation(); handleConnect(person); }}
                         disabled={sentRequests.has(person.id) && !connectedUsers.has(person.id)}
                       >
                         {connectedUsers.has(person.id) ? "Chat" : sentRequests.has(person.id) ? "Sent" : "Connect"}
@@ -1135,11 +1149,7 @@ export default function Dashboard() {
                         size="sm"
                         variant="outline"
                         className="flex-1 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl h-8 text-xs min-h-[36px] bg-transparent max-w-[50%]"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedProfile(person);
-                          setIsProfileModalOpen(true);
-                        }}
+                        onClick={(e) => { e.stopPropagation(); setSelectedProfile(person); setIsProfileModalOpen(true); }}
                       >
                         View
                       </Button>
