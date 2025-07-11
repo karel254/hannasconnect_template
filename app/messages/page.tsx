@@ -446,7 +446,8 @@ export default function Messages() {
                   >
                     <p className="text-sm">{msg.text}</p>
                     <p
-                      className={`text-xs mt-1 ${msg.sender === "me" ? "text-white/70" : "text-gray-500 dark:text-gray-400"}`}
+                      className={`text-xs mt-1 ${msg.sender === "me" ? "text-white/70 text-right block w-full" : "text-gray-500 dark:text-gray-400"}`}
+                      style={msg.sender === "me" ? { marginLeft: 'auto' } : {}}
                     >
                       {formatTime(msg.timestamp)}
                     </p>

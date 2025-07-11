@@ -17,6 +17,8 @@ import { useToast } from "@/hooks/use-toast"
 import { useDebounce } from "@/hooks/use-debounce"
 import { useRef } from "react"
 import { useEffect } from "react"
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 function scrollIntoViewIfNeeded(element: HTMLElement | null) {
   if (!element) return;
@@ -1152,15 +1154,24 @@ export default function RegisterPage() {
             {/* Date of Birth */}
             <div className="space-y-2">
               <Label htmlFor="dateOfBirth">Date of Birth (Must be 25 or older) *</Label>
-              <Input
+              <DatePicker
                 id="dateOfBirth"
-                type="date"
-                max={getMaxDate()}
-                value={formData.dateOfBirth}
-                onChange={(e) => updateFormData("dateOfBirth", e.target.value)}
-                className="transition-all duration-200"
-                pattern="\d{4}-\d{2}-\d{2}"
-                onFocus={handleFieldFocus}
+                selected={formData.dateOfBirth ? new Date(formData.dateOfBirth) : null}
+                onChange={date => updateFormData("dateOfBirth", date ? date.toISOString().split("T")[0] : "")}
+                maxDate={(() => { const d = new Date(); d.setFullYear(d.getFullYear() - 25); d.setHours(0,0,0,0); return d; })()}
+                showMonthDropdown
+                showYearDropdown
+                dropdownMode="select"
+                dateFormat="yyyy-MM-dd"
+                placeholderText="Select your date of birth"
+                className="transition-all duration-200 w-full px-3 py-2 border rounded-md text-base focus:outline-none focus:ring-2 focus:ring-[#B22222] focus:border-[#B22222] bg-white dark:bg-gray-900"
+                calendarClassName="z-50"
+                popperPlacement="bottom-start"
+                disabledKeyboardNavigation
+                autoComplete="off"
+                onKeyDown={e => e.preventDefault()}
+                aria-label="Date of Birth"
+                inputProps={{ readOnly: true, onPaste: e => e.preventDefault() }}
               />
             </div>
 
@@ -1625,16 +1636,16 @@ export default function RegisterPage() {
                 </Select>
                 {formData.glasses === "yes" && (
                   <>
-                    <Input
-                      value={formData.glassesDescription}
+                  <Input
+                    value={formData.glassesDescription}
                       onChange={e => {
                         const value = e.target.value.split(/\s+/).slice(0, 25).join(" ");
                         updateFormData("glassesDescription", value);
                       }}
-                      placeholder="Describe your glasses"
-                      className="transition-all duration-200 mt-2"
-                      onFocus={handleFieldFocus}
-                    />
+                    placeholder="Describe your glasses"
+                    className="transition-all duration-200 mt-2"
+                    onFocus={handleFieldFocus}
+                  />
                     <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">{formData.glassesDescription?.trim() ? formData.glassesDescription.trim().split(/\s+/).length : 0}/25 words</div>
                   </>
                 )}
@@ -1668,16 +1679,16 @@ export default function RegisterPage() {
                 </Select>
                 {formData.disability === "yes" && (
                   <>
-                    <Input
-                      value={formData.disabilityDescription}
+                  <Input
+                    value={formData.disabilityDescription}
                       onChange={e => {
                         const value = e.target.value.split(/\s+/).slice(0, 25).join(" ");
                         updateFormData("disabilityDescription", value);
                       }}
-                      placeholder="Describe your disability"
-                      className="transition-all duration-200 mt-2"
-                      onFocus={handleFieldFocus}
-                    />
+                    placeholder="Describe your disability"
+                    className="transition-all duration-200 mt-2"
+                    onFocus={handleFieldFocus}
+                  />
                     <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">{formData.disabilityDescription?.trim() ? formData.disabilityDescription.trim().split(/\s+/).length : 0}/25 words</div>
                   </>
                 )}
@@ -1697,16 +1708,16 @@ export default function RegisterPage() {
                 </Select>
                 {formData.chronicIllness === "yes" && (
                   <>
-                    <Input
-                      value={formData.chronicIllnessDescription}
+                  <Input
+                    value={formData.chronicIllnessDescription}
                       onChange={e => {
                         const value = e.target.value.split(/\s+/).slice(0, 25).join(" ");
                         updateFormData("chronicIllnessDescription", value);
                       }}
-                      placeholder="Describe your chronic illness"
-                      className="transition-all duration-200 mt-2"
-                      onFocus={handleFieldFocus}
-                    />
+                    placeholder="Describe your chronic illness"
+                    className="transition-all duration-200 mt-2"
+                    onFocus={handleFieldFocus}
+                  />
                     <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">{formData.chronicIllnessDescription?.trim() ? formData.chronicIllnessDescription.trim().split(/\s+/).length : 0}/25 words</div>
                   </>
                 )}

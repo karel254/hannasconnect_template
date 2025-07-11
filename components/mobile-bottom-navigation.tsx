@@ -36,8 +36,10 @@ function MobileBottomNavigationContent() {
   }, [])
 
   // Don't show on these pages
-  const excludedPaths = ["/", "/blog", "/login", "/register"]
-  const isExcluded = excludedPaths.includes(pathname)
+  const excludedPaths = ["/", "/blog", "/login", "/register", "/how-it-works"];
+  // Normalize pathname to remove trailing slash for robust matching
+  const normalizedPath = pathname.endsWith("/") && pathname.length > 1 ? pathname.slice(0, -1) : pathname;
+  const isExcluded = excludedPaths.includes(normalizedPath);
   
   // Don't show when in a chat (messages page with user parameter)
   const isInChat = pathname === "/messages" && searchParams.get("user")
