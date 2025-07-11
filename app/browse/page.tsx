@@ -1054,8 +1054,9 @@ export default function Browse() {
 
   return (
     <div className="min-h-screen w-full bg-white dark:bg-gray-900 pb-20">
-      {/* Mobile App Header with Back Navigation */}
-      <div className="bg-gradient-to-r from-[#B22222] to-[#8B0000] text-white p-4 shadow-lg">
+      {/* Sticky Mobile Header + Filters */}
+      <div className="lg:hidden sticky top-0 z-40 w-full">
+        <div className="bg-gradient-to-r from-[#B22222] to-[#8B0000] text-white p-4 shadow-lg w-full">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Button
@@ -1071,11 +1072,7 @@ export default function Browse() {
           <div className="text-sm text-white/80">{filteredUsers.length} profiles</div>
         </div>
       </div>
-
-      <div className="h-full w-full">
-        <div className="flex flex-col lg:flex-row h-full">
-          {/* Filters - Mobile */}
-          <div className="lg:hidden w-full p-4 bg-white dark:bg-gray-900 border-b dark:border-gray-700">
+        <div className="w-full p-4 bg-white dark:bg-gray-900 border-b dark:border-gray-700 shadow-md">
             {/* Member Type Filter */}
             <div className="mb-4">
               <div className="grid grid-cols-3 gap-2">
@@ -1099,13 +1096,12 @@ export default function Browse() {
                   variant={memberType === "diaspora" ? "default" : "outline"}
                   size="sm"
                   onClick={() => setMemberType("diaspora")}
-                  className={`text-xs flex-1 rounded-r-lg rounded-l-none h-8 px-2 py-1 whitespace-nowrap ${memberType === "diaspora" ? "bg-[#B22222] hover:bg-[#8B0000] text-white" : "border-gray-300 dark:border-gray-600"}`}
+                className={`text-xs flex-1 rounded-r-lg rounded-l-none h-8 px-2 py-1 whitespace-nowrap ${memberType === "diaspora" ? "bg-[#B22222] hover:bg-[#8B0000] text-white" : "border-gray-300 dark:border-gray-600"}`}
                 >
-                  Diaspora Members
+                Diaspora Members
                 </Button>
               </div>
             </div>
-
             <Sheet>
               <SheetTrigger asChild>
                 <Button className="w-full flex items-center justify-center gap-2 bg-[#B22222] hover:bg-[#8B0000] rounded-xl py-3 min-h-[44px]">
@@ -1135,22 +1131,22 @@ export default function Browse() {
                     />
                   </div>
 
-                  {/* Gender (moved here) */}
-                  <div>
-                    <Label className="text-base font-medium text-gray-900 dark:text-gray-100">
-                      Gender
-                    </Label>
-                    <Select value={selectedGender} onValueChange={setSelectedGender}>
-                      <SelectTrigger className="rounded-xl">
-                        <SelectValue placeholder="Any Gender" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="any">Any Gender</SelectItem>
-                        <SelectItem value="male">Male</SelectItem>
-                        <SelectItem value="female">Female</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                {/* Gender (moved here) */}
+                <div>
+                  <Label className="text-base font-medium text-gray-900 dark:text-gray-100">
+                    Gender
+                  </Label>
+                  <Select value={selectedGender} onValueChange={setSelectedGender}>
+                    <SelectTrigger className="rounded-xl">
+                      <SelectValue placeholder="Any Gender" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="any">Any Gender</SelectItem>
+                      <SelectItem value="male">Male</SelectItem>
+                      <SelectItem value="female">Female</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
 
                   {/* Relationship Goals */}
                   <div>
@@ -1378,14 +1374,15 @@ export default function Browse() {
                   </details>
 
                   <Button
-                    className="bg-[#B22222] hover:bg-[#8B0000] mt-6 rounded-xl py-2 text-sm max-w-xs w-full mx-auto block"
+                  className="bg-[#B22222] hover:bg-[#8B0000] mt-6 rounded-xl py-2 text-sm max-w-xs w-full mx-auto block"
                     onClick={handleFilterChange}
                   >
-                    Done
+                  Done
                   </Button>
                 </div>
               </SheetContent>
             </Sheet>
+        </div>
           </div>
 
           {/* Filters - Desktop */}
@@ -1410,22 +1407,22 @@ export default function Browse() {
                   />
                 </div>
 
-                {/* Gender (moved here) */}
-                <div>
-                  <Label className="text-base font-medium text-gray-900 dark:text-gray-100">
-                    Gender
-                  </Label>
-                  <Select value={selectedGender} onValueChange={setSelectedGender}>
-                    <SelectTrigger className="rounded-xl">
-                      <SelectValue placeholder="Any Gender" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="any">Any Gender</SelectItem>
-                      <SelectItem value="male">Male</SelectItem>
-                      <SelectItem value="female">Female</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+            {/* Gender (moved here) */}
+            <div>
+              <Label className="text-base font-medium text-gray-900 dark:text-gray-100">
+                Gender
+              </Label>
+              <Select value={selectedGender} onValueChange={setSelectedGender}>
+                <SelectTrigger className="rounded-xl">
+                  <SelectValue placeholder="Any Gender" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="any">Any Gender</SelectItem>
+                  <SelectItem value="male">Male</SelectItem>
+                  <SelectItem value="female">Female</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
                 {/* Relationship Goals */}
                 <div>
@@ -1653,10 +1650,10 @@ export default function Browse() {
                 </details>
 
                 <Button
-                  className="bg-[#B22222] hover:bg-[#8B0000] mt-6 rounded-xl py-2 text-sm max-w-xs w-full mx-auto block"
+              className="bg-[#B22222] hover:bg-[#8B0000] mt-6 rounded-xl py-2 text-sm max-w-xs w-full mx-auto block"
                   onClick={handleFilterChange}
                 >
-                  Done
+              Done
                 </Button>
               </div>
             </div>
@@ -1666,32 +1663,32 @@ export default function Browse() {
           <div className="flex-1 p-4">
             {/* Member Type Filter for Desktop only, above profiles grid */}
             <div className="hidden lg:flex w-full mb-6">
-              <div className="flex w-full min-w-0">
-                <Button
-                  variant={memberType === "all" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setMemberType("all")}
-                  className={`flex-1 min-w-0 h-10 px-2 py-0 text-base rounded-l-lg rounded-r-none border border-gray-300 dark:border-gray-600 flex items-center justify-center font-semibold truncate ${memberType === "all" ? "bg-[#B22222] hover:bg-[#8B0000] text-white" : "bg-white text-black"}`}
-                >
-                  <span className="truncate">All Members</span>
-                </Button>
-                <Button
-                  variant={memberType === "local" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setMemberType("local")}
-                  className={`flex-1 min-w-0 h-10 px-2 py-0 text-base rounded-none border border-gray-300 dark:border-gray-600 flex items-center justify-center font-semibold truncate ${memberType === "local" ? "bg-[#B22222] hover:bg-[#8B0000] text-white" : "bg-white text-black"}`}
-                >
-                  <span className="truncate">Local Members</span>
-                </Button>
-                <Button
-                  variant={memberType === "diaspora" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setMemberType("diaspora")}
-                  className={`flex-1 min-w-0 h-10 px-2 py-0 text-base rounded-r-lg rounded-l-none border border-gray-300 dark:border-gray-600 flex items-center justify-center font-semibold truncate ${memberType === "diaspora" ? "bg-[#B22222] hover:bg-[#8B0000] text-white" : "bg-white text-black"}`}
-                >
-                  <span className="truncate">Diaspora Members</span>
-                </Button>
-              </div>
+          <div className="flex w-full min-w-0">
+              <Button
+                variant={memberType === "all" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setMemberType("all")}
+              className={`flex-1 min-w-0 h-10 px-2 py-0 text-base rounded-l-lg rounded-r-none border border-gray-300 dark:border-gray-600 flex items-center justify-center font-semibold truncate ${memberType === "all" ? "bg-[#B22222] hover:bg-[#8B0000] text-white" : "bg-white text-black"}`}
+              >
+              <span className="truncate">All Members</span>
+              </Button>
+              <Button
+                variant={memberType === "local" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setMemberType("local")}
+              className={`flex-1 min-w-0 h-10 px-2 py-0 text-base rounded-none border border-gray-300 dark:border-gray-600 flex items-center justify-center font-semibold truncate ${memberType === "local" ? "bg-[#B22222] hover:bg-[#8B0000] text-white" : "bg-white text-black"}`}
+              >
+              <span className="truncate">Local Members</span>
+              </Button>
+              <Button
+                variant={memberType === "diaspora" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setMemberType("diaspora")}
+              className={`flex-1 min-w-0 h-10 px-2 py-0 text-base rounded-r-lg rounded-l-none border border-gray-300 dark:border-gray-600 flex items-center justify-center font-semibold truncate ${memberType === "diaspora" ? "bg-[#B22222] hover:bg-[#8B0000] text-white" : "bg-white text-black"}`}
+              >
+              <span className="truncate">Diaspora Members</span>
+              </Button>
+          </div>
             </div>
             {isLoading ? (
               <div className="flex items-center justify-center h-64">
@@ -1704,46 +1701,46 @@ export default function Browse() {
                 <p className="text-gray-500 dark:text-gray-400">Try adjusting your filters to see more profiles.</p>
               </div>
             ) : (
-              <div className="grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
+          <div className="grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
                 {currentUsers.map((user) => (
                   <Card
                     key={user.id}
-                    className="w-full bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow cursor-pointer flex flex-col"
+                className="w-full bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow cursor-pointer flex flex-col"
                     onClick={() => { setSelectedProfile(user); setIsProfileModalOpen(true); }}
                   >
-                    <CardHeader className="p-3 sm:p-4 pb-2">
-                      <div className="relative flex flex-col items-center">
-                        <Avatar className="h-14 w-14 sm:h-16 sm:w-16 mb-2 ring-2 ring-white dark:ring-gray-600">
+                <CardHeader className="p-3 sm:p-4 pb-2">
+                  <div className="relative flex flex-col items-center">
+                    <Avatar className="h-14 w-14 sm:h-16 sm:w-16 mb-2 ring-2 ring-white dark:ring-gray-600">
                           <AvatarImage src={user.avatar || "/placeholder.svg"} alt={user.name} />
-                          <AvatarFallback className="bg-[#B22222] text-white text-xs sm:text-sm">{user.name.charAt(0)}</AvatarFallback>
+                      <AvatarFallback className="bg-[#B22222] text-white text-xs sm:text-sm">{user.name.charAt(0)}</AvatarFallback>
                         </Avatar>
-                        <span
-                          className="absolute top-0 right-0 p-0 m-0 bg-transparent shadow-none pointer-events-none"
-                          style={{ width: '1.5rem', height: '1.5rem' }}
-                          aria-hidden="true"
-                        >
-                          <Heart className="h-3 w-3 sm:h-4 sm:w-4 text-gray-400" />
-                        </span>
+                    <span
+                      className="absolute top-0 right-0 p-0 m-0 bg-transparent shadow-none pointer-events-none"
+                      style={{ width: '1.5rem', height: '1.5rem' }}
+                      aria-hidden="true"
+                    >
+                      <Heart className="h-3 w-3 sm:h-4 sm:w-4 text-gray-400" />
+                    </span>
                       </div>
-                      <div className="text-center space-y-1 mt-1">
-                        <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-xs sm:text-sm truncate">
+                  <div className="text-center space-y-1 mt-1">
+                    <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-xs sm:text-sm truncate">
                           {user.name}, {user.age}
                         </h3>
                         <p className="text-gray-600 dark:text-gray-300 text-xs truncate">{user.occupation}</p>
                         <p className="text-gray-500 dark:text-gray-400 text-xs truncate">{user.location}</p>
                         <div className="flex items-center justify-center gap-1">
-                          <Badge className="bg-[#B22222] text-white text-[10px] sm:text-xs ml-2">
-                            {user.mockCompatibility !== undefined ? user.mockCompatibility : calculateCompatibility(currentUser, user)}% match
+                      <Badge className="bg-[#B22222] text-white text-[10px] sm:text-xs ml-2">
+                        {user.mockCompatibility !== undefined ? user.mockCompatibility : calculateCompatibility(currentUser, user)}% match
                           </Badge>
                         </div>
                       </div>
                     </CardHeader>
-                    <CardFooter className="p-3 sm:p-4 pt-0">
+                <CardFooter className="p-3 sm:p-4 pt-0">
                       <div className="flex space-x-2 w-full">
                         <Button
                           size="sm"
                           className="flex-1 bg-[#B22222] hover:bg-[#8B0000] text-white rounded-xl h-8 text-xs min-h-[36px] max-w-[50%]"
-                          onClick={(e) => { e.stopPropagation(); handleConnect(user); }}
+                      onClick={(e) => { e.stopPropagation(); handleConnect(user); }}
                           disabled={sentRequests.has(user.id) && !connectedUsers.has(user.id)}
                         >
                           {connectedUsers.has(user.id) ? "Chat" : sentRequests.has(user.id) ? "Sent" : "Connect"}
@@ -1752,9 +1749,9 @@ export default function Browse() {
                           size="sm"
                           variant="outline"
                           className="flex-1 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl h-8 text-xs min-h-[36px] bg-transparent max-w-[50%]"
-                          onClick={(e) => { e.stopPropagation(); setSelectedProfile(user); setIsProfileModalOpen(true); }}
-                        >
-                          View
+                      onClick={(e) => { e.stopPropagation(); setSelectedProfile(user); setIsProfileModalOpen(true); }}
+                    >
+                      View
                         </Button>
                       </div>
                     </CardFooter>
@@ -1802,11 +1799,6 @@ export default function Browse() {
               </div>
             )}
           </div>
-        </div>
-      </div>
-
-      {/* Profile Modal */}
-      <ProfileModal open={isProfileModalOpen} onOpenChange={setIsProfileModalOpen} profile={selectedProfile} />
     </div>
   )
 }

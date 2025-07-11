@@ -183,7 +183,7 @@ export default function BlockedUsersPage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20">
       {/* Mobile Header with Back Navigation */}
-      <div className="md:hidden bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 flex items-center justify-between">
+      <div className="md:hidden sticky top-0 z-40 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 flex items-center justify-between shadow-md">
         <div className="flex items-center gap-3">
           <Button
             variant="ghost"
@@ -201,7 +201,7 @@ export default function BlockedUsersPage() {
       </div>
 
       {/* Desktop Header */}
-      <div className="hidden md:block bg-gradient-to-r from-[#B22222] to-[#8B0000] text-white p-6 shadow-lg">
+      <div className="hidden md:block sticky top-0 z-40 bg-gradient-to-r from-[#B22222] to-[#8B0000] text-white p-6 shadow-lg">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Button

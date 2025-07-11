@@ -1053,7 +1053,7 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20">
       {/* Mobile Header - No Back Navigation */}
-      <div className="md:hidden bg-[#B22222] text-white border-b border-[#B22222] px-4 py-3">
+      <div className="md:hidden sticky top-0 z-40 bg-[#B22222] text-white border-b border-[#B22222] px-4 py-3 shadow-md">
         <div className="flex flex-col items-start gap-1">
           <h1 className="text-xl font-bold text-white">Welcome back, {getCurrentUsername(user)}!</h1>
           <span className="text-xs text-white/90 font-normal">Ready to make new connections today?</span>
@@ -1061,7 +1061,7 @@ export default function Dashboard() {
       </div>
 
       {/* Desktop Header - No Back Navigation */}
-      <div className="hidden md:block bg-[#B22222] text-white border-b border-[#B22222] px-6 py-4">
+      <div className="hidden md:block sticky top-0 z-40 bg-[#B22222] text-white border-b border-[#B22222] px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex flex-col items-start gap-1">
             <h1 className="text-2xl font-bold text-white">Welcome back, {getCurrentUsername(user)}!</h1>

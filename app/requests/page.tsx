@@ -769,7 +769,7 @@ export default function RequestsPage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20">
       {/* Mobile Header with Back Navigation */}
-      <div className="md:hidden bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 flex items-center justify-between">
+      <div className="md:hidden sticky top-0 z-40 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 flex items-center justify-between shadow-md">
         <div className="flex items-center gap-3">
           <Button
             variant="ghost"
@@ -787,7 +787,7 @@ export default function RequestsPage() {
       </div>
 
       {/* Desktop Header */}
-      <div className="hidden md:block bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+      <div className="hidden md:block sticky top-0 z-40 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Button
@@ -807,38 +807,45 @@ export default function RequestsPage() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-6">
+      <div className="container mx-auto px-4 py-6 space-y-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+          <TabsList
+            className="sticky z-40 top-[56px] w-full grid grid-cols-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-0 shadow-none mx-0 overflow-hidden"
+            style={{ boxSizing: 'border-box' }}
+          >
             <TabsTrigger 
               value="pending" 
-              className="data-[state=active]:bg-[#B22222] data-[state=active]:text-white text-xs sm:text-sm"
+              className="col-span-1 min-w-0 w-full h-full data-[state=active]:bg-[#B22222] data-[state=active]:text-white grid place-items-center text-xs sm:text-sm font-medium px-0 py-2 rounded-lg transition-all truncate"
             >
-              Pending
-              <Badge className="ml-2 bg-gray-200 text-gray-700 dark:bg-gray-600 dark:text-gray-300">
-                {requests.filter(r => r.status === "pending").length}
-              </Badge>
+              <span className="truncate flex items-center gap-1 min-w-0">
+                Pending
+                <Badge className="bg-gray-700/70 text-white font-bold px-1 py-0.5 rounded text-xs min-w-[1.5em] max-w-[2em] text-center truncate">
+                  {requests.filter(r => r.status === "pending").length}
+                </Badge>
+              </span>
             </TabsTrigger>
             <TabsTrigger 
               value="accepted" 
-              className="data-[state=active]:bg-[#B22222] data-[state=active]:text-white text-xs sm:text-sm"
+              className="col-span-1 min-w-0 w-full h-full data-[state=active]:bg-[#B22222] data-[state=active]:text-white grid place-items-center text-xs sm:text-sm font-medium px-0 py-2 rounded-lg transition-all truncate"
             >
-              Accepted
+              <span className="truncate min-w-0">Accepted</span>
             </TabsTrigger>
             <TabsTrigger 
               value="sent" 
-              className="data-[state=active]:bg-[#B22222] data-[state=active]:text-white text-xs sm:text-sm"
+              className="col-span-1 min-w-0 w-full h-full data-[state=active]:bg-[#B22222] data-[state=active]:text-white grid place-items-center text-xs sm:text-sm font-medium px-0 py-2 rounded-lg transition-all truncate"
             >
-              Sent
-              <Badge className="ml-2 bg-gray-200 text-gray-700 dark:bg-gray-600 dark:text-gray-300">
-                {requests.filter(r => r.status === "sent").length}
-              </Badge>
+              <span className="truncate flex items-center gap-1 min-w-0">
+                Sent
+                <Badge className="bg-gray-700/70 text-white font-bold px-1 py-0.5 rounded text-xs min-w-[1.5em] max-w-[2em] text-center truncate">
+                  {requests.filter(r => r.status === "sent").length}
+                </Badge>
+              </span>
             </TabsTrigger>
             <TabsTrigger 
               value="rejected" 
-              className="data-[state=active]:bg-[#B22222] data-[state=active]:text-white text-xs sm:text-sm"
+              className="col-span-1 min-w-0 w-full h-full data-[state=active]:bg-[#B22222] data-[state=active]:text-white grid place-items-center text-xs sm:text-sm font-medium px-0 py-2 rounded-lg transition-all truncate"
             >
-              Rejected
+              <span className="truncate min-w-0">Rejected</span>
             </TabsTrigger>
           </TabsList>
 
@@ -858,29 +865,29 @@ export default function RequestsPage() {
             ) : (
               <div className="flex flex-col gap-3">
                 {filteredRequests.map((request) => (
-                  <div key={request.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm px-4 py-3 flex items-center gap-3">
+                  <div key={request.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm px-4 py-3 flex flex-wrap items-center gap-3 w-full">
                     <Avatar className="h-12 w-12 flex-shrink-0">
                       <AvatarImage src={request.avatar || '/placeholder.svg'} alt={request.name} />
                       <AvatarFallback className="bg-[#B22222] text-white text-sm">{request.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
+                      </Avatar>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between">
-                        <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm truncate">{request.name}, {request.age || calculateAge(request.dateOfBirth)}</h3>
-                        <Badge className="bg-[#B22222] text-white text-xs ml-2">{request.compatibility}% match</Badge>
-                      </div>
+                      <div className="flex items-center justify-between min-w-0">
+                        <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm truncate min-w-0">{request.name}, {request.age || calculateAge(request.dateOfBirth)}</h3>
+                        <Badge className="bg-[#B22222] text-white text-xs ml-2 whitespace-nowrap">{request.compatibility}% match</Badge>
+                          </div>
                       {request.message && (
-                        <p className="text-xs text-gray-600 dark:text-gray-300 mt-1 line-clamp-2">{request.message}</p>
+                        <p className="text-xs text-gray-600 dark:text-gray-300 mt-1 line-clamp-2 min-w-0 truncate">{request.message}</p>
                       )}
-                      <Button
+                          <Button
                         size="sm"
                         variant="outline"
                         className="mt-2 w-full border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-xs py-1"
                         onClick={() => { setSelectedProfile(request); setIsProfileModalOpen(true); }}
                       >
                         View Profile
-                      </Button>
-                      <div className="flex gap-2 mt-2">
-                        <Button
+                          </Button>
+                      <div className="flex gap-2 mt-2 w-full">
+                          <Button
                           size="sm"
                           className="flex-1 bg-green-600 hover:bg-green-700 text-white text-xs py-1"
                           onClick={() => handleAcceptRequest(request.id)}
@@ -893,10 +900,10 @@ export default function RequestsPage() {
                           onClick={() => handleRejectRequest(request.id)}
                         >
                           Reject
-                        </Button>
+                          </Button>
+                        </div>
                       </div>
                     </div>
-                  </div>
                 ))}
               </div>
             )}
@@ -922,34 +929,34 @@ export default function RequestsPage() {
                     <Avatar className="h-12 w-12 flex-shrink-0">
                       <AvatarImage src={request.avatar || '/placeholder.svg'} alt={request.name} />
                       <AvatarFallback className="bg-[#B22222] text-white text-sm">{request.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 min-w-0">
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
                         <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm truncate">{request.name}, {request.age || calculateAge(request.dateOfBirth)}</h3>
                         <Badge className="bg-[#B22222] text-white text-xs ml-2">{request.compatibility}% match</Badge>
-                      </div>
+                          </div>
                       {request.message && (
                         <p className="text-xs text-gray-600 dark:text-gray-300 mt-1 line-clamp-2">{request.message}</p>
                       )}
                       <div className="flex gap-2 mt-2">
-                        <Button
+                          <Button
                           size="sm"
                           variant="outline"
                           className="flex-1 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-xs py-1"
                           onClick={() => { setSelectedProfile(request); setIsProfileModalOpen(true); }}
                         >
                           View
-                        </Button>
-                        <Button
+                          </Button>
+                          <Button
                           size="sm"
                           className="flex-1 bg-[#B22222] hover:bg-[#8B0000] text-white text-xs py-1"
                           onClick={() => router.push(`/messages?user=${request.userId}`)}
                         >
                           Chat
-                        </Button>
+                          </Button>
+                        </div>
                       </div>
                     </div>
-                  </div>
                 ))}
               </div>
             )}
@@ -971,12 +978,12 @@ export default function RequestsPage() {
                     <Avatar className="h-12 w-12 flex-shrink-0">
                       <AvatarImage src={request.avatar || '/placeholder.svg'} alt={request.name} />
                       <AvatarFallback className="bg-[#B22222] text-white text-sm">{request.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 min-w-0">
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
                         <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm truncate">{request.name}, {request.age || calculateAge(request.dateOfBirth)}</h3>
                         <Badge className="bg-[#B22222] text-white text-xs ml-2">{request.compatibility}% match</Badge>
-                      </div>
+                          </div>
                       {request.message && (
                         <p className="text-xs text-gray-600 dark:text-gray-300 mt-1 line-clamp-2">{request.message}</p>
                       )}
@@ -1042,12 +1049,12 @@ export default function RequestsPage() {
                     <Avatar className="h-12 w-12 flex-shrink-0">
                       <AvatarImage src={request.avatar || '/placeholder.svg'} alt={request.name} />
                       <AvatarFallback className="bg-[#B22222] text-white text-sm">{request.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 min-w-0">
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
                         <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm truncate">{request.name}, {request.age || calculateAge(request.dateOfBirth)}</h3>
                         <Badge className="bg-[#B22222] text-white text-xs ml-2">{request.compatibility}% match</Badge>
-                      </div>
+                          </div>
                       {request.message && (
                         <p className="text-xs text-gray-600 dark:text-gray-300 mt-1 line-clamp-2">{request.message}</p>
                       )}
@@ -1057,7 +1064,7 @@ export default function RequestsPage() {
                           className="flex-1 bg-gray-400 hover:bg-gray-500 text-white text-xs py-1"
                           disabled
                         >
-                          Rejected
+                              Rejected
                         </Button>
                         <Button
                           size="sm"
@@ -1067,11 +1074,11 @@ export default function RequestsPage() {
                         >
                           View
                         </Button>
-                      </div>
-                    </div>
-                  </div>
+                            </div>
+                          </div>
+                        </div>
                 ))}
-              </div>
+                      </div>
             )}
           </TabsContent>
         </Tabs>

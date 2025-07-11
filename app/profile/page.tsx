@@ -310,7 +310,31 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20 md:pb-0">
       {/* Mobile Header */}
-      <div className="md:hidden bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 flex items-center justify-between">
+      <div className="md:hidden sticky top-0 z-40 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 flex items-center justify-between shadow-md">
+        <div className="flex items-center gap-3">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => router.push("/dashboard")}
+            className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Profile</h1>
+        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleLogout}
+          className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-900/20"
+        >
+          <LogOut className="h-4 w-4 mr-2" />
+          Logout
+        </Button>
+      </div>
+
+      {/* Desktop Header */}
+      <div className="hidden md:block sticky top-0 z-40 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 flex items-center justify-between shadow-md">
         <div className="flex items-center gap-3">
           <Button
             variant="ghost"
@@ -456,21 +480,18 @@ export default function ProfilePage() {
         {/* Profile Tabs */}
         <Tabs defaultValue="about" className="space-y-6">
           <div className="overflow-x-auto">
-            <TabsList className="grid w-full grid-cols-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-              <TabsTrigger value="about" className="data-[state=active]:bg-[#B22222] data-[state=active]:text-white">
-                About
+            <TabsList className="flex w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-x-auto p-0 shadow-none mx-0">
+              <TabsTrigger value="about" className="flex-1 min-w-0 flex items-center justify-center data-[state=active]:bg-[#B22222] data-[state=active]:text-white text-base font-medium px-0 py-2 rounded-lg transition-all truncate">
+                <span className="truncate">About</span>
               </TabsTrigger>
-              <TabsTrigger
-                value="preferences"
-                className="data-[state=active]:bg-[#B22222] data-[state=active]:text-white"
-              >
-                Preferences
+              <TabsTrigger value="preferences" className="flex-1 min-w-0 flex items-center justify-center data-[state=active]:bg-[#B22222] data-[state=active]:text-white text-base font-medium px-0 py-2 rounded-lg transition-all truncate">
+                <span className="truncate">Preferences</span>
               </TabsTrigger>
-              <TabsTrigger value="settings" className="data-[state=active]:bg-[#B22222] data-[state=active]:text-white">
-                Settings
+              <TabsTrigger value="settings" className="flex-1 min-w-0 flex items-center justify-center data-[state=active]:bg-[#B22222] data-[state=active]:text-white text-base font-medium px-0 py-2 rounded-lg transition-all truncate">
+                <span className="truncate">Settings</span>
               </TabsTrigger>
-              <TabsTrigger value="account" className="data-[state=active]:bg-[#B22222] data-[state=active]:text-white">
-                Account
+              <TabsTrigger value="account" className="flex-1 min-w-0 flex items-center justify-center data-[state=active]:bg-[#B22222] data-[state=active]:text-white text-base font-medium px-0 py-2 rounded-lg transition-all truncate">
+                <span className="truncate">Account</span>
               </TabsTrigger>
             </TabsList>
           </div>

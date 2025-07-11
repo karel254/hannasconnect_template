@@ -15,6 +15,7 @@ interface Message {
   text: string
   sender: "me" | string
   timestamp: Date
+  status?: "sent" | "delivered" | "read"
   isTyping?: boolean
 }
 
@@ -259,9 +260,18 @@ export default function Messages() {
         text: message.trim(),
         sender: "me",
         timestamp: new Date(),
+        status: "sent"
       }
       setMessages(prev => [...prev, newMessage])
       setMessage("")
+
+      // Simulate status updates for demo
+      setTimeout(() => {
+        setMessages(prev => prev.map(m => m.id === newMessage.id ? { ...m, status: "delivered" } : m))
+        setTimeout(() => {
+          setMessages(prev => prev.map(m => m.id === newMessage.id ? { ...m, status: "read" } : m))
+        }, 1200)
+      }, 1000)
       
       // Simulate typing indicator and response
       setTimeout(() => {
@@ -294,15 +304,14 @@ export default function Messages() {
   }
 
   return (
-    <div className="h-screen bg-gray-50 dark:bg-gray-900 flex overflow-hidden w-screen max-w-none">
+    <div className="h-screen bg-gray-50 dark:bg-gray-900 flex w-screen max-w-none">
       {/* Contacts List */}
       <div
-        className={`${selectedUser ? "hidden md:flex" : "flex"} flex-col w-full md:w-80 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 overflow-hidden flex-shrink-0`}
+        className={`${selectedUser ? "hidden md:flex" : "flex"} flex-col w-full md:w-80 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex-shrink-0 h-full`}
       >
         {/* Header */}
-        <div className="flex-shrink-0 p-4 border-b border-gray-200 dark:border-gray-700 flex items-center gap-2">
-          {/* Back navigation for mobile */}
           {!selectedUser && (
+          <div className="flex-shrink-0 h-[56px] p-4 border-b border-gray-200 dark:border-gray-700 flex items-center gap-2 sticky top-0 z-40 bg-white dark:bg-gray-800 shadow-md">
             <Button
               variant="ghost"
               size="icon"
@@ -311,9 +320,9 @@ export default function Messages() {
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
-          )}
           <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-0">Messages</h1>
         </div>
+        )}
         <div className="relative px-4 pb-4">
           <Search className="absolute left-7 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
           <Input
@@ -325,7 +334,7 @@ export default function Messages() {
         </div>
 
         {/* Conversations */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto min-h-0">
           <div className="space-y-2 p-2">
             {filteredConversations.map((conversation) => (
               <div
@@ -385,9 +394,9 @@ export default function Messages() {
 
       {/* Chat Area */}
       {selectedUser ? (
-        <div className="h-full min-h-0 flex flex-col bg-white dark:bg-gray-800 overflow-hidden flex-1 w-full max-w-none relative">
-          {/* Chat Header - Fixed & Prominent */}
-          <div className="fixed top-0 z-50 px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-md md:left-80 left-0 right-0">
+        <div className="h-full min-h-0 flex flex-col bg-white dark:bg-gray-800 flex-1 w-full max-w-none relative">
+          {/* Chat Header - Sticky at the very top, replaces main header */}
+          <div className="sticky top-0 z-50 px-6 py-4 h-[64px] border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-md flex items-center">
             <div className="flex items-center gap-4">
               <Button variant="ghost" size="icon" className="md:hidden mr-2" onClick={() => {
                 setSelectedUser(null)
@@ -419,8 +428,8 @@ export default function Messages() {
             </div>
           </div>
 
-          {/* Messages - Scrollable with top padding for fixed header */}
-          <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4 pt-24 pb-32">
+          {/* Messages - Scrollable with top padding for sticky headers */}
+          <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4 pt-4 pb-32">
             {messages.map((msg) => (
               <div key={msg.id} className={`flex ${msg.sender === "me" ? "justify-end" : "justify-start"}`}>
                 <div
@@ -438,19 +447,48 @@ export default function Messages() {
                     </Avatar>
                   )}
                   <div
-                    className={`px-4 py-2 rounded-2xl ${
+                    className={`px-4 py-2 rounded-2xl relative ${
                       msg.sender === "me"
                         ? "bg-[#B22222] text-white rounded-br-md"
                         : "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-bl-md"
                     }`}
                   >
                     <p className="text-sm">{msg.text}</p>
-                    <p
-                      className={`text-xs mt-1 ${msg.sender === "me" ? "text-white/70 text-right block w-full" : "text-gray-500 dark:text-gray-400"}`}
-                      style={msg.sender === "me" ? { marginLeft: 'auto' } : {}}
+                    {msg.sender === "me" ? (
+                      <div className="flex items-center justify-end gap-1 mt-1 w-full">
+                        <span className="text-xs text-white/70" style={{marginRight: 2}}>{formatTime(msg.timestamp)}</span>
+                        {/* WhatsApp-style ticks */}
+                        <span className={`transition-all duration-200 ease-in-out ${msg.status === "sent" ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}
+                          style={{ display: msg.status === "sent" ? 'inline' : 'none' }}>
+                          {/* Single gray tick */}
+                          <svg width="16" height="16" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5 9.5L8 12.5L13 7.5" stroke="#bbb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        </span>
+                        <span className={`transition-all duration-200 ease-in-out ${msg.status === "delivered" ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}
+                          style={{ display: msg.status === "delivered" ? 'inline' : 'none' }}>
+                          {/* Two light-gray ticks */}
+                          <svg width="16" height="16" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M4.5 10L7.5 13L12.5 8" stroke="#bbb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M7 10L10 13L15 8" stroke="#bbb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        </span>
+                        <span className={`transition-all duration-200 ease-in-out ${msg.status === "read" ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}
+                          style={{ display: msg.status === "read" ? 'inline' : 'none' }}>
+                          {/* Two green ticks */}
+                          <svg width="16" height="16" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M4.5 10L7.5 13L12.5 8" stroke="#25D366" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M7 10L10 13L15 8" stroke="#25D366" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        </span>
+                      </div>
+                    ) : (
+                      <p
+                        className={`text-xs mt-1 text-gray-500 dark:text-gray-400`}
                     >
                       {formatTime(msg.timestamp)}
                     </p>
+                    )}
                   </div>
                 </div>
               </div>
