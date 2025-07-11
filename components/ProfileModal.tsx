@@ -161,7 +161,7 @@ export default function ProfileModal({ open, onOpenChange, profile }) {
                 <div className="break-words"><span className="font-semibold">Alcohol:</span> {safeProfile.alcohol || safeProfile.preferences?.alcohol || 'N/A'}</div>
                 <div className="break-words"><span className="font-semibold">Smoking:</span> {safeProfile.smoking || safeProfile.preferences?.smoking || 'N/A'}</div>
                 <div className="break-words"><span className="font-semibold">Dietary Preference:</span> {safeProfile.dietaryPreference || safeProfile.preferences?.dietaryPreference || 'N/A'}</div>
-                <div className="break-words"><span className="font-semibold">Has Pets:</span> {safeProfile.hasPets || safeProfile.preferences?.pets || 'N/A'}</div>
+                <div className="break-words"><span className="font-semibold">Has Pets:</span> {safeProfile.pets || safeProfile.hasPets || safeProfile.preferences?.pets || 'N/A'}</div>
                 <div className="break-words"><span className="font-semibold">Exercise Frequency:</span> {safeProfile.exerciseFrequency || 'N/A'}</div>
                 <div className="break-words"><span className="font-semibold">Hobbies:</span> {safeProfile.hobbies || 'N/A'}</div>
               </div>
@@ -213,7 +213,7 @@ export default function ProfileModal({ open, onOpenChange, profile }) {
                 <div className="break-words"><span className="font-semibold">Long Distance OK:</span> {safeProfile.longDistanceOk || 'N/A'}</div>
                 <div className="break-words"><span className="font-semibold">Dating Perspective:</span> {safeProfile.datingPerspective || 'N/A'}</div>
                 <div className="break-words"><span className="font-semibold">Deal Breakers:</span> {safeProfile.dealBreakers || 'N/A'}</div>
-                <div className="break-words"><span className="font-semibold">Relationship Hopes:</span> {safeProfile.relationshipHopes || 'N/A'}</div>
+                <div className="break-words"><span className="font-semibold">Relationship Goals:</span> {safeProfile.relationshipHopes || 'N/A'}</div>
                 <div className="break-words"><span className="font-semibold">Partner Preferences:</span> {safeProfile.partnerPreferences || 'N/A'}</div>
                 <div className="break-words"><span className="font-semibold">Personality Type:</span> {safeProfile.personalityType || 'N/A'}</div>
                 <div className="break-words"><span className="font-semibold">Don't Contact If:</span> {safeProfile.dontContactIf || 'N/A'}</div>

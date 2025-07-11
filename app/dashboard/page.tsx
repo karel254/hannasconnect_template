@@ -237,7 +237,9 @@ export default function Dashboard() {
       believesInMarriage: "Yes",
       // About Me
       bio: "Engineer from Kisumu with a passion for technology and community development.",
-      selfDescription: "I'm a dedicated engineer who loves solving problems and building things that make a difference. When I'm not coding, you'll find me playing football or exploring new places. I believe in the power of community and am always looking for ways to give back."
+      selfDescription: "I'm a dedicated engineer who loves solving problems and building things that make a difference. When I'm not coding, you'll find me playing football or exploring new places. I believe in the power of community and am always looking for ways to give back.",
+      relationshipGoals: "To find a long-term partner who shares my passion for technology and community development.",
+      pets: "No pets, but I love animals and would consider adopting a dog if my partner is open to it."
     },
     {
       id: 2,
@@ -320,7 +322,9 @@ export default function Dashboard() {
       believesInMarriage: "Yes",
       // About Me
       bio: "Banker in Nairobi with a love for cooking and reading.",
-      selfDescription: "I'm a passionate banker who believes in financial literacy and helping others achieve their dreams. I love experimenting with new recipes and getting lost in good books. I value honesty, family, and building meaningful connections."
+      selfDescription: "I'm a passionate banker who believes in financial literacy and helping others achieve their dreams. I love experimenting with new recipes and getting lost in good books. I value honesty, family, and building meaningful connections.",
+      relationshipGoals: "To find a partner who shares my love for cooking and reading, and who is ambitious and family-oriented.",
+      pets: "Yes, I have a cat named Whiskers. I love animals and would consider adopting more if my partner is open to it."
     },
     {
       id: 3,
@@ -403,7 +407,9 @@ export default function Dashboard() {
       believesInMarriage: "Yes",
       // About Me
       bio: "Teacher from Machakos passionate about education and community service.",
-      selfDescription: "I'm a dedicated teacher who believes in the power of education to transform lives. I love music and find joy in helping others through community service. I'm looking for someone who shares my values and commitment to making a positive impact."
+      selfDescription: "I'm a dedicated teacher who believes in the power of education to transform lives. I love music and find joy in helping others through community service. I'm looking for someone who shares my values and commitment to making a positive impact.",
+      relationshipGoals: "To find a partner who shares my passion for education and community service, and who is ambitious and family-oriented.",
+      pets: "No pets, but I love animals and would consider adopting a dog if my partner is open to it."
     },
     {
       id: 4,
@@ -486,7 +492,9 @@ export default function Dashboard() {
       believesInMarriage: "Yes",
       // About Me
       bio: "Businessman in Nakuru with a passion for golf and travel.",
-      selfDescription: "I'm a successful businessman who values hard work and family. I enjoy golf and traveling to new places. I'm looking for someone who is independent, ambitious, and shares my values of family and success."
+      selfDescription: "I'm a successful businessman who values hard work and family. I enjoy golf and traveling to new places. I'm looking for someone who is independent, ambitious, and shares my values of family and success.",
+      relationshipGoals: "To find a partner who is independent, ambitious, and shares my values of family and success.",
+      pets: "No pets, but I love animals and would consider adopting a dog if my partner is open to it."
     },
     // Other Kenyans
     {
@@ -570,7 +578,9 @@ export default function Dashboard() {
       believesInMarriage: "Yes",
       // About Me
       bio: "Creative designer from Nairobi with a passion for art and travel.",
-      selfDescription: "I'm a creative soul who finds beauty in everything around me. I love expressing myself through art and capturing moments through photography. I'm looking for someone who appreciates creativity and shares my love for adventure and growth."
+      selfDescription: "I'm a creative soul who finds beauty in everything around me. I love expressing myself through art and capturing moments through photography. I'm looking for someone who appreciates creativity and shares my love for adventure and growth.",
+      relationshipGoals: "To find a partner who shares my passion for art and travel, and who is adventurous and open-minded.",
+      pets: "No pets, but I love animals and would consider adopting a dog if my partner is open to it."
     },
     {
       id: 6,
@@ -653,7 +663,9 @@ export default function Dashboard() {
       believesInMarriage: "Yes",
       // About Me
       bio: "Marketing manager in Eldoret with a passion for fitness and cooking.",
-      selfDescription: "I'm a driven marketing professional who loves staying active and creating delicious meals. I believe in hard work, family values, and building meaningful relationships. I'm looking for someone who shares my passion for life and commitment to growth."
+      selfDescription: "I'm a driven marketing professional who loves staying active and creating delicious meals. I believe in hard work, family values, and building meaningful relationships. I'm looking for someone who shares my passion for life and commitment to growth.",
+      relationshipGoals: "To find a partner who shares my passion for fitness and cooking, and who is ambitious and family-oriented.",
+      pets: "No pets, but I love animals and would consider adopting a dog if my partner is open to it."
     },
     // International users
     {
@@ -737,7 +749,9 @@ export default function Dashboard() {
       believesInMarriage: "Maybe",
       // About Me
       bio: "Software engineer from London with a passion for technology and travel.",
-      selfDescription: "I'm a tech enthusiast who loves solving complex problems and exploring new places. I value independence, growth, and meaningful connections. I'm looking for someone who shares my curiosity and passion for life."
+      selfDescription: "I'm a tech enthusiast who loves solving complex problems and exploring new places. I value independence, growth, and meaningful connections. I'm looking for someone who shares my curiosity and passion for life.",
+      relationshipGoals: "To find a partner who shares my passion for technology and travel, and who is ambitious and open-minded.",
+      pets: "No pets, but I love animals and would consider adopting a dog if my partner is open to it."
     },
     {
       id: 8,
@@ -820,7 +834,9 @@ export default function Dashboard() {
       believesInMarriage: "Yes",
       // About Me
       bio: "Doctor from Mumbai with a passion for medicine and cricket.",
-      selfDescription: "I'm a dedicated doctor who believes in serving others and maintaining strong family values. I love cricket and cooking traditional Indian dishes. I'm looking for someone who shares my values of family, education, and service to others."
+      selfDescription: "I'm a dedicated doctor who believes in serving others and maintaining strong family values. I love cricket and cooking traditional Indian dishes. I'm looking for someone who shares my values of family, education, and service to others.",
+      relationshipGoals: "To find a partner who shares my passion for medicine and cricket, and who is family-oriented and educated.",
+      pets: "No pets, but I love animals and would consider adopting a dog if my partner is open to it."
     },
     {
       id: 9,
@@ -903,7 +919,9 @@ export default function Dashboard() {
       believesInMarriage: "Maybe",
       // About Me
       bio: "Artist in New York with a passion for creativity and self-expression.",
-      selfDescription: "I'm a free-spirited artist who finds beauty in everything around me. I love expressing myself through various art forms and connecting with people who appreciate creativity. I'm looking for someone who shares my passion for art and life."
+      selfDescription: "I'm a free-spirited artist who finds beauty in everything around me. I love expressing myself through various art forms and connecting with people who appreciate creativity. I'm looking for someone who shares my passion for art and life.",
+      relationshipGoals: "To find a partner who shares my passion for creativity and self-expression, and who is adventurous and open-minded.",
+      pets: "No pets, but I love animals and would consider adopting a dog if my partner is open to it."
     },
   ]
 
