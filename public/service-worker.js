@@ -1,3 +1,4 @@
+// Import Workbox for offline caching and routing
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/6.5.4/workbox-sw.js');
 
 if (workbox) {
@@ -63,7 +64,17 @@ if (workbox) {
   console.log('Workbox could not be loaded. No offline support.');
 }
 
-// Push notification event listener
+// --- PUSH NOTIFICATIONS ---
+// Listen for push events sent from the backend server
+// The backend should send a push payload with a JSON body like:
+// {
+//   title: 'New Message',
+//   body: 'You have a new message!',
+//   icon: '/images/favicon.ico',
+//   tag: 'message',
+//   data: { ... },
+//   ...other NotificationOptions
+// }
 self.addEventListener('push', function(event) {
   if (event.data) {
     const data = event.data.json();
@@ -77,22 +88,23 @@ self.addEventListener('push', function(event) {
       actions: data.actions || [],
       data: data.data || {}
     };
-
+    // Show the notification to the user
     event.waitUntil(
       self.registration.showNotification(data.title || 'HannaSConnect', options)
     );
   }
 });
 
-// Notification click event listener
+// Handle notification click events
+// You can customize this to open a specific page or handle actions
 self.addEventListener('notificationclick', function(event) {
   event.notification.close();
   
   if (event.action) {
-    // Handle specific action clicks
+    // Handle specific action clicks (e.g., reply, mark as read)
     console.log('Action clicked:', event.action);
   } else {
-    // Default click behavior - open the app
+    // Default click behavior - open the app homepage
     event.waitUntil(
       clients.openWindow('/')
     );

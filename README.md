@@ -158,3 +158,43 @@ This frontend currently uses mock data, localStorage, and in-memory state for al
 
 ## Questions?
 Contact the frontend team for clarification on any integration points or UI requirements.
+
+## Push Notifications (Frontend PWA)
+
+This project includes a full client-side push notification setup for a Next.js PWA. Backend developers should note:
+
+### How it Works
+- The frontend registers a service worker and subscribes the user to push notifications using the VAPID public key.
+- The subscription object is POSTed to `/api/push-subscribe` (currently a mock endpoint).
+- The service worker (`public/service-worker.js`) listens for `push` events and displays notifications.
+
+### Backend Integration
+- The backend should store the subscription object received at `/api/push-subscribe` for each user.
+- To send a push notification, the backend should use the [Web Push Protocol](https://developer.mozilla.org/en-US/docs/Web/API/Push_API) and the VAPID private key to send a payload to the user's subscription endpoint.
+- The push payload should be a JSON object like:
+
+```json
+{
+  "title": "New Message",
+  "body": "You have a new message!",
+  "icon": "/images/favicon.ico",
+  "tag": "message",
+  "data": { "url": "/messages" }
+}
+```
+
+- The service worker will display the notification and handle clicks (default: opens the app homepage).
+
+### VAPID Key
+- The VAPID public key is set in `hooks/usePushNotifications.tsx`.
+- The backend must use the matching VAPID private key to send push messages.
+
+### API Endpoint
+- `/api/push-subscribe` should be implemented on the backend to store and manage subscriptions.
+- The current implementation is a mock and does not persist data.
+
+### Service Worker
+- See `public/service-worker.js` for the push event handler and notification display logic.
+- You can customize the notification options and click behavior as needed.
+
+---

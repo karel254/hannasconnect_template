@@ -1,7 +1,9 @@
 import { useState, useCallback } from "react"
 
-const VAPID_PUBLIC_KEY = "BEl62iUYgUivxIkv69yViEuiBIa1HmFJxFuipUrC8odJ8Fei8f9zPeirifF4jXhVE6HT3VTvRy4mcTqS6XpAaa7o"; // Replace with your actual key
+// VAPID public key for push notifications (replace with your own in production)
+const VAPID_PUBLIC_KEY = "BEl62iUYgUivxIkv69yViEuiBIa1HmFJxFuipUrC8odJ8Fei8f9zPeirifF4jXhVE6HT3VTvRy4mcTqS6XpAaa7o";
 
+// Utility to convert a base64 VAPID key to a Uint8Array for PushManager
 function urlBase64ToUint8Array(base64String: string) {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4)
   const base64 = (base64String + padding).replace(/\-/g, "+").replace(/_/g, "/")
@@ -13,23 +15,23 @@ function urlBase64ToUint8Array(base64String: string) {
   return outputArray
 }
 
+// Custom React hook for push notification registration and subscription
 export function usePushNotifications() {
   const [isSupported, setIsSupported] = useState(false)
   const [permission, setPermission] = useState<NotificationPermission>("default")
   const [subscription, setSubscription] = useState<PushSubscription | null>(null)
   const [isLoading, setIsLoading] = useState(false)
 
-  // Check if push notifications are supported
+  // Check if push notifications are supported in the browser
   const checkSupport = useCallback(() => {
     const supported = "serviceWorker" in navigator && "PushManager" in window && "Notification" in window
     setIsSupported(supported)
     return supported
   }, [])
 
-  // Request permission
+  // Request notification permission from the user
   const requestPermission = useCallback(async () => {
     if (!checkSupport()) return false
-    
     try {
       const result = await Notification.requestPermission()
       setPermission(result)
@@ -40,23 +42,23 @@ export function usePushNotifications() {
     }
   }, [checkSupport])
 
-  // Subscribe to push notifications
+  // Subscribe the user to push notifications and send the subscription to the backend
   const subscribe = useCallback(async () => {
     if (!checkSupport() || permission !== "granted") return false
-    
     setIsLoading(true)
     try {
-      // Register service worker
+      // Register the service worker (must be at the root for PWA)
       const registration = await navigator.serviceWorker.register("/service-worker.js")
       await navigator.serviceWorker.ready
 
-      // Subscribe to push notifications
+      // Subscribe to push notifications using the VAPID public key
       const pushSubscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
       })
 
-      // Send subscription to backend
+      // Send the subscription object to the backend API endpoint
+      // The backend should store this subscription and use it to send push messages
       const response = await fetch("/api/push-subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -77,10 +79,9 @@ export function usePushNotifications() {
     }
   }, [checkSupport, permission])
 
-  // Unsubscribe from push notifications
+  // Unsubscribe the user from push notifications
   const unsubscribe = useCallback(async () => {
     if (!subscription) return false
-    
     try {
       await subscription.unsubscribe()
       setSubscription(null)
@@ -92,13 +93,13 @@ export function usePushNotifications() {
   }, [subscription])
 
   return {
-    isSupported,
-    permission,
-    subscription,
-    isLoading,
-    checkSupport,
-    requestPermission,
-    subscribe,
-    unsubscribe
+    isSupported, // Whether push notifications are supported
+    permission,  // Notification permission state
+    subscription, // Current push subscription object
+    isLoading,   // Loading state for async actions
+    checkSupport, // Function to check support
+    requestPermission, // Function to request permission
+    subscribe,   // Function to subscribe
+    unsubscribe  // Function to unsubscribe
   }
 } 
