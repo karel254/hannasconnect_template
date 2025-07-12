@@ -1389,20 +1389,20 @@ export default function Browse() {
           {/* Desktop: Full width layout with filter button */}
           <div className="hidden lg:block w-full">
             {/* Desktop Header - match requests/dashboard sticky style */}
-            <div className="sticky top-0 z-40 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 shadow-md">
+            <div className="sticky top-0 z-40 bg-gradient-to-r from-[#B22222] to-[#8B0000] text-white px-6 py-4 shadow-md">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <Button
                     variant="ghost"
                     size="icon"
                     onClick={() => router.push("/dashboard")}
-                    className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
+                    className="text-white hover:bg-white/20"
                   >
                     <ArrowLeft className="h-5 w-5" />
                   </Button>
-                  <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Browse Profiles</h1>
+                  <h1 className="text-2xl font-bold text-white">Browse Profiles</h1>
                 </div>
-                <div className="text-lg text-gray-500 dark:text-gray-400">{filteredUsers.length} profiles</div>
+                <div className="text-lg text-white/80">{filteredUsers.length} profiles</div>
               </div>
             </div>
             

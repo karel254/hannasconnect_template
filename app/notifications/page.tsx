@@ -84,7 +84,7 @@ export default function NotificationsPage() {
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-50">
+      <div className="bg-gradient-to-r from-[#B22222] to-[#8B0000] text-white fixed top-0 left-0 right-0 z-50">
         <div className="px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -92,16 +92,16 @@ export default function NotificationsPage() {
                 variant="ghost"
                 size="icon"
                 onClick={() => router.push("/dashboard")}
-                className="text-gray-600 hover:text-gray-900"
+                className="text-white hover:bg-white/20"
               >
                 <ArrowLeft className="h-5 w-5" />
               </Button>
-              <Bell className="w-6 h-6 text-[#B22222]" />
-              <h1 className="text-xl font-bold text-gray-900">Notifications</h1>
-              {unreadCount > 0 && <Badge className="bg-[#B22222] text-white text-xs">{unreadCount}</Badge>}
+              <Bell className="w-6 h-6 text-white" />
+              <h1 className="text-xl font-bold text-white">Notifications</h1>
+              {unreadCount > 0 && <Badge className="bg-white/20 text-white text-xs">{unreadCount}</Badge>}
             </div>
             {unreadCount > 0 && (
-              <Button variant="ghost" size="sm" onClick={markAllAsRead} className="text-[#B22222] hover:bg-red-50">
+              <Button variant="ghost" size="sm" onClick={markAllAsRead} className="text-white hover:bg-white/20">
                 Mark all read
               </Button>
             )}

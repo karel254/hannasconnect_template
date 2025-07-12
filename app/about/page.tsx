@@ -7,19 +7,19 @@ export default function AboutPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-50">
       {/* Header */}
-      <div className="bg-white border-b">
+      <div className="bg-gradient-to-r from-[#B22222] to-[#8B0000] text-white">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center gap-4 mb-4">
             <Link href="/dashboard">
-              <Button variant="ghost" size="sm" className="gap-2">
+              <Button variant="ghost" size="sm" className="gap-2 text-white hover:bg-white/20">
                 <ArrowLeft className="h-4 w-4" />
                 Back to Home
               </Button>
             </Link>
           </div>
           <div className="text-center">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">About Hanna&apos;s Connect™</h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <h1 className="text-4xl font-bold text-white mb-4">About Hanna&apos;s Connect™</h1>
+            <p className="text-xl text-white/90 max-w-3xl mx-auto">
               We're revolutionizing online dating by putting privacy, authenticity, and meaningful connections first.
             </p>
           </div>

@@ -73,13 +73,13 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 bg-white border-b border-gray-200">
+      <div className="flex items-center justify-between p-4 bg-gradient-to-r from-[#B22222] to-[#8B0000] text-white">
         <Link href="/dashboard">
-          <Button variant="ghost" size="icon" className="text-gray-600">
+          <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
             <ArrowLeft className="w-5 h-5" />
           </Button>
         </Link>
-        <h1 className="text-lg font-semibold text-gray-900">Log In</h1>
+        <h1 className="text-lg font-semibold text-white">Log In</h1>
         <div className="w-10" /> {/* Spacer */}
       </div>
 

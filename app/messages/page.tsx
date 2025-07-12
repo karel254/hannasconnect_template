@@ -321,16 +321,16 @@ export default function Messages() {
       >
         {/* Header */}
           {!selectedUser && (
-          <div className="flex-shrink-0 h-[56px] p-4 border-b border-gray-200 dark:border-gray-700 flex items-center gap-2 sticky top-0 z-40 bg-white dark:bg-gray-800 shadow-md">
+          <div className="flex-shrink-0 h-[56px] p-4 border-b border-gray-200 dark:border-gray-700 flex items-center gap-2 sticky top-0 z-40 bg-gradient-to-r from-[#B22222] to-[#8B0000] text-white shadow-md">
             <Button
               variant="ghost"
               size="icon"
-              className="md:hidden mr-2"
+              className="md:hidden mr-2 text-white hover:bg-white/20"
               onClick={() => router.push("/dashboard")}
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
-          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-0">Messages</h1>
+          <h1 className="text-xl font-bold text-white mb-0">Messages</h1>
         </div>
         )}
         <div className="relative px-4 pb-4">
@@ -406,9 +406,9 @@ export default function Messages() {
       {selectedUser ? (
         <div className="h-full min-h-0 flex flex-col bg-white dark:bg-gray-800 flex-1 w-full max-w-none relative">
           {/* Chat Header - Sticky at the very top, replaces main header */}
-          <div className="sticky top-0 z-50 px-6 py-4 h-[64px] border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-md flex items-center">
+          <div className="sticky top-0 z-50 px-6 py-4 h-[64px] border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-[#B22222] to-[#8B0000] text-white shadow-md flex items-center">
             <div className="flex items-center gap-4">
-              <Button variant="ghost" size="icon" className="md:hidden mr-2" onClick={() => {
+              <Button variant="ghost" size="icon" className="md:hidden mr-2 text-white hover:bg-white/20" onClick={() => {
                 setSelectedUser(null)
                 router.push("/messages")
               }}>
@@ -429,10 +429,10 @@ export default function Messages() {
                 )}
               </div>
               <div className="flex flex-col justify-center">
-                <span className="font-bold text-lg sm:text-xl text-gray-900 dark:text-gray-100 leading-tight">{selectedConversation?.name}</span>
-                <span className="flex items-center gap-2 text-green-600 dark:text-green-400 font-medium text-sm">
+                <span className="font-bold text-lg sm:text-xl text-white leading-tight">{selectedConversation?.name}</span>
+                <span className="flex items-center gap-2 text-green-400 font-medium text-sm">
                   {selectedConversation?.online && <span className="h-2 w-2 rounded-full bg-green-500 inline-block"></span>}
-                  {selectedConversation?.online ? "Online" : <span className="text-gray-500 dark:text-gray-400 font-normal">Last seen recently</span>}
+                  {selectedConversation?.online ? "Online" : <span className="text-white/70 font-normal">Last seen recently</span>}
                 </span>
               </div>
             </div>

@@ -159,6 +159,15 @@ export default function BlogsPage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
       <div className="container mx-auto px-4">
+        <div className="flex items-center mb-6">
+          <a href="/dashboard">
+            <Button variant="ghost" size="icon" className="text-[#B22222] hover:text-[#8B0000]">
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+            </Button>
+          </a>
+        </div>
         <h1 className="text-3xl font-bold mb-8 text-center">All Blog Articles</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {blogPosts.map((post) => (

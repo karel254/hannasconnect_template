@@ -54,11 +54,11 @@ export default function MoreAboutPage() {
       <div className="max-w-xl mx-auto px-4 space-y-6">
         <div className="flex items-center mb-4">
           <Link href="/dashboard">
-            <Button variant="ghost" size="icon" className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100">
+            <Button variant="ghost" size="icon" className="text-[#B22222] hover:text-[#8B0000] dark:text-red-400 dark:hover:text-red-300">
               <ArrowLeft className="h-5 w-5" />
             </Button>
           </Link>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 ml-2">More about this App</h1>
+          <h1 className="text-2xl font-bold text-[#B22222] dark:text-red-400 ml-2">More about this App</h1>
         </div>
         <div className="space-y-4">
           {items.map((item) => (
