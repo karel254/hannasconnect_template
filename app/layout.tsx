@@ -7,6 +7,7 @@ import ClientLayout from "./ClientLayout"
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister"
 import OfflineWrapper from "@/components/OfflineWrapper"
 import PersistentLogin from "@/components/PersistentLogin"
+import { PushNotificationPermission } from "@/components/PushNotificationPermission"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -22,8 +23,25 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/service-worker.js')
+                    .then(function(registration) {
+                      console.log('SW registered: ', registration);
+                    })
+                    .catch(function(registrationError) {
+                      console.log('SW registration failed: ', registrationError);
+                    });
+                });
+              }
+            `,
+          }}
+        />
         <link rel="manifest" href="/manifest.json" />
         <link rel="icon" href="/images/heart-key-bg.png" type="image/png" sizes="32x32" />
         <link rel="icon" href="/images/heart-key-bg.png" type="image/png" sizes="192x192" />
@@ -35,6 +53,7 @@ export default function RootLayout({
         <ServiceWorkerRegister />
         <OfflineWrapper>
           <ClientLayout>{children}</ClientLayout>
+          <PushNotificationPermission />
         </OfflineWrapper>
       </body>
     </html>

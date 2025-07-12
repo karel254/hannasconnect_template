@@ -61,4 +61,40 @@ if (workbox) {
 
 } else {
   console.log('Workbox could not be loaded. No offline support.');
-} 
+}
+
+// Push notification event listener
+self.addEventListener('push', function(event) {
+  if (event.data) {
+    const data = event.data.json();
+    const options = {
+      body: data.body || 'You have a new notification!',
+      icon: data.icon || '/images/favicon.ico',
+      badge: data.badge || '/images/favicon.ico',
+      image: data.image,
+      tag: data.tag || 'default',
+      requireInteraction: data.requireInteraction || false,
+      actions: data.actions || [],
+      data: data.data || {}
+    };
+
+    event.waitUntil(
+      self.registration.showNotification(data.title || 'HannaSConnect', options)
+    );
+  }
+});
+
+// Notification click event listener
+self.addEventListener('notificationclick', function(event) {
+  event.notification.close();
+  
+  if (event.action) {
+    // Handle specific action clicks
+    console.log('Action clicked:', event.action);
+  } else {
+    // Default click behavior - open the app
+    event.waitUntil(
+      clients.openWindow('/')
+    );
+  }
+}); 

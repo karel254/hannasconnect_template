@@ -659,11 +659,11 @@ const AvatarSelection = memo(
   ({
     selectedAvatar,
     onSelect,
-    fullName,
+    username,
   }: {
     selectedAvatar: number
     onSelect: (avatar: number) => void
-    fullName: string
+    username: string
   }) => {
     const maleImages = ['male1.jpg', 'male2.jpg', 'male3.jpg', 'male4.jpeg']
     const femaleImages = ['female1.jpg', 'female2.jpg', 'female3.jpg', 'female4.jpg', 'female5.jpg', 'female6.jpg', 'female7.jpg', 'female8.jpeg']
@@ -678,7 +678,7 @@ const AvatarSelection = memo(
           <Avatar className="h-20 w-20 ring-2 ring-[#B22222]/20 dark:ring-red-400/20">
             <AvatarImage src={`/images/${selectedImage}`} alt="Selected avatar" />
             <AvatarFallback className="text-lg font-bold text-[#B22222] dark:text-red-400">
-              {fullName.charAt(0).toUpperCase() || "U"}
+              {username?.charAt(0)?.toUpperCase() || "U"}
             </AvatarFallback>
           </Avatar>
         </div>
@@ -1112,7 +1112,7 @@ export default function RegisterPage() {
             <AvatarSelection
               selectedAvatar={formData.selectedAvatar}
               onSelect={(avatar) => updateFormData("selectedAvatar", avatar)}
-              fullName={formData.username}
+              username={formData.username}
             />
 
             {/* Username */}
@@ -1169,9 +1169,9 @@ export default function RegisterPage() {
                 popperPlacement="bottom-start"
                 disabledKeyboardNavigation
                 autoComplete="off"
-                onKeyDown={e => e.preventDefault()}
+                onKeyDown={(e: React.KeyboardEvent) => e.preventDefault()}
                 aria-label="Date of Birth"
-                inputProps={{ readOnly: true, onPaste: e => e.preventDefault() }}
+                readOnly
               />
             </div>
 

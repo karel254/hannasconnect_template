@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
+import { useToast } from "@/hooks/use-toast"
 
 interface Message {
   id: number
@@ -29,6 +30,7 @@ export default function Messages() {
   const [messages, setMessages] = useState<Message[]>([])
   const [isTyping, setIsTyping] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const { toast } = useToast();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -130,13 +132,14 @@ export default function Messages() {
     const messageData: { [key: string]: Message[] } = {
       amara: [
         { id: 1, text: "Hey! How was your day?", sender: "amara", timestamp: new Date(Date.now() - 30 * 60 * 1000) },
-        { id: 2, text: "It was great! Just finished a new project at work.", sender: "me", timestamp: new Date(Date.now() - 28 * 60 * 1000) },
+        { id: 2, text: "It was great! Just finished a new project at work.", sender: "me", timestamp: new Date(Date.now() - 28 * 60 * 1000), status: "read" },
         { id: 3, text: "That's awesome! What kind of project?", sender: "amara", timestamp: new Date(Date.now() - 27 * 60 * 1000) },
         {
           id: 4,
           text: "A mobile app for a local restaurant. Really proud of how it turned out!",
           sender: "me",
           timestamp: new Date(Date.now() - 25 * 60 * 1000),
+          status: "read"
         },
         {
           id: 5,
@@ -147,7 +150,7 @@ export default function Messages() {
       ],
       kemi: [
         { id: 1, text: "Hi there! How are you doing?", sender: "kemi", timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000) },
-        { id: 2, text: "I'm doing well, thanks! How about you?", sender: "me", timestamp: new Date(Date.now() - 23 * 60 * 60 * 1000) },
+        { id: 2, text: "I'm doing well, thanks! How about you?", sender: "me", timestamp: new Date(Date.now() - 23 * 60 * 60 * 1000), status: "read" },
         {
           id: 3,
           text: "Thanks for the book recommendation! I just started reading it.",
@@ -157,12 +160,12 @@ export default function Messages() {
       ],
       david: [
         { id: 1, text: "The concert was amazing! You would have loved it.", sender: "david", timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000) },
-        { id: 2, text: "Which band was playing?", sender: "me", timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000) },
+        { id: 2, text: "Which band was playing?", sender: "me", timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), status: "read" },
       ],
       funmi: [{ id: 1, text: "Hope you're having a great day! 😊", sender: "funmi", timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000) }],
       tunde: [
         { id: 1, text: "Let's catch up soon. It's been too long!", sender: "tunde", timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000) },
-        { id: 2, text: "How about this weekend?", sender: "me", timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000) },
+        { id: 2, text: "How about this weekend?", sender: "me", timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), status: "read" },
       ],
     }
     return messageData[userId] || []
@@ -303,6 +306,13 @@ export default function Messages() {
     router.push(`/messages?user=${userId}`)
   }
 
+  // Get current user's privacy settings from localStorage (simulate profile)
+  let showReadReceipts = true;
+  try {
+    const demoUser = JSON.parse(localStorage.getItem("demoUser") || '{}');
+    showReadReceipts = demoUser?.settings?.privacy?.showReadReceipts !== false;
+  } catch {}
+
   return (
     <div className="h-screen bg-gray-50 dark:bg-gray-900 flex w-screen max-w-none">
       {/* Contacts List */}
@@ -352,7 +362,7 @@ export default function Messages() {
                   <div className="relative flex-shrink-0">
                     <Avatar className="h-12 w-12">
                       <AvatarImage src={conversation.avatar || "/placeholder.svg"} alt={conversation.name} />
-                      <AvatarFallback className="bg-[#B22222] text-white">{conversation.name.charAt(0)}</AvatarFallback>
+                      <AvatarFallback className="bg-[#B22222] text-white">{conversation.name?.charAt(0) || 'U'}</AvatarFallback>
                     </Avatar>
                     {conversation.online && conversation.isConnected && (
                       <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full"></div>
@@ -411,7 +421,7 @@ export default function Messages() {
                     alt={selectedConversation?.name}
                   />
                   <AvatarFallback className="bg-[#B22222] text-white text-xl">
-                    {selectedConversation?.name.charAt(0)}
+                    {selectedConversation?.username?.charAt(0) || selectedConversation?.name?.charAt(0) || 'U'}
                   </AvatarFallback>
                 </Avatar>
                 {selectedConversation?.online && (
@@ -442,7 +452,7 @@ export default function Messages() {
                         alt={selectedConversation?.name}
                       />
                       <AvatarFallback className="bg-[#B22222] text-white text-xs">
-                        {selectedConversation?.name.charAt(0)}
+                        {selectedConversation?.name?.charAt(0) || 'U'}
                       </AvatarFallback>
                     </Avatar>
                   )}
@@ -458,29 +468,45 @@ export default function Messages() {
                       <div className="flex items-center justify-end gap-1 mt-1 w-full">
                         <span className="text-xs text-white/70" style={{marginRight: 2}}>{formatTime(msg.timestamp)}</span>
                         {/* WhatsApp-style ticks */}
-                        <span className={`transition-all duration-200 ease-in-out ${msg.status === "sent" ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}
-                          style={{ display: msg.status === "sent" ? 'inline' : 'none' }}>
-                          {/* Single gray tick */}
-                          <svg width="16" height="16" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M5 9.5L8 12.5L13 7.5" stroke="#bbb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                        </span>
-                        <span className={`transition-all duration-200 ease-in-out ${msg.status === "delivered" ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}
-                          style={{ display: msg.status === "delivered" ? 'inline' : 'none' }}>
-                          {/* Two light-gray ticks */}
-                          <svg width="16" height="16" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M4.5 10L7.5 13L12.5 8" stroke="#bbb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                            <path d="M7 10L10 13L15 8" stroke="#bbb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                        </span>
-                        <span className={`transition-all duration-200 ease-in-out ${msg.status === "read" ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}
-                          style={{ display: msg.status === "read" ? 'inline' : 'none' }}>
-                          {/* Two green ticks */}
-                          <svg width="16" height="16" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M4.5 10L7.5 13L12.5 8" stroke="#25D366" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                            <path d="M7 10L10 13L15 8" stroke="#25D366" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                        </span>
+                        {showReadReceipts ? (
+                          <>
+                            <span className={`transition-all duration-200 ease-in-out ${msg.status === "sent" ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}
+                              style={{ display: msg.status === "sent" ? 'inline' : 'none' }}>
+                              {/* Single gray tick */}
+                              <svg width="16" height="16" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M5 9.5L8 12.5L13 7.5" stroke="#bbb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                            </span>
+                            <span className={`transition-all duration-200 ease-in-out ${msg.status === "delivered" ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}
+                              style={{ display: msg.status === "delivered" ? 'inline' : 'none' }}>
+                              {/* Two light-gray ticks */}
+                              <svg width="16" height="16" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4.5 10L7.5 13L12.5 8" stroke="#bbb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                <path d="M7 10L10 13L15 8" stroke="#bbb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                            </span>
+                            <span className={`transition-all duration-200 ease-in-out ${msg.status === "read" ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}
+                              style={{ display: msg.status === "read" ? 'inline' : 'none' }}>
+                              {/* Two green ticks */}
+                              <svg width="16" height="16" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4.5 10L7.5 13L12.5 8" stroke="#25D366" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                <path d="M7 10L10 13L15 8" stroke="#25D366" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                            </span>
+                          </>
+                        ) : (
+                          <>
+                            {/* Only show delivered (grey) ticks, never green */}
+                            <span className={`transition-all duration-200 ease-in-out ${(msg.status === "sent" || msg.status === "delivered" || msg.status === "read") ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}
+                              style={{ display: (msg.status === "sent" || msg.status === "delivered" || msg.status === "read") ? 'inline' : 'none' }}>
+                              {/* Two light-gray ticks always */}
+                              <svg width="16" height="16" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4.5 10L7.5 13L12.5 8" stroke="#bbb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                <path d="M7 10L10 13L15 8" stroke="#bbb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                            </span>
+                          </>
+                        )}
                       </div>
                     ) : (
                       <p
@@ -503,7 +529,7 @@ export default function Messages() {
                       alt={selectedConversation?.name}
                     />
                     <AvatarFallback className="bg-[#B22222] text-white text-xs">
-                      {selectedConversation?.name.charAt(0)}
+                      {selectedConversation?.name?.charAt(0) || 'U'}
                     </AvatarFallback>
                   </Avatar>
                   <div className="px-4 py-2 rounded-2xl bg-gray-100 dark:bg-gray-700 rounded-bl-md">

@@ -21,6 +21,7 @@ import ProfileModal from "@/components/ProfileModal";
 interface Connection {
   id: string
   userId: string
+  username: string
   name: string
   age: number
   occupation: string
@@ -755,13 +756,13 @@ export default function ConnectionsPage() {
                     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                       <Avatar className="h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0">
                         <AvatarImage src={connection.avatar} alt={connection.name} />
-                        <AvatarFallback className="bg-[#B22222] text-white text-sm sm:text-lg">{connection.name.charAt(0)}</AvatarFallback>
+                        <AvatarFallback className="bg-[#B22222] text-white text-sm sm:text-lg">{connection.name?.charAt(0) || 'U'}</AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0 space-y-2">
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                           <div className="space-y-1">
                             <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm sm:text-base truncate">
-                              {connection.name}, {connection.age}
+                              @{connection.username}, {connection.age}
                             </h3>
                             <p className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm truncate">{connection.occupation}</p>
                             <p className="text-gray-500 dark:text-gray-400 text-xs truncate">{connection.location}</p>
@@ -837,14 +838,14 @@ export default function ConnectionsPage() {
                         <Avatar className="h-16 w-16">
                           <AvatarImage src={connection.avatar} alt={connection.name} />
                           <AvatarFallback className="bg-[#B22222] text-white">
-                            {connection.name.charAt(0)}
+                            {connection.name?.charAt(0) || 'U'}
                           </AvatarFallback>
                         </Avatar>
                         
                         <div className="flex-1">
                           <div className="flex items-center space-x-2 mb-1">
                             <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                              {connection.name}, {connection.age}
+                              @{connection.username}, {connection.age}
                             </h3>
                             <Badge className="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
                               Blocked

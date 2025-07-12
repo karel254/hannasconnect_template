@@ -29,6 +29,7 @@ import ProfileModal from "@/components/ProfileModal";
 interface ConnectionRequest {
   id: string
   userId: string
+  username: string
   name: string
   age: number
   occupation: string
@@ -818,10 +819,10 @@ export default function RequestsPage() {
               className="col-span-1 min-w-0 w-full h-full data-[state=active]:bg-[#B22222] data-[state=active]:text-white grid place-items-center text-xs sm:text-sm font-medium px-0 py-2 rounded-lg transition-all truncate"
             >
               <span className="truncate flex items-center gap-1 min-w-0">
-                Pending
+              Pending
                 <Badge className="bg-gray-700/70 text-white font-bold px-1 py-0.5 rounded text-xs min-w-[1.5em] max-w-[2em] text-center truncate">
-                  {requests.filter(r => r.status === "pending").length}
-                </Badge>
+                {requests.filter(r => r.status === "pending").length}
+              </Badge>
               </span>
             </TabsTrigger>
             <TabsTrigger 
@@ -835,10 +836,10 @@ export default function RequestsPage() {
               className="col-span-1 min-w-0 w-full h-full data-[state=active]:bg-[#B22222] data-[state=active]:text-white grid place-items-center text-xs sm:text-sm font-medium px-0 py-2 rounded-lg transition-all truncate"
             >
               <span className="truncate flex items-center gap-1 min-w-0">
-                Sent
+              Sent
                 <Badge className="bg-gray-700/70 text-white font-bold px-1 py-0.5 rounded text-xs min-w-[1.5em] max-w-[2em] text-center truncate">
-                  {requests.filter(r => r.status === "sent").length}
-                </Badge>
+                {requests.filter(r => r.status === "sent").length}
+              </Badge>
               </span>
             </TabsTrigger>
             <TabsTrigger 
@@ -868,11 +869,11 @@ export default function RequestsPage() {
                   <div key={request.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm px-4 py-3 flex flex-wrap items-center gap-3 w-full">
                     <Avatar className="h-12 w-12 flex-shrink-0">
                       <AvatarImage src={request.avatar || '/placeholder.svg'} alt={request.name} />
-                      <AvatarFallback className="bg-[#B22222] text-white text-sm">{request.name.charAt(0)}</AvatarFallback>
+                      <AvatarFallback className="bg-[#B22222] text-white text-sm">{request.name?.charAt(0) || request.username?.charAt(0) || 'U'}</AvatarFallback>
                       </Avatar>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between min-w-0">
-                        <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm truncate min-w-0">{request.name}, {request.age || calculateAge(request.dateOfBirth)}</h3>
+                        <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm truncate min-w-0">@{request.username}, {request.age || calculateAge(request.dateOfBirth)}</h3>
                         <Badge className="bg-[#B22222] text-white text-xs ml-2 whitespace-nowrap">{request.compatibility}% match</Badge>
                           </div>
                       {request.message && (
@@ -928,11 +929,11 @@ export default function RequestsPage() {
                   <div key={request.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm px-4 py-3 flex items-center gap-3">
                     <Avatar className="h-12 w-12 flex-shrink-0">
                       <AvatarImage src={request.avatar || '/placeholder.svg'} alt={request.name} />
-                      <AvatarFallback className="bg-[#B22222] text-white text-sm">{request.name.charAt(0)}</AvatarFallback>
+                      <AvatarFallback className="bg-[#B22222] text-white text-sm">{request.name?.charAt(0) || request.username?.charAt(0) || 'U'}</AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
-                        <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm truncate">{request.name}, {request.age || calculateAge(request.dateOfBirth)}</h3>
+                        <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm truncate">@{request.username}, {request.age || calculateAge(request.dateOfBirth)}</h3>
                         <Badge className="bg-[#B22222] text-white text-xs ml-2">{request.compatibility}% match</Badge>
                           </div>
                       {request.message && (
@@ -977,11 +978,11 @@ export default function RequestsPage() {
                   <div key={request.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm px-4 py-3 flex items-center gap-3">
                     <Avatar className="h-12 w-12 flex-shrink-0">
                       <AvatarImage src={request.avatar || '/placeholder.svg'} alt={request.name} />
-                      <AvatarFallback className="bg-[#B22222] text-white text-sm">{request.name.charAt(0)}</AvatarFallback>
+                      <AvatarFallback className="bg-[#B22222] text-white text-sm">{request.name?.charAt(0) || request.username?.charAt(0) || 'U'}</AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
-                        <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm truncate">{request.name}, {request.age || calculateAge(request.dateOfBirth)}</h3>
+                        <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm truncate">@{request.username}, {request.age || calculateAge(request.dateOfBirth)}</h3>
                         <Badge className="bg-[#B22222] text-white text-xs ml-2">{request.compatibility}% match</Badge>
                           </div>
                       {request.message && (
@@ -1006,7 +1007,7 @@ export default function RequestsPage() {
                             });
                             toast({
                               title: "Request undone",
-                              description: `Your connection request to ${request.name} has been cancelled.`,
+                              description: `Your connection request to @${request.username} has been cancelled.`,
                               duration: 2000,
                             });
                           }}
@@ -1048,11 +1049,11 @@ export default function RequestsPage() {
                   <div key={request.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm px-4 py-3 flex items-center gap-3">
                     <Avatar className="h-12 w-12 flex-shrink-0">
                       <AvatarImage src={request.avatar || '/placeholder.svg'} alt={request.name} />
-                      <AvatarFallback className="bg-[#B22222] text-white text-sm">{request.name.charAt(0)}</AvatarFallback>
+                      <AvatarFallback className="bg-[#B22222] text-white text-sm">{request.name?.charAt(0) || request.username?.charAt(0) || 'U'}</AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
-                        <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm truncate">{request.name}, {request.age || calculateAge(request.dateOfBirth)}</h3>
+                        <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm truncate">@{request.username}, {request.age || calculateAge(request.dateOfBirth)}</h3>
                         <Badge className="bg-[#B22222] text-white text-xs ml-2">{request.compatibility}% match</Badge>
                           </div>
                       {request.message && (

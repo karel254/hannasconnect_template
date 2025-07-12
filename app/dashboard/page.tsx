@@ -108,6 +108,25 @@ export default function Dashboard() {
       { status: "rejected" },
     ]
     setPendingRequests(requests.filter(r => r.status === "pending").length)
+
+    // Toast for new messages
+    try {
+      const demoUser = JSON.parse(localStorage.getItem("demoUser") || '{}');
+      const toastMessages = demoUser?.settings?.notifications?.toastMessages !== false;
+      const toastMatches = demoUser?.settings?.notifications?.toastMatches !== false;
+      if (toastMessages && conversations.some(c => c.unread > 0)) {
+        toast({
+          title: "New Message!",
+          description: "You have a new message.",
+        });
+      }
+      if (toastMatches && requests.filter(r => r.status === "pending").length > 0) {
+        toast({
+          title: "New Match!",
+          description: "You have a new match.",
+        });
+      }
+    } catch {}
   }, [router])
 
   // Remove the static stats array. Instead, calculate values dynamically:
@@ -1010,7 +1029,7 @@ export default function Dashboard() {
       setSentRequests(prev => new Set(prev).add(user.id));
       toast({
         title: "Connection request sent!",
-        description: `Your request to connect with ${user.name} has been sent.`,
+        description: `Your request to connect with @${user.username} has been sent.`,
         action: (
           <ToastAction altText="Undo" onClick={() => {
             setSentRequests(prev => {
@@ -1029,7 +1048,7 @@ export default function Dashboard() {
 
   const handleBlock = (user) => {
     // Implement block logic here (mock for now)
-    alert(`Blocked ${user.name}`);
+    alert(`Blocked @${user.username}`);
   };
   const handleMessage = (user) => {
     router.push(`/messages?user=${encodeURIComponent(JSON.stringify(user))}`);
@@ -1129,7 +1148,7 @@ export default function Dashboard() {
                     <div className="relative flex flex-col items-center">
                       <Avatar className="h-14 w-14 sm:h-16 sm:w-16 mb-2 ring-2 ring-white dark:ring-gray-600">
                         <AvatarImage src={person.avatar || "/placeholder.svg"} alt={person.name} />
-                        <AvatarFallback className="bg-[#B22222] text-white text-xs sm:text-sm">{person.name.charAt(0)}</AvatarFallback>
+                        <AvatarFallback className="bg-[#B22222] text-white text-xs sm:text-sm">{person.name?.charAt(0) || 'U'}</AvatarFallback>
                       </Avatar>
                       <span
                         className="absolute top-0 right-0 p-0 m-0 bg-transparent shadow-none pointer-events-none"
@@ -1141,7 +1160,7 @@ export default function Dashboard() {
                     </div>
                     <div className="text-center space-y-1 mt-1">
                       <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-xs sm:text-sm truncate">
-                        {person.name}, {person.age}
+                        @{person.username}, {person.age}
                       </h3>
                       <p className="text-gray-600 dark:text-gray-300 text-xs truncate">{person.occupation}</p>
                       <p className="text-gray-500 dark:text-gray-400 text-xs truncate">{person.location}</p>
@@ -1283,7 +1302,7 @@ export default function Dashboard() {
                 <div key={user.id} className="flex items-center justify-between gap-2 border-b pb-2">
                   <div className="flex items-center gap-3 min-w-0">
                     <div className="relative flex items-center">
-                      <div className="font-semibold text-gray-900 dark:text-gray-100 text-lg">{user.name}</div>
+                      <div className="font-semibold text-gray-900 dark:text-gray-100 text-lg">@{user.username}</div>
                       {user.online && (
                         <span className="ml-2 block h-3 w-3 rounded-full bg-green-500 ring-2 ring-white" title="Online"></span>
                       )}

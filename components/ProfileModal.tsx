@@ -50,11 +50,8 @@ export default function ProfileModal({ open, onOpenChange, profile }) {
             </div>
             <div className="text-center space-y-2">
               <h2 className="text-xl lg:text-2xl font-bold text-[#B22222] tracking-tight leading-tight drop-shadow break-words">
-                {safeProfile.name}
-              </h2>
-              <div className="text-gray-600 dark:text-gray-300 text-sm lg:text-base break-words">
                 @{safeProfile.username}
-              </div>
+              </h2>
               <div className="flex flex-wrap justify-center gap-1 mb-2">
                 <Badge className="bg-[#B22222] text-white font-medium px-2 py-1 text-xs">
                   {safeProfile.occupation}

@@ -9,10 +9,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { useToast } from "../../hooks/use-toast"
+import ProfileModal from "@/components/ProfileModal";
 
 interface BlockedUser {
   id: string
   userId: string
+  username: string
   name: string
   age: number
   occupation: string
@@ -30,6 +32,8 @@ export default function BlockedUsersPage() {
   const [user, setUser] = useState<any>(null)
   const [blockedUsers, setBlockedUsers] = useState<BlockedUser[]>([])
   const [searchQuery, setSearchQuery] = useState("")
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [selectedProfile, setSelectedProfile] = useState(null);
 
   useEffect(() => {
     // Check if user is logged in
@@ -51,6 +55,7 @@ export default function BlockedUsersPage() {
       {
         id: "1",
         userId: "brianotieno",
+        username: "brianotieno",
         name: "Brian Otieno",
         age: 34,
         gender: "Male",
@@ -64,6 +69,7 @@ export default function BlockedUsersPage() {
       {
         id: "2",
         userId: "faithwambui",
+        username: "faithwambui",
         name: "Faith Wambui",
         age: 27,
         gender: "Female",
@@ -77,6 +83,7 @@ export default function BlockedUsersPage() {
       {
         id: "3",
         userId: "janetmwikali",
+        username: "janetmwikali",
         name: "Janet Mwikali",
         age: 29,
         gender: "Female",
@@ -90,6 +97,7 @@ export default function BlockedUsersPage() {
       {
         id: "4",
         userId: "petermwangi",
+        username: "petermwangi",
         name: "Peter Mwangi",
         age: 44,
         gender: "Male",
@@ -104,6 +112,7 @@ export default function BlockedUsersPage() {
       {
         id: "5",
         userId: "emilysmith",
+        username: "emilysmith",
         name: "Emily Smith",
         age: 31,
         gender: "Female",
@@ -117,6 +126,7 @@ export default function BlockedUsersPage() {
       {
         id: "6",
         userId: "rajpatel",
+        username: "rajpatel",
         name: "Raj Patel",
         age: 36,
         gender: "Male",
@@ -262,14 +272,14 @@ export default function BlockedUsersPage() {
                       <Avatar className="h-16 w-16">
                         <AvatarImage src={blockedUser.avatar} alt={blockedUser.name} />
                         <AvatarFallback className="bg-[#B22222] text-white">
-                          {blockedUser.name.charAt(0)}
+                          {blockedUser.name?.charAt(0) || 'U'}
                         </AvatarFallback>
                       </Avatar>
                       
                       <div className="flex-1">
                         <div className="flex items-center space-x-2 mb-1">
                           <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                            {blockedUser.name}, {blockedUser.age || calculateAge(blockedUser.dateOfBirth)}
+                            @{blockedUser.username}, {blockedUser.age || calculateAge(blockedUser.dateOfBirth)}
                           </h3>
                           <Badge className="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
                             Blocked
@@ -289,15 +299,25 @@ export default function BlockedUsersPage() {
                       </div>
                     </div>
                     
-                    <Button
-                      onClick={() => handleUnblock(blockedUser.id)}
-                      variant="outline"
-                      size="sm"
-                      className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300"
-                    >
-                      <User className="h-4 w-4 mr-1" />
-                      Unblock
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300"
+                        onClick={() => { setSelectedProfile(blockedUser); setIsProfileModalOpen(true); }}
+                      >
+                        View Profile
+                      </Button>
+                      <Button
+                        onClick={() => handleUnblock(blockedUser.id)}
+                        variant="outline"
+                        size="sm"
+                        className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300"
+                      >
+                        <User className="h-4 w-4 mr-1" />
+                        Unblock
+                      </Button>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -332,6 +352,7 @@ export default function BlockedUsersPage() {
           </CardContent>
         </Card>
       </div>
+      <ProfileModal open={isProfileModalOpen} onOpenChange={setIsProfileModalOpen} profile={selectedProfile} />
     </div>
   )
 } 

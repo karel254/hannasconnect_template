@@ -787,7 +787,8 @@ const baseUsers = [
   },
 ];
 
-const USERS_PER_PAGE = 6 // Show 2x3 grid per page
+// Set number of profiles per page
+const USERS_PER_PAGE = typeof window !== 'undefined' && window.innerWidth >= 1024 ? 12 : 8;
 
 // Helper to calculate age from date of birth string (YYYY-MM-DD)
 function calculateAge(dateOfBirth: string) {
@@ -1053,8 +1054,8 @@ export default function Browse() {
   const currentUser = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem("demoUser") || '{}') : {};
 
   return (
-    <div className="min-h-screen w-full bg-white dark:bg-gray-900 pb-20">
-      {/* Sticky Mobile Header + Filters */}
+    <div className="w-full bg-white dark:bg-gray-900 pb-20">
+      {/* Mobile/Tablet: Sticky header and filters */}
       <div className="lg:hidden sticky top-0 z-40 w-full">
         <div className="bg-gradient-to-r from-[#B22222] to-[#8B0000] text-white p-4 shadow-lg w-full">
         <div className="flex items-center justify-between">
@@ -1146,7 +1147,7 @@ export default function Browse() {
                       <SelectItem value="female">Female</SelectItem>
                     </SelectContent>
                   </Select>
-                </div>
+                  </div>
 
                   {/* Relationship Goals */}
                   <div>
@@ -1385,13 +1386,72 @@ export default function Browse() {
         </div>
           </div>
 
-          {/* Filters - Desktop */}
-          <div className="hidden lg:block w-80 bg-white dark:bg-gray-800 shadow-lg h-full overflow-y-auto">
-            <div className="p-6 fixed top-0 w-80 bg-white dark:bg-gray-800 z-40">
-              <h2 className="text-xl font-bold text-[#B22222] dark:text-red-400 mb-6">Filter Profiles</h2>
-
-              {/* Member Type filter removed from sidebar for desktop */}
-              <div className="space-y-6 max-h-[70vh] overflow-y-auto scrollbar-thin scrollbar-thumb-[#B22222] scrollbar-track-gray-200 dark:scrollbar-thumb-red-400 dark:scrollbar-track-gray-800">
+          {/* Desktop: Full width layout with filter button */}
+          <div className="hidden lg:block w-full">
+            {/* Desktop Header - match requests/dashboard sticky style */}
+            <div className="sticky top-0 z-40 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 shadow-md">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => router.push("/dashboard")}
+                    className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
+                  >
+                    <ArrowLeft className="h-5 w-5" />
+                  </Button>
+                  <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Browse Profiles</h1>
+                </div>
+                <div className="text-lg text-gray-500 dark:text-gray-400">{filteredUsers.length} profiles</div>
+              </div>
+            </div>
+            
+            {/* Desktop Member Type Filter and Filter Button - sticky below header */}
+            <div className="w-full px-6 py-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-md sticky top-[72px] z-30">
+              <div className="flex items-center justify-between mb-4">
+                {/* Member Type Filter */}
+                <div className="flex w-full max-w-md">
+                  <Button
+                    variant={memberType === "all" ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setMemberType("all")}
+                    className={`flex-1 min-w-0 h-10 px-2 py-0 text-base rounded-l-lg rounded-r-none border border-gray-300 dark:border-gray-600 flex items-center justify-center font-semibold truncate ${memberType === "all" ? "bg-[#B22222] hover:bg-[#8B0000] text-white" : "bg-white dark:bg-gray-800 text-black dark:text-white"}`}
+                  >
+                    <span className="truncate">All Members</span>
+                  </Button>
+                  <Button
+                    variant={memberType === "local" ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setMemberType("local")}
+                    className={`flex-1 min-w-0 h-10 px-2 py-0 text-base rounded-none border border-gray-300 dark:border-gray-600 flex items-center justify-center font-semibold truncate ${memberType === "local" ? "bg-[#B22222] hover:bg-[#8B0000] text-white" : "bg-white dark:bg-gray-800 text-black dark:text-white"}`}
+                  >
+                    <span className="truncate">Local Members</span>
+                  </Button>
+                  <Button
+                    variant={memberType === "diaspora" ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setMemberType("diaspora")}
+                    className={`flex-1 min-w-0 h-10 px-2 py-0 text-base rounded-r-lg rounded-l-none border border-gray-300 dark:border-gray-600 flex items-center justify-center font-semibold truncate ${memberType === "diaspora" ? "bg-[#B22222] hover:bg-[#8B0000] text-white" : "bg-white dark:bg-gray-800 text-black dark:text-white"}`}
+                  >
+                    <span className="truncate">Diaspora Members</span>
+                  </Button>
+                </div>
+                
+                {/* Filter Button */}
+                <Sheet>
+                  <SheetTrigger asChild>
+                    <Button className="flex items-center justify-center gap-2 bg-[#B22222] hover:bg-[#8B0000] rounded-xl py-3 px-6 min-h-[44px]">
+                      <Filter size={16} /> Filter Profiles
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent side="left" className="w-[400px] bg-white dark:bg-gray-800">
+                    <SheetHeader>
+                      <SheetTitle className="text-[#B22222] dark:text-red-400">Filter Profiles</SheetTitle>
+                      <SheetDescription className="dark:text-gray-400">
+                        Find your ideal match by filtering profiles based on your preferences.
+                      </SheetDescription>
+                    </SheetHeader>
+                    <div className="py-6 space-y-6 max-h-[70vh] overflow-y-auto scrollbar-thin scrollbar-thumb-[#B22222] scrollbar-track-gray-200 dark:scrollbar-thumb-red-400 dark:scrollbar-track-gray-800">
                 {/* Age Range */}
                 <div>
                   <Label className="text-base font-medium text-gray-900 dark:text-gray-100">
@@ -1407,30 +1467,30 @@ export default function Browse() {
                   />
                 </div>
 
-            {/* Gender (moved here) */}
-            <div>
-              <Label className="text-base font-medium text-gray-900 dark:text-gray-100">
-                Gender
-              </Label>
-              <Select value={selectedGender} onValueChange={setSelectedGender}>
-                <SelectTrigger className="rounded-xl">
-                  <SelectValue placeholder="Any Gender" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="any">Any Gender</SelectItem>
-                  <SelectItem value="male">Male</SelectItem>
-                  <SelectItem value="female">Female</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+                      {/* Gender */}
+                      <div>
+                        <Label className="text-base font-medium text-gray-900 dark:text-gray-100">
+                          Gender
+                        </Label>
+                        <Select value={selectedGender} onValueChange={setSelectedGender}>
+                          <SelectTrigger className="rounded-xl">
+                            <SelectValue placeholder="Any Gender" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="any">Any Gender</SelectItem>
+                            <SelectItem value="male">Male</SelectItem>
+                            <SelectItem value="female">Female</SelectItem>
+                          </SelectContent>
+                        </Select>
+                </div>
 
                 {/* Relationship Goals */}
                 <div>
-                  <Label htmlFor="goals" className="text-base font-medium text-gray-900 dark:text-gray-100">
+                        <Label htmlFor="goals-desktop" className="text-base font-medium text-gray-900 dark:text-gray-100">
                     Relationship Goals
                   </Label>
                   <Select value={selectedGoals} onValueChange={setSelectedGoals}>
-                    <SelectTrigger id="goals" className="mt-2 rounded-xl">
+                          <SelectTrigger id="goals-desktop" className="mt-2 rounded-xl">
                       <SelectValue placeholder="Any Relationship Goal" />
                     </SelectTrigger>
                     <SelectContent>
@@ -1650,46 +1710,20 @@ export default function Browse() {
                 </details>
 
                 <Button
-              className="bg-[#B22222] hover:bg-[#8B0000] mt-6 rounded-xl py-2 text-sm max-w-xs w-full mx-auto block"
+                        className="bg-[#B22222] hover:bg-[#8B0000] mt-6 rounded-xl py-2 text-sm max-w-xs w-full mx-auto block"
                   onClick={handleFilterChange}
                 >
-              Done
+                        Done
                 </Button>
               </div>
+                  </SheetContent>
+                </Sheet>
             </div>
           </div>
+            </div>
 
-          {/* Main Content */}
-          <div className="flex-1 p-4">
-            {/* Member Type Filter for Desktop only, above profiles grid */}
-            <div className="hidden lg:flex w-full mb-6">
-          <div className="flex w-full min-w-0">
-              <Button
-                variant={memberType === "all" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setMemberType("all")}
-              className={`flex-1 min-w-0 h-10 px-2 py-0 text-base rounded-l-lg rounded-r-none border border-gray-300 dark:border-gray-600 flex items-center justify-center font-semibold truncate ${memberType === "all" ? "bg-[#B22222] hover:bg-[#8B0000] text-white" : "bg-white text-black"}`}
-              >
-              <span className="truncate">All Members</span>
-              </Button>
-              <Button
-                variant={memberType === "local" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setMemberType("local")}
-              className={`flex-1 min-w-0 h-10 px-2 py-0 text-base rounded-none border border-gray-300 dark:border-gray-600 flex items-center justify-center font-semibold truncate ${memberType === "local" ? "bg-[#B22222] hover:bg-[#8B0000] text-white" : "bg-white text-black"}`}
-              >
-              <span className="truncate">Local Members</span>
-              </Button>
-              <Button
-                variant={memberType === "diaspora" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setMemberType("diaspora")}
-              className={`flex-1 min-w-0 h-10 px-2 py-0 text-base rounded-r-lg rounded-l-none border border-gray-300 dark:border-gray-600 flex items-center justify-center font-semibold truncate ${memberType === "diaspora" ? "bg-[#B22222] hover:bg-[#8B0000] text-white" : "bg-white text-black"}`}
-              >
-              <span className="truncate">Diaspora Members</span>
-              </Button>
-          </div>
-            </div>
+          {/* Main Content: Full width on all devices */}
+          <main className="w-full bg-white dark:bg-gray-900 p-4">
             {isLoading ? (
               <div className="flex items-center justify-center h-64">
                 <Loader2 className="h-8 w-8 animate-spin text-[#B22222]" />
@@ -1712,7 +1746,7 @@ export default function Browse() {
                   <div className="relative flex flex-col items-center">
                     <Avatar className="h-14 w-14 sm:h-16 sm:w-16 mb-2 ring-2 ring-white dark:ring-gray-600">
                           <AvatarImage src={user.avatar || "/placeholder.svg"} alt={user.name} />
-                      <AvatarFallback className="bg-[#B22222] text-white text-xs sm:text-sm">{user.name.charAt(0)}</AvatarFallback>
+                      <AvatarFallback className="bg-[#B22222] text-white text-xs sm:text-sm">{user.name?.charAt(0) || 'U'}</AvatarFallback>
                         </Avatar>
                     <span
                       className="absolute top-0 right-0 p-0 m-0 bg-transparent shadow-none pointer-events-none"
@@ -1724,7 +1758,7 @@ export default function Browse() {
                       </div>
                   <div className="text-center space-y-1 mt-1">
                     <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-xs sm:text-sm truncate">
-                          {user.name}, {user.age}
+                          @{user.username}, {user.age}
                         </h3>
                         <p className="text-gray-600 dark:text-gray-300 text-xs truncate">{user.occupation}</p>
                         <p className="text-gray-500 dark:text-gray-400 text-xs truncate">{user.location}</p>
@@ -1798,7 +1832,8 @@ export default function Browse() {
                 </Button>
               </div>
             )}
-          </div>
+          </main>
+      <ProfileModal open={isProfileModalOpen} onOpenChange={setIsProfileModalOpen} profile={selectedProfile} />
     </div>
   )
 }

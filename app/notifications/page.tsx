@@ -13,7 +13,7 @@ const notifications = [
     id: 1,
     type: "match",
     title: "New Match!",
-    message: "You and Sarah Johnson are a 95% match",
+    message: "You and @sarahj are a 95% match",
     time: "2 min ago",
     read: false,
     avatar: "/images/female1.jpg",
@@ -24,7 +24,7 @@ const notifications = [
     id: 2,
     type: "message",
     title: "New Message",
-    message: "Alex Johnson sent you a message",
+    message: "@alexj sent you a message",
     time: "5 min ago",
     read: false,
     avatar: "/images/male1.jpg",
@@ -35,7 +35,7 @@ const notifications = [
     id: 3,
     type: "profile_view",
     title: "Profile View",
-    message: "Emily Chen viewed your profile",
+    message: "@emilyc viewed your profile",
     time: "1 hour ago",
     read: true,
     avatar: "/images/female2.jpg",
@@ -135,7 +135,7 @@ export default function NotificationsPage() {
                       {notification.avatar ? (
                         <Avatar className="w-10 h-10">
                           <AvatarImage src={notification.avatar || "/placeholder.svg"} alt="User" />
-                          <AvatarFallback>{notification.title.charAt(0)}</AvatarFallback>
+                          <AvatarFallback>{notification.title?.charAt(0) || 'N'}</AvatarFallback>
                         </Avatar>
                       ) : (
                         <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">

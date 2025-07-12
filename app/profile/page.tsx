@@ -39,7 +39,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { useTheme } from "@/contexts/theme-context"
 
 interface UserProfile {
-  name: string
   username: string
   email: string
   age: number
@@ -81,13 +80,15 @@ interface UserProfile {
     notifications: {
       messages: boolean
       matches: boolean
-      likes: boolean
       marketing: boolean
+      toastMessages?: boolean // Add for pop-up toasts
+      toastMatches?: boolean // Add for pop-up toasts
     }
     privacy: {
       showAge: boolean
       showLocation: boolean
       showOnline: boolean
+      showReadReceipts?: boolean // Add for read receipts
     }
   }
 }
@@ -150,7 +151,6 @@ export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false)
   const [showAvatarSelection, setShowAvatarSelection] = useState(false)
   const [profile, setProfile] = useState<UserProfile>({
-    name: "Akinyi",
     username: "akinyi254",
     email: "akinyi@example.com",
     age: 28,
@@ -171,13 +171,15 @@ export default function ProfilePage() {
       notifications: {
         messages: true,
         matches: true,
-        likes: true,
         marketing: false,
+        toastMessages: true, // default true
+        toastMatches: true, // default true
       },
       privacy: {
         showAge: true,
         showLocation: true,
         showOnline: true,
+        showReadReceipts: true, // default true
       },
     },
   })
@@ -188,6 +190,25 @@ export default function ProfilePage() {
   const [deleteEmail, setDeleteEmail] = useState("")
   const [deletePassword, setDeletePassword] = useState("")
   const [isDeleting, setIsDeleting] = useState(false)
+  
+  // Password change states
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false)
+  const [oldPassword, setOldPassword] = useState("")
+  const [newPassword, setNewPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [showOldPassword, setShowOldPassword] = useState(false)
+  const [showNewPassword, setShowNewPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [isChangingPassword, setIsChangingPassword] = useState(false)
+  
+  // Email preferences states
+  const [isEmailModalOpen, setIsEmailModalOpen] = useState(false)
+  const [emailPreferences, setEmailPreferences] = useState({
+    marketing: false,
+    updates: true,
+    matches: true
+  })
+  const [isUpdatingEmail, setIsUpdatingEmail] = useState(false)
 
   const reasonOptions = [
     "I found a match",
@@ -208,14 +229,12 @@ export default function ProfilePage() {
     }
 
     // Load user data from localStorage
-    const storedName = localStorage.getItem("userName") || "Demo User"
     const storedUsername = localStorage.getItem("userUsername") || "demouser"
     const storedOccupation = localStorage.getItem("userOccupation") || "Professional"
     const storedAvatar = localStorage.getItem("selectedIcon") || "/images/male1.jpg"
 
     setProfile((prev) => ({
       ...prev,
-      name: storedName,
       username: storedUsername,
       occupation: storedOccupation,
       avatar: storedAvatar,
@@ -225,7 +244,6 @@ export default function ProfilePage() {
 
   const handleSave = () => {
     // Save to localStorage
-    localStorage.setItem("userName", profile.name)
     localStorage.setItem("userUsername", profile.username)
     localStorage.setItem("userOccupation", profile.occupation)
     localStorage.setItem("selectedIcon", profile.avatar)
@@ -307,6 +325,72 @@ export default function ProfilePage() {
     }, 2000)
   }
 
+  const handlePasswordChange = async () => {
+    if (newPassword !== confirmPassword) {
+      toast({
+        title: "Passwords don't match",
+        description: "Please make sure your new passwords match.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    if (newPassword.length < 8) {
+      toast({
+        title: "Password too weak",
+        description: "Password must be at least 8 characters long.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    // Check for password strength
+    const hasUpperCase = /[A-Z]/.test(newPassword)
+    const hasLowerCase = /[a-z]/.test(newPassword)
+    const hasNumbers = /\d/.test(newPassword)
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(newPassword)
+
+    if (!hasUpperCase || !hasLowerCase || !hasNumbers || !hasSpecialChar) {
+      toast({
+        title: "Password too weak",
+        description: "Password must contain uppercase, lowercase, numbers, and special characters.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    setIsChangingPassword(true)
+    
+    // Simulate API call
+    setTimeout(() => {
+      setIsChangingPassword(false)
+      setIsPasswordModalOpen(false)
+      setOldPassword("")
+      setNewPassword("")
+      setConfirmPassword("")
+      
+      toast({
+        title: "Password Updated",
+        description: "Your password has been successfully changed.",
+      })
+    }, 2000)
+  }
+
+  const handleEmailPreferencesUpdate = async () => {
+    setIsUpdatingEmail(true)
+    
+    // Simulate API call
+    setTimeout(() => {
+      setIsUpdatingEmail(false)
+      setIsEmailModalOpen(false)
+      
+      toast({
+        title: "Email Preferences Updated",
+        description: "Your email preferences have been successfully updated.",
+      })
+    }, 1500)
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20 md:pb-0">
       {/* Mobile Header */}
@@ -364,8 +448,8 @@ export default function ProfilePage() {
             <div className="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6">
               <div className="relative">
                 <Avatar className="h-24 w-24 md:h-32 md:w-32">
-                  <AvatarImage src={profile.avatar || "/placeholder.svg"} alt={profile.name} />
-                  <AvatarFallback className="bg-[#B22222] text-white text-2xl">{profile.name.charAt(0)}</AvatarFallback>
+                  <AvatarImage src={profile.avatar || "/placeholder.svg"} alt={profile.username} />
+                  <AvatarFallback className="bg-[#B22222] text-white text-2xl">{profile.username?.charAt(0) || 'U'}</AvatarFallback>
                 </Avatar>
                 <Button
                   variant="outline"
@@ -380,8 +464,7 @@ export default function ProfilePage() {
               <div className="flex-1 text-center md:text-left">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
                   <div>
-                    <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{profile.name}</h1>
-                    <p className="text-gray-600 dark:text-gray-400 mb-2">@{profile.username}</p>
+                    <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">@{profile.username}</h1>
                     <div className="flex flex-wrap justify-center md:justify-start gap-4 text-sm text-gray-600 dark:text-gray-400">
                       <div className="flex items-center">
                         <Calendar className="h-4 w-4 mr-1" />
@@ -504,18 +587,6 @@ export default function ProfilePage() {
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="name" className="text-gray-700 dark:text-gray-300">
-                      Full Name
-                    </Label>
-                    <Input
-                      id="name"
-                      value={profile.name}
-                      onChange={(e) => setProfile((prev) => ({ ...prev, name: e.target.value }))}
-                      disabled={!isEditing}
-                      className="bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600"
-                    />
-                  </div>
-                  <div>
                     <Label htmlFor="username" className="text-gray-700 dark:text-gray-300">
                       Username
                     </Label>
@@ -528,41 +599,14 @@ export default function ProfilePage() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="age" className="text-gray-700 dark:text-gray-300">
-                      Age
+                    <Label htmlFor="email" className="text-gray-700 dark:text-gray-300">
+                      Email
                     </Label>
                     <Input
-                      id="age"
-                      type="number"
-                      value={profile.age}
-                      onChange={(e) => setProfile((prev) => ({ ...prev, age: Number.parseInt(e.target.value) || 25 }))}
-                      disabled={!isEditing}
-                      className="bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="location" className="text-gray-700 dark:text-gray-300">
-                      Location
-                    </Label>
-                    <Input
-                      id="location"
-                      value={profile.location}
-                      onChange={(e) => setProfile((prev) => ({ ...prev, location: e.target.value }))}
-                      disabled={!isEditing}
-                      placeholder="City, Country"
-                      className="bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600"
-                    />
-                  </div>
-                  <div className="md:col-span-2">
-                    <Label htmlFor="occupation" className="text-gray-700 dark:text-gray-300">
-                      Occupation
-                    </Label>
-                    <Input
-                      id="occupation"
-                      value={profile.occupation}
-                      onChange={(e) => setProfile((prev) => ({ ...prev, occupation: e.target.value }))}
-                      disabled={!isEditing}
-                      className="bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600"
+                      id="email"
+                      value={profile.email}
+                      disabled
+                      className="bg-gray-100 dark:bg-gray-600 border-gray-200 dark:border-gray-600"
                     />
                   </div>
                 </div>
@@ -1100,20 +1144,18 @@ export default function ProfilePage() {
                   <div className="flex items-center space-x-3">
                     <Bell className="h-5 w-5 text-gray-600 dark:text-gray-400" />
                     <div>
-                      <Label className="text-gray-700 dark:text-gray-300">New Messages</Label>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Get notified when you receive new messages
-                      </p>
+                      <Label className="text-gray-700 dark:text-gray-300">Show pop-up for new messages</Label>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Show a pop-up toast when you get a new message</p>
                     </div>
                   </div>
                   <Checkbox
-                    checked={profile.settings.notifications.messages}
+                    checked={profile.settings.notifications.toastMessages}
                     onCheckedChange={(checked) =>
                       setProfile((prev) => ({
                         ...prev,
                         settings: {
                           ...prev.settings,
-                          notifications: { ...prev.settings.notifications, messages: checked as boolean },
+                          notifications: { ...prev.settings.notifications, toastMessages: checked as boolean },
                         },
                       }))
                     }
@@ -1124,42 +1166,18 @@ export default function ProfilePage() {
                   <div className="flex items-center space-x-3">
                     <Heart className="h-5 w-5 text-gray-600 dark:text-gray-400" />
                     <div>
-                      <Label className="text-gray-700 dark:text-gray-300">New Matches</Label>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">Get notified when you have new matches</p>
+                      <Label className="text-gray-700 dark:text-gray-300">Show pop-up for new matches</Label>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Show a pop-up toast when you get a new match</p>
                     </div>
                   </div>
                   <Checkbox
-                    checked={profile.settings.notifications.matches}
+                    checked={profile.settings.notifications.toastMatches}
                     onCheckedChange={(checked) =>
                       setProfile((prev) => ({
                         ...prev,
                         settings: {
                           ...prev.settings,
-                          notifications: { ...prev.settings.notifications, matches: checked as boolean },
-                        },
-                      }))
-                    }
-                    className="border-[#B22222] data-[state=checked]:bg-[#B22222] data-[state=checked]:border-[#B22222]"
-                  />
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <Star className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-                    <div>
-                      <Label className="text-gray-700 dark:text-gray-300">Likes</Label>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Get notified when someone likes your profile
-                      </p>
-                    </div>
-                  </div>
-                  <Checkbox
-                    checked={profile.settings.notifications.likes}
-                    onCheckedChange={(checked) =>
-                      setProfile((prev) => ({
-                        ...prev,
-                        settings: {
-                          ...prev.settings,
-                          notifications: { ...prev.settings.notifications, likes: checked as boolean },
+                          notifications: { ...prev.settings.notifications, toastMatches: checked as boolean },
                         },
                       }))
                     }
@@ -1190,6 +1208,28 @@ export default function ProfilePage() {
                         settings: {
                           ...prev.settings,
                           privacy: { ...prev.settings.privacy, showOnline: checked as boolean },
+                        },
+                      }))
+                    }
+                    className="border-[#B22222] data-[state=checked]:bg-[#B22222] data-[state=checked]:border-[#B22222]"
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <Shield className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+                    <div>
+                      <Label className="text-gray-700 dark:text-gray-300">Show read receipts</Label>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Allow others to see when you have read their messages. If off, you also can't see others' read receipts.</p>
+                    </div>
+                  </div>
+                  <Checkbox
+                    checked={profile.settings.privacy.showReadReceipts}
+                    onCheckedChange={(checked) =>
+                      setProfile((prev) => ({
+                        ...prev,
+                        settings: {
+                          ...prev.settings,
+                          privacy: { ...prev.settings.privacy, showReadReceipts: checked as boolean },
                         },
                       }))
                     }
@@ -1273,24 +1313,40 @@ export default function ProfilePage() {
                 <CardTitle className="text-gray-900 dark:text-gray-100">Account Information</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="email" className="text-gray-700 dark:text-gray-300">
-                    Email Address
-                  </Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={profile.email}
-                    onChange={(e) => setProfile((prev) => ({ ...prev, email: e.target.value }))}
-                    disabled={!isEditing}
-                    className="bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600"
-                  />
+                    <Label className="text-gray-700 dark:text-gray-300">Username</Label>
+                    <p className="text-gray-900 dark:text-gray-100 font-medium">{profile.username}</p>
                 </div>
+                  <div>
+                    <Label className="text-gray-700 dark:text-gray-300">Email</Label>
+                    <p className="text-gray-900 dark:text-gray-100 font-medium">{profile.email}</p>
+                  </div>
+                  <div>
+                    <Label className="text-gray-700 dark:text-gray-300">Member Since</Label>
+                    <p className="text-gray-900 dark:text-gray-100 font-medium">January 2024</p>
+                  </div>
+                  <div>
+                    <Label className="text-gray-700 dark:text-gray-300">Account Status</Label>
+                    <Badge className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">
+                      Active
+                    </Badge>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+              <CardHeader>
+                <CardTitle className="text-gray-900 dark:text-gray-100">Account Actions</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
                 <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
                   <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Account Actions</h3>
                   <div className="space-y-3">
                     <Button
                       variant="outline"
+                      onClick={() => setIsPasswordModalOpen(true)}
                       className="w-full justify-start border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-transparent"
                     >
                       <Settings className="h-4 w-4 mr-2" />
@@ -1298,6 +1354,7 @@ export default function ProfilePage() {
                     </Button>
                     <Button
                       variant="outline"
+                      onClick={() => setIsEmailModalOpen(true)}
                       className="w-full justify-start border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-transparent"
                     >
                       <Mail className="h-4 w-4 mr-2" />
@@ -1318,6 +1375,169 @@ export default function ProfilePage() {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Password Change Modal */}
+      <Dialog open={isPasswordModalOpen} onOpenChange={setIsPasswordModalOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Change Password</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="oldPassword">Current Password</Label>
+              <div className="relative">
+                <Input
+                  id="oldPassword"
+                  type={showOldPassword ? "text" : "password"}
+                  value={oldPassword}
+                  onChange={(e) => setOldPassword(e.target.value)}
+                  placeholder="Enter your current password"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                  onClick={() => setShowOldPassword(!showOldPassword)}
+                >
+                  {showOldPassword ? "Hide" : "Show"}
+                </Button>
+              </div>
+            </div>
+            <div>
+              <Label htmlFor="newPassword">New Password</Label>
+              <div className="relative">
+                <Input
+                  id="newPassword"
+                  type={showNewPassword ? "text" : "password"}
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="Enter your new password"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                  onClick={() => setShowNewPassword(!showNewPassword)}
+                >
+                  {showNewPassword ? "Hide" : "Show"}
+                </Button>
+              </div>
+            </div>
+            <div>
+              <Label htmlFor="confirmPassword">Confirm New Password</Label>
+              <div className="relative">
+                <Input
+                  id="confirmPassword"
+                  type={showConfirmPassword ? "text" : "password"}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Confirm your new password"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                >
+                  {showConfirmPassword ? "Hide" : "Show"}
+                </Button>
+              </div>
+            </div>
+            <div className="text-sm text-gray-600 dark:text-gray-400">
+              <p>Password must contain:</p>
+              <ul className="list-disc ml-4 mt-1">
+                <li>At least 8 characters</li>
+                <li>Uppercase and lowercase letters</li>
+                <li>Numbers and special characters</li>
+              </ul>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsPasswordModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button 
+              onClick={handlePasswordChange}
+              disabled={!oldPassword || !newPassword || !confirmPassword || isChangingPassword}
+              className="bg-[#B22222] hover:bg-[#8B0000] text-white"
+            >
+              {isChangingPassword ? "Changing..." : "Change Password"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Email Preferences Modal */}
+      <Dialog open={isEmailModalOpen} onOpenChange={setIsEmailModalOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Email Preferences</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <Label className="text-gray-700 dark:text-gray-300">Marketing Emails</Label>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Receive promotional content and special offers
+                </p>
+              </div>
+              <Checkbox
+                checked={emailPreferences.marketing}
+                onCheckedChange={(checked) =>
+                  setEmailPreferences(prev => ({ ...prev, marketing: checked as boolean }))
+                }
+                className="border-[#B22222] data-[state=checked]:bg-[#B22222] data-[state=checked]:border-[#B22222]"
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <div>
+                <Label className="text-gray-700 dark:text-gray-300">App Updates</Label>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Get notified about new features and improvements
+                </p>
+              </div>
+              <Checkbox
+                checked={emailPreferences.updates}
+                onCheckedChange={(checked) =>
+                  setEmailPreferences(prev => ({ ...prev, updates: checked as boolean }))
+                }
+                className="border-[#B22222] data-[state=checked]:bg-[#B22222] data-[state=checked]:border-[#B22222]"
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <div>
+                <Label className="text-gray-700 dark:text-gray-300">New Matches</Label>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Receive email notifications for new matches
+                </p>
+              </div>
+              <Checkbox
+                checked={emailPreferences.matches}
+                onCheckedChange={(checked) =>
+                  setEmailPreferences(prev => ({ ...prev, matches: checked as boolean }))
+                }
+                className="border-[#B22222] data-[state=checked]:bg-[#B22222] data-[state=checked]:border-[#B22222]"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsEmailModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleEmailPreferencesUpdate}
+              disabled={isUpdatingEmail}
+              className="bg-[#B22222] hover:bg-[#8B0000] text-white"
+            >
+              {isUpdatingEmail ? "Updating..." : "Update Preferences"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
         <DialogContent className="max-w-lg w-full">
           {deleteStep === 1 && (
