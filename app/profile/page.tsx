@@ -200,6 +200,15 @@ export default function ProfilePage() {
   const [showNewPassword, setShowNewPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isChangingPassword, setIsChangingPassword] = useState(false)
+
+  // Get current user info
+  let currentUser = null
+  if (typeof window !== 'undefined') {
+    try {
+      currentUser = JSON.parse(localStorage.getItem('demoUser') || '{}')
+    } catch {}
+  }
+  const isAdmin = currentUser?.username === 'admin'
   
   // Email preferences states
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false)
@@ -334,7 +343,6 @@ export default function ProfilePage() {
       })
       return
     }
-
     if (newPassword.length < 8) {
       toast({
         title: "Password too weak",
@@ -343,13 +351,11 @@ export default function ProfilePage() {
       })
       return
     }
-
     // Check for password strength
     const hasUpperCase = /[A-Z]/.test(newPassword)
     const hasLowerCase = /[a-z]/.test(newPassword)
     const hasNumbers = /\d/.test(newPassword)
     const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(newPassword)
-
     if (!hasUpperCase || !hasLowerCase || !hasNumbers || !hasSpecialChar) {
       toast({
         title: "Password too weak",
@@ -358,17 +364,22 @@ export default function ProfilePage() {
       })
       return
     }
-
     setIsChangingPassword(true)
-    
-    // Simulate API call
     setTimeout(() => {
       setIsChangingPassword(false)
       setIsPasswordModalOpen(false)
       setOldPassword("")
       setNewPassword("")
       setConfirmPassword("")
-      
+      // --- Admin password update logic ---
+      if (isAdmin) {
+        localStorage.setItem('adminPassword', newPassword)
+        toast({
+          title: "Admin Password Updated",
+          description: "Your admin password has been successfully changed.",
+        })
+        return
+      }
       toast({
         title: "Password Updated",
         description: "Your password has been successfully changed.",
@@ -1639,6 +1650,67 @@ export default function ProfilePage() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Only show password change for admin */}
+      {isAdmin && (
+        <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 mt-6">
+          <CardHeader>
+            <CardTitle className="text-gray-900 dark:text-gray-100">Change Admin Password</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Button onClick={() => setIsPasswordModalOpen(true)} className="bg-[#B22222] hover:bg-[#8B0000] text-white">
+              Change Password
+            </Button>
+            <Dialog open={isPasswordModalOpen} onOpenChange={setIsPasswordModalOpen}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Change Admin Password</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <Label htmlFor="oldPassword">Old Password</Label>
+                  <Input
+                    id="oldPassword"
+                    type={showOldPassword ? "text" : "password"}
+                    value={oldPassword}
+                    onChange={e => setOldPassword(e.target.value)}
+                    className="w-full"
+                  />
+                  <Button type="button" variant="ghost" size="icon" onClick={() => setShowOldPassword(v => !v)}>
+                    {showOldPassword ? 'Hide' : 'Show'}
+                  </Button>
+                  <Label htmlFor="newPassword">New Password</Label>
+                  <Input
+                    id="newPassword"
+                    type={showNewPassword ? "text" : "password"}
+                    value={newPassword}
+                    onChange={e => setNewPassword(e.target.value)}
+                    className="w-full"
+                  />
+                  <Button type="button" variant="ghost" size="icon" onClick={() => setShowNewPassword(v => !v)}>
+                    {showNewPassword ? 'Hide' : 'Show'}
+                  </Button>
+                  <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                  <Input
+                    id="confirmPassword"
+                    type={showConfirmPassword ? "text" : "password"}
+                    value={confirmPassword}
+                    onChange={e => setConfirmPassword(e.target.value)}
+                    className="w-full"
+                  />
+                  <Button type="button" variant="ghost" size="icon" onClick={() => setShowConfirmPassword(v => !v)}>
+                    {showConfirmPassword ? 'Hide' : 'Show'}
+                  </Button>
+                </div>
+                <DialogFooter>
+                  <Button onClick={handlePasswordChange} disabled={isChangingPassword} className="bg-[#B22222] hover:bg-[#8B0000] text-white">
+                    {isChangingPassword ? 'Changing...' : 'Change Password'}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }

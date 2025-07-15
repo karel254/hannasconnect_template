@@ -214,6 +214,7 @@ export default function ProfileModal({ open, onOpenChange, profile }) {
                 <div className="break-words"><span className="font-semibold">Partner Preferences:</span> {safeProfile.partnerPreferences || 'N/A'}</div>
                 <div className="break-words"><span className="font-semibold">Personality Type:</span> {safeProfile.personalityType || 'N/A'}</div>
                 <div className="break-words"><span className="font-semibold">Don't Contact If:</span> {safeProfile.dontContactIf || 'N/A'}</div>
+                <div className="break-words"><span className="font-semibold">If we end up together, here's what you can expect from me:</span> {safeProfile.expectFromMe || 'N/A'}</div>
                 <div className="break-words"><span className="font-semibold">Imperfections:</span> {safeProfile.imperfections || 'N/A'}</div>
                 <div className="break-words"><span className="font-semibold">Political Views:</span> {safeProfile.politicalViews || 'N/A'}</div>
                 <div className="break-words"><span className="font-semibold">Date Different Politics:</span> {safeProfile.dateDifferentPolitics || 'N/A'}</div>

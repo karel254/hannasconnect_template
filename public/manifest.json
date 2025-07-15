@@ -1,6 +1,6 @@
 {
   "name": "Hanna's Connect",
-  "short_name": "HannaConnect",
+  "short_name": "Hanna's Connect",
   "description": "Connect and build meaningful relationships.",
   "start_url": "/dashboard",
   "display": "standalone",

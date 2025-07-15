@@ -863,6 +863,8 @@ interface FormData {
   bodyType: string
   heightFt?: string
   heightIn?: string
+  sexualOrientationOther?: string
+  expectFromMe?: string
 }
 
 export default function RegisterPage() {
@@ -963,6 +965,8 @@ export default function RegisterPage() {
     bodyType: "",
     heightFt: "",
     heightIn: "",
+    sexualOrientationOther: "",
+    expectFromMe: "",
   })
 
   const totalSteps = 7
@@ -1167,11 +1171,8 @@ export default function RegisterPage() {
                 className="transition-all duration-200 w-full px-3 py-2 border rounded-md text-base focus:outline-none focus:ring-2 focus:ring-[#B22222] focus:border-[#B22222] bg-white dark:bg-gray-900"
                 calendarClassName="z-50"
                 popperPlacement="bottom-start"
-                disabledKeyboardNavigation
                 autoComplete="off"
-                onKeyDown={(e: React.KeyboardEvent) => e.preventDefault()}
                 aria-label="Date of Birth"
-                readOnly
               />
             </div>
 
@@ -1225,22 +1226,19 @@ export default function RegisterPage() {
                   label="County *"
                   onFocus={handleFieldFocus}
                 />
-
-                {formData.county && filteredConstituencies.length > 0 && (
-                  <SearchableSelect
-                    items={filteredConstituencies}
+                {/* Constituency as free text input, not dropdown */}
+                <div className="space-y-2">
+                  <Label htmlFor="constituency">Constituency</Label>
+                  <Input
+                    id="constituency"
                     value={formData.constituency}
-                    onValueChange={(value) => {
-                      updateFormData("constituency", value)
-                      updateFormData("ward", "")
-                    }}
-                    placeholder="Select constituency"
-                    searchPlaceholder="Search constituencies..."
-                    label="Constituency"
+                    onChange={e => updateFormData("constituency", e.target.value)}
+                    placeholder="Enter your constituency"
+                    className="transition-all duration-200"
                     onFocus={handleFieldFocus}
                   />
-                )}
-
+                </div>
+                {/* Ward remains as before (optional) */}
                 {formData.constituency && filteredWards.length > 0 && (
                   <SearchableSelect
                     items={filteredWards}
@@ -1255,16 +1253,16 @@ export default function RegisterPage() {
               </div>
             )}
 
-            {/* State for other countries */}
-            {formData.country && formData.country !== "Kenya" && filteredStates.length > 0 && (
-              <div className="animate-in slide-in-from-top-4">
-                <SearchableSelect
-                  items={filteredStates}
+            {/* State for other countries as free text input */}
+            {formData.country && formData.country !== "Kenya" && (
+              <div className="animate-in slide-in-from-top-4 space-y-2">
+                <Label htmlFor="state">State/Province</Label>
+                <Input
+                  id="state"
                   value={formData.state}
-                  onValueChange={(value) => updateFormData("state", value)}
-                  placeholder="Select state/province"
-                  searchPlaceholder="Search states..."
-                  label="State/Province"
+                  onChange={e => updateFormData("state", e.target.value)}
+                  placeholder="Enter your state/province"
+                  className="transition-all duration-200"
                   onFocus={handleFieldFocus}
                 />
               </div>
@@ -1534,7 +1532,7 @@ export default function RegisterPage() {
                       }}
                       placeholder="Describe your tattoos"
                     />
-                    <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">{formData.tattoosDescription?.trim() ? formData.tattoosDescription.trim().split(/\s+/).length : 0}/25 words</div>
+                    <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">{(formData.tattoosDescription ?? '').trim() ? (formData.tattoosDescription ?? '').trim().split(/\s+/).length : 0}/25 words</div>
                   </>
                 )}
               </div>
@@ -1559,7 +1557,7 @@ export default function RegisterPage() {
                       }}
                       placeholder="Describe your piercings"
                     />
-                    <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">{formData.piercingsDescription?.trim() ? formData.piercingsDescription.trim().split(/\s+/).length : 0}/25 words</div>
+                    <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">{(formData.piercingsDescription ?? '').trim() ? (formData.piercingsDescription ?? '').trim().split(/\s+/).length : 0}/25 words</div>
                   </>
                 )}
               </div>
@@ -1584,7 +1582,7 @@ export default function RegisterPage() {
                       }}
                       placeholder="Describe your dimples"
                     />
-                    <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">{formData.dimplesDescription?.trim() ? formData.dimplesDescription.trim().split(/\s+/).length : 0}/25 words</div>
+                    <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">{(formData.dimplesDescription ?? '').trim() ? (formData.dimplesDescription ?? '').trim().split(/\s+/).length : 0}/25 words</div>
                   </>
                 )}
               </div>
@@ -1646,7 +1644,7 @@ export default function RegisterPage() {
                     className="transition-all duration-200 mt-2"
                     onFocus={handleFieldFocus}
                   />
-                    <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">{formData.glassesDescription?.trim() ? formData.glassesDescription.trim().split(/\s+/).length : 0}/25 words</div>
+                    <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">{(formData.glassesDescription ?? '').trim() ? (formData.glassesDescription ?? '').trim().split(/\s+/).length : 0}/25 words</div>
                   </>
                 )}
               </div>
@@ -1689,7 +1687,7 @@ export default function RegisterPage() {
                     className="transition-all duration-200 mt-2"
                     onFocus={handleFieldFocus}
                   />
-                    <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">{formData.disabilityDescription?.trim() ? formData.disabilityDescription.trim().split(/\s+/).length : 0}/25 words</div>
+                    <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">{(formData.disabilityDescription ?? '').trim() ? (formData.disabilityDescription ?? '').trim().split(/\s+/).length : 0}/25 words</div>
                   </>
                 )}
               </div>
@@ -1718,7 +1716,7 @@ export default function RegisterPage() {
                     className="transition-all duration-200 mt-2"
                     onFocus={handleFieldFocus}
                   />
-                    <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">{formData.chronicIllnessDescription?.trim() ? formData.chronicIllnessDescription.trim().split(/\s+/).length : 0}/25 words</div>
+                    <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">{(formData.chronicIllnessDescription ?? '').trim() ? (formData.chronicIllnessDescription ?? '').trim().split(/\s+/).length : 0}/25 words</div>
                   </>
                 )}
               </div>
@@ -1803,19 +1801,21 @@ export default function RegisterPage() {
               </div>
             </div>
 
+            {/* Occupation */}
             <div className="space-y-2">
-              <Label>Occupation</Label>
+              <Label htmlFor="occupation">Occupation</Label>
               <Input
+                id="occupation"
                 value={formData.occupation}
                 onChange={e => {
-                  const value = e.target.value.split(/\s+/).slice(0, 25).join(" ");
+                  const value = e.target.value.split(/\s+/).slice(0, 5).join(" ");
                   updateFormData("occupation", value);
                 }}
-                placeholder="What is your occupation?"
+                placeholder="e.g. Software Engineer, Doctor"
                 className="transition-all duration-200"
                 onFocus={handleFieldFocus}
               />
-              <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">{formData.occupation?.trim() ? formData.occupation.trim().split(/\s+/).length : 0}/25 words</div>
+              <div className="text-xs text-gray-500 text-right">{formData.occupation.trim() ? formData.occupation.trim().split(/\s+/).length : 0}/5 words</div>
             </div>
 
             <div className="space-y-4">
@@ -1837,6 +1837,7 @@ export default function RegisterPage() {
                 onFocus={handleFieldFocus}
               />
 
+              {/* Kenya-specific work location fields */}
               {formData.workCountry === "Kenya" && (
                 <div className="space-y-4 animate-in slide-in-from-top-4">
                   <SearchableSelect
@@ -1852,71 +1853,51 @@ export default function RegisterPage() {
                     label="Work County"
                     onFocus={handleFieldFocus}
                   />
-
-                  {formData.workCounty &&
-                    DATA_CONSTANTS.kenyanConstituencies[
-                      formData.workCounty as keyof typeof DATA_CONSTANTS.kenyanConstituencies
-                    ] && (
-                      <SearchableSelect
-                        items={
-                          DATA_CONSTANTS.kenyanConstituencies[
-                            formData.workCounty as keyof typeof DATA_CONSTANTS.kenyanConstituencies
-                          ]
-                        }
-                        value={formData.workConstituency}
-                        onValueChange={(value) => {
-                          updateFormData("workConstituency", value)
-                          updateFormData("workWard", "")
-                        }}
-                        placeholder="Select work constituency"
-                        searchPlaceholder="Search constituencies..."
-                        label="Work Constituency"
-                        onFocus={handleFieldFocus}
-                      />
-                    )}
-
-                  {formData.workConstituency &&
-                    DATA_CONSTANTS.kenyanWards[
-                      formData.workConstituency as keyof typeof DATA_CONSTANTS.kenyanWards
-                    ] && (
-                      <SearchableSelect
-                        items={
-                          DATA_CONSTANTS.kenyanWards[
-                            formData.workConstituency as keyof typeof DATA_CONSTANTS.kenyanWards
-                          ]
-                        }
-                        value={formData.workWard}
-                        onValueChange={(value) => updateFormData("workWard", value)}
-                        placeholder="Select work ward"
-                        searchPlaceholder="Search wards..."
-                        label="Work Ward"
-                        onFocus={handleFieldFocus}
-                      />
-                    )}
-                </div>
-              )}
-
-              {formData.workCountry &&
-                formData.workCountry !== "Kenya" &&
-                DATA_CONSTANTS.countriesAndStates[
-                  formData.workCountry as keyof typeof DATA_CONSTANTS.countriesAndStates
-                ] && (
-                  <div className="animate-in slide-in-from-top-4">
-                    <SearchableSelect
-                      items={
-                        DATA_CONSTANTS.countriesAndStates[
-                          formData.workCountry as keyof typeof DATA_CONSTANTS.countriesAndStates
-                        ]
-                      }
-                      value={formData.workState}
-                      onValueChange={(value) => updateFormData("workState", value)}
-                      placeholder="Select work state/province"
-                      searchPlaceholder="Search states..."
-                      label="Work State/Province"
+                  {/* Work Constituency as free text input, not dropdown */}
+                  <div className="space-y-2">
+                    <Label htmlFor="workConstituency">Work Constituency</Label>
+                    <Input
+                      id="workConstituency"
+                      value={formData.workConstituency}
+                      onChange={e => updateFormData("workConstituency", e.target.value)}
+                      placeholder="Enter your work constituency"
+                      className="transition-all duration-200"
                       onFocus={handleFieldFocus}
                     />
                   </div>
-                )}
+                  {/* Ward remains as before (optional) */}
+                  {formData.workConstituency && DATA_CONSTANTS.kenyanWards[
+                    formData.workConstituency as keyof typeof DATA_CONSTANTS.kenyanWards
+                  ] && (
+                    <SearchableSelect
+                      items={DATA_CONSTANTS.kenyanWards[
+                        formData.workConstituency as keyof typeof DATA_CONSTANTS.kenyanWards
+                      ]}
+                      value={formData.workWard}
+                      onValueChange={(value) => updateFormData("workWard", value)}
+                      placeholder="Select work ward (optional)"
+                      searchPlaceholder="Search wards..."
+                      label="Work Ward (Optional)"
+                      onFocus={handleFieldFocus}
+                    />
+                  )}
+                </div>
+              )}
+
+              {/* State for other countries as free text input */}
+              {formData.workCountry && formData.workCountry !== "Kenya" && (
+                <div className="animate-in slide-in-from-top-4 space-y-2">
+                  <Label htmlFor="workState">Work State/Province</Label>
+                  <Input
+                    id="workState"
+                    value={formData.workState}
+                    onChange={e => updateFormData("workState", e.target.value)}
+                    placeholder="Enter your work state/province"
+                    className="transition-all duration-200"
+                    onFocus={handleFieldFocus}
+                  />
+                </div>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -2341,13 +2322,32 @@ export default function RegisterPage() {
 
             <div className="space-y-2">
               <Label>Sexual Orientation</Label>
-              <Input
+              <Select
                 value={formData.sexualOrientation}
-                onChange={e => updateFormData("sexualOrientation", e.target.value)}
-                placeholder="Type your sexual orientation"
-                className="transition-all duration-200"
-                onFocus={handleFieldFocus}
-              />
+                onValueChange={value => updateFormData("sexualOrientation", value)}
+              >
+                <SelectTrigger className="transition-all duration-200">
+                  <SelectValue placeholder="Select" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Heterosexual">Heterosexual</SelectItem>
+                  <SelectItem value="Homosexual">Homosexual</SelectItem>
+                  <SelectItem value="Bisexual">Bisexual</SelectItem>
+                  <SelectItem value="Asexual">Asexual</SelectItem>
+                  <SelectItem value="Pansexual">Pansexual</SelectItem>
+                  <SelectItem value="Queer">Queer</SelectItem>
+                  <SelectItem value="Other">Other</SelectItem>
+                </SelectContent>
+              </Select>
+              {formData.sexualOrientation === "Other" && (
+                <Input
+                  value={formData.sexualOrientationOther || ''}
+                  onChange={e => updateFormData("sexualOrientationOther", e.target.value)}
+                  placeholder="Please specify"
+                  className="transition-all duration-200 mt-2"
+                  onFocus={handleFieldFocus}
+                />
+              )}
             </div>
             <div className="space-y-2">
               <Label>How traditional or modern are you in relationships?</Label>
@@ -2406,6 +2406,23 @@ export default function RegisterPage() {
               <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">{formData.dontContactIf.trim() ? formData.dontContactIf.trim().split(/\s+/).length : 0}/25 words</div>
             </div>
 
+            {/* New field: If we end up together, here's what you can expect from me */}
+            <div className="space-y-2">
+              <Label>If we end up together, here's what you can expect from me</Label>
+              <Textarea
+                value={formData.expectFromMe || ''}
+                onChange={e => {
+                  const value = e.target.value.split(/\s+/).slice(0, 25).join(" ");
+                  updateFormData("expectFromMe", value);
+                }}
+                placeholder="Describe what your partner can expect from you"
+                className="transition-all duration-200"
+                onFocus={handleFieldFocus}
+              />
+              <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">{formData.expectFromMe?.trim() ? formData.expectFromMe.trim().split(/\s+/).length : 0}/25 words</div>
+            </div>
+
+            {/* Restored previous questions */}
             <div className="space-y-2">
               <Label>Imperfections</Label>
               <Textarea
@@ -2425,67 +2442,60 @@ export default function RegisterPage() {
               <Label>Political Views</Label>
               <Input
                 value={formData.politicalViews}
-                onChange={e => {
-                  const value = e.target.value.split(/\s+/).slice(0, 25).join(" ");
-                  updateFormData("politicalViews", value);
-                }}
+                onChange={e => updateFormData("politicalViews", e.target.value)}
                 placeholder="Describe your political views"
                 className="transition-all duration-200"
                 onFocus={handleFieldFocus}
               />
-              <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">{formData.politicalViews?.trim() ? formData.politicalViews.trim().split(/\s+/).length : 0}/25 words</div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Can you date someone with different political views?</Label>
-                <Select
-                  value={formData.dateDifferentPolitics}
-                  onValueChange={(value) => updateFormData("dateDifferentPolitics", value)}
-                >
-                  <SelectTrigger className="transition-all duration-200">
-                    <SelectValue placeholder="Select" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="yes">Yes</SelectItem>
-                    <SelectItem value="no">No</SelectItem>
-                    <SelectItem value="depends">Depends</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Do you believe in marriage?</Label>
-                <Select
-                  value={formData.believesInMarriage}
-                  onValueChange={(value) => updateFormData("believesInMarriage", value)}
-                >
-                  <SelectTrigger className="transition-all duration-200">
-                    <SelectValue placeholder="Select" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="yes">Yes</SelectItem>
-                    <SelectItem value="no">No</SelectItem>
-                    <SelectItem value="maybe">Maybe</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
             </div>
 
             <div className="space-y-2">
-              <Label>Describe Yourself</Label>
+              <Label>Would you date someone with different political views?</Label>
+              <Select
+                value={formData.dateDifferentPolitics}
+                onValueChange={value => updateFormData("dateDifferentPolitics", value)}
+              >
+                <SelectTrigger className="transition-all duration-200">
+                  <SelectValue placeholder="Select" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="yes">Yes</SelectItem>
+                  <SelectItem value="no">No</SelectItem>
+                  <SelectItem value="maybe">Maybe</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Do you believe in marriage?</Label>
+              <Select
+                value={formData.believesInMarriage}
+                onValueChange={value => updateFormData("believesInMarriage", value)}
+              >
+                <SelectTrigger className="transition-all duration-200">
+                  <SelectValue placeholder="Select" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="yes">Yes</SelectItem>
+                  <SelectItem value="no">No</SelectItem>
+                  <SelectItem value="maybe">Maybe</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Describe yourself</Label>
               <Textarea
                 value={formData.selfDescription}
                 onChange={(e) => {
                   const value = e.target.value.split(/\s+/).slice(0, 25).join(" ");
                   updateFormData("selfDescription", value);
                 }}
-                placeholder="Tell us about yourself in your own words"
-                rows={4}
+                placeholder="Describe yourself in your own words"
                 className="transition-all duration-200"
                 onFocus={handleFieldFocus}
               />
-              <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">{formData.selfDescription.trim() ? formData.selfDescription.trim().split(/\s+/).length : 0}/25 words</div>
+              <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">{formData.selfDescription?.trim() ? formData.selfDescription.trim().split(/\s+/).length : 0}/25 words</div>
             </div>
           </div>
         )
@@ -2502,6 +2512,108 @@ export default function RegisterPage() {
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
+
+  // Add validation for each step
+  const isStepValid = (step: number): boolean => {
+    switch (step) {
+      case 1:
+        return !!(
+          formData.selectedAvatar !== undefined &&
+          formData.username.trim() &&
+          formData.gender &&
+          (formData.gender !== 'other' || formData.customGender.trim()) &&
+          formData.dateOfBirth &&
+          formData.race &&
+          formData.country &&
+          (formData.country !== 'Kenya' || (formData.county && formData.constituency)) &&
+          (formData.country === 'Kenya' ? true : formData.state) &&
+          formData.languages.length > 0 && formData.languages[0].trim() &&
+          (formData.country !== 'Kenya' || formData.tribe.trim()) &&
+          formData.email.trim() &&
+          formData.password.trim() &&
+          formData.confirmPassword.trim()
+        );
+      case 2:
+        return !!(
+          formData.weight &&
+          formData.weightUnit &&
+          formData.height &&
+          formData.heightUnit &&
+          formData.complexion &&
+          formData.eyeColor &&
+          formData.bodyType
+        );
+      case 3:
+        return !!(
+          formData.glasses &&
+          (formData.glasses !== 'yes' || (formData.glassesDescription ?? '').trim()) &&
+          formData.dimples &&
+          (formData.dimples !== 'yes' || (formData.dimplesDescription ?? '').trim()) &&
+          formData.teethFeatures &&
+          formData.tattoos &&
+          (formData.tattoos !== 'yes' || (formData.tattoosDescription ?? '').trim()) &&
+          formData.piercings &&
+          (formData.piercings !== 'yes' || (formData.piercingsDescription ?? '').trim()) &&
+          formData.hivStatus &&
+          formData.disability &&
+          (formData.disability !== 'yes' || (formData.disabilityDescription ?? '').trim()) &&
+          formData.chronicIllness &&
+          (formData.chronicIllness !== 'yes' || (formData.chronicIllnessDescription ?? '').trim()) &&
+          formData.allergies &&
+          formData.bloodType &&
+          formData.snoring
+        );
+      case 4:
+        return !!(
+          formData.employmentStatus &&
+          formData.occupation &&
+          formData.workCountry &&
+          (formData.workCountry !== 'Kenya' || (formData.workCounty && formData.workConstituency)) &&
+          (formData.workCountry === 'Kenya' ? true : formData.workState) &&
+          formData.financialStability &&
+          formData.alcohol &&
+          formData.smoking &&
+          formData.dietaryPreference &&
+          formData.hasPets &&
+          (formData.hasPets !== 'yes' || (formData.petsDescription ?? '').trim()) &&
+          formData.exerciseFrequency
+        );
+      case 5:
+        return !!(
+          formData.hobbies &&
+          formData.interests &&
+          formData.religion &&
+          formData.religiousness &&
+          formData.denomination &&
+          formData.churchAttendance
+        );
+      case 6:
+        return !!(
+          formData.maritalStatus &&
+          formData.hasChildren &&
+          (formData.hasChildren !== 'yes' || (formData.numberOfChildren && formData.childrenAges && formData.childrenLiveWithUser)) &&
+          formData.wantsChildren &&
+          formData.acceptsPartnerWithKids &&
+          formData.longDistanceOk &&
+          formData.datingPerspective &&
+          formData.dealBreakers &&
+          formData.sexualOrientation
+        );
+      case 7:
+        return !!(
+          formData.personalityType &&
+          formData.dontContactIf &&
+          formData.expectFromMe &&
+          formData.imperfections &&
+          formData.politicalViews &&
+          formData.dateDifferentPolitics &&
+          formData.believesInMarriage &&
+          formData.selfDescription
+        );
+      default:
+        return true;
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-4 px-2 sm:py-8 sm:px-4">
@@ -2539,6 +2651,7 @@ export default function RegisterPage() {
                 ) : (
                   <Button
                     onClick={nextStep}
+                    /* disabled={!isStepValid(currentStep)} */
                     className="flex items-center space-x-2 transition-all duration-200 hover:scale-105"
                   >
                     <span>Next</span>

@@ -29,6 +29,16 @@ export default function LoginPage() {
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
+  // --- Admin password logic ---
+  // Store admin password in localStorage if not set
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      if (!localStorage.getItem('adminPassword')) {
+        localStorage.setItem('adminPassword', 'admin0404');
+      }
+    }
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
@@ -36,6 +46,64 @@ export default function LoginPage() {
     // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 1000))
 
+    // --- Admin login logic ---
+    if (email === 'admin' || email === 'hanna.kanuna@gmail.com') {
+      const adminPassword = localStorage.getItem('adminPassword') || 'admin0404';
+      if (password === adminPassword) {
+        const demoUser = {
+          email: 'hanna.kanuna@gmail.com',
+          username: 'admin',
+          loginTime: new Date().toISOString(),
+          isAdmin: true,
+        }
+        localStorage.setItem('demoUser', JSON.stringify(demoUser))
+        localStorage.setItem('userUsername', 'admin')
+        Cookies.set('demoUser', JSON.stringify(demoUser), { expires: 30, path: '/' })
+        toast({
+          title: 'Welcome Admin!',
+          description: "You've successfully logged in as admin.",
+        })
+        router.push('/dashboard')
+        setIsLoading(false)
+        return
+      } else {
+        toast({
+          title: 'Error',
+          description: 'Incorrect admin password.',
+          variant: 'destructive',
+        })
+        setIsLoading(false)
+        return
+      }
+    }
+
+    // --- Registration-based login logic ---
+    const regDataRaw = localStorage.getItem('registrationData');
+    let regData = null;
+    try { regData = regDataRaw ? JSON.parse(regDataRaw) : null; } catch {}
+    if (regData &&
+      ((regData.email && regData.email.toLowerCase() === email.toLowerCase()) ||
+       (regData.username && regData.username.toLowerCase() === email.toLowerCase())) &&
+      regData.password === password
+    ) {
+      const user = {
+        email: regData.email,
+        username: regData.username,
+        loginTime: new Date().toISOString(),
+      };
+      localStorage.setItem('demoUser', JSON.stringify(user));
+      localStorage.setItem('userUsername', regData.username);
+      Cookies.set('demoUser', JSON.stringify(user), { expires: 30, path: '/' });
+      toast({
+        title: 'Welcome!',
+        description: "You've successfully logged in.",
+      });
+      router.push('/dashboard');
+      setIsLoading(false);
+      return;
+    }
+
+    // --- Demo login fallback ---
     if (email && password) {
       // Extract username from email
       const username = email.split("@")[0];
@@ -47,17 +115,11 @@ export default function LoginPage() {
       }
       localStorage.setItem("demoUser", JSON.stringify(demoUser))
       localStorage.setItem("userUsername", username)
-      // --- Persistent login using cookies ---
-      // This cookie keeps the user logged in even after closing the browser.
-      // Backend devs: You can use this cookie for authentication/session management.
-      // Set a long expiry (e.g., 30 days)
       Cookies.set("demoUser", JSON.stringify(demoUser), { expires: 30, path: "/" })
-
       toast({
         title: "Welcome back!",
         description: "You've successfully logged in.",
       })
-
       router.push("/dashboard")
     } else {
       toast({
@@ -66,7 +128,6 @@ export default function LoginPage() {
         variant: "destructive",
       })
     }
-
     setIsLoading(false)
   }
 

@@ -29,52 +29,47 @@ export default function Messages() {
   const [searchQuery, setSearchQuery] = useState("")
   const [messages, setMessages] = useState<Message[]>([])
   const [isTyping, setIsTyping] = useState(false)
+  const [blockedChats, setBlockedChats] = useState<string[]>(() => {
+    if (typeof window !== 'undefined') {
+      return JSON.parse(localStorage.getItem('blockedChats') || '[]')
+    }
+    return []
+  })
+  const [deletedChats, setDeletedChats] = useState<string[]>(() => {
+    if (typeof window !== 'undefined') {
+      return JSON.parse(localStorage.getItem('deletedChats') || '[]')
+    }
+    return []
+  })
+  const [showOptions, setShowOptions] = useState<string | null>(null)
+  const optionsTimeout = useRef<any>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const { toast } = useToast();
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  // Get current user info
+  let currentUser = null
+  if (typeof window !== 'undefined') {
+    try {
+      currentUser = JSON.parse(localStorage.getItem('demoUser') || '{}')
+    } catch {}
+  }
+  const isAdmin = currentUser?.username === 'admin' || currentUser?.email === 'hanna.kanuna@gmail.com';
+
+  // --- Admin chat definition ---
+  const adminChat = {
+    id: 'admin',
+    name: 'Admin',
+    avatar: '/images/male1.jpg',
+    lastMessage: 'Welcome! Contact admin for help.',
+    timestamp: 'now',
+    unread: 0,
+    online: true,
+    isConnected: true,
+    isAdminChat: true,
   }
 
-  useEffect(() => {
-    scrollToBottom()
-  }, [messages, isTyping])
-
-  useEffect(() => {
-    // Check if user is logged in
-    const userData = localStorage.getItem("demoUser")
-    if (!userData) {
-      router.push("/login")
-      return
-    }
-  }, [router])
-
-  useEffect(() => {
-    if (selectedUser) {
-      // Load initial messages
-      const initialMessages = getMessages(selectedUser)
-      setMessages(initialMessages)
-      
-      // Simulate typing indicator after a delay
-      setTimeout(() => {
-        setIsTyping(true)
-        setTimeout(() => {
-          setIsTyping(false)
-          // Add a simulated response
-          const newMessage: Message = {
-            id: Date.now(),
-            text: getRandomResponse(selectedUser),
-            sender: selectedUser,
-            timestamp: new Date(),
-          }
-          setMessages(prev => [...prev, newMessage])
-        }, 2000)
-      }, 1000)
-    }
-  }, [selectedUser])
-
   // Sample conversations data with connection status
-  const conversations = [
+  let conversations = [
     {
       id: "amara",
       name: "Amara",
@@ -126,6 +121,63 @@ export default function Messages() {
       isConnected: true,
     },
   ]
+
+  // --- Pin Admin chat for all except admin ---
+  if (!isAdmin) {
+    conversations = [adminChat, ...conversations.filter(c => c.id !== 'admin')]
+  } else {
+    conversations = conversations.filter(c => c.id !== 'admin')
+  }
+
+  // Remove blocked and deleted chats (except admin)
+  conversations = conversations.filter(
+    c => (c.id === 'admin' || (!blockedChats.includes(c.id) && !deletedChats.includes(c.id)))
+  )
+
+  // Update scrollToBottom to only scroll if the conversation area is overflowing
+  const scrollToBottom = () => {
+    // Find the conversation area (the scrollable div containing messages)
+    const chatArea = document.querySelector('.conversation-scroll-area');
+    if (chatArea && messagesEndRef.current) {
+      // Only scroll if content is overflowing (scrollHeight > clientHeight)
+      if (chatArea.scrollHeight > chatArea.clientHeight) {
+        messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  }
+
+  useEffect(() => {
+    // Check if user is logged in
+    const userData = localStorage.getItem("demoUser")
+    if (!userData) {
+      router.push("/login")
+      return
+    }
+  }, [router])
+
+  useEffect(() => {
+    if (selectedUser) {
+      // Load initial messages
+      const initialMessages = getMessages(selectedUser)
+      setMessages(initialMessages)
+      
+      // Simulate typing indicator after a delay
+      setTimeout(() => {
+        setIsTyping(true)
+        setTimeout(() => {
+          setIsTyping(false)
+          // Add a simulated response
+          const newMessage: Message = {
+            id: Date.now(),
+            text: getRandomResponse(selectedUser),
+            sender: selectedUser,
+            timestamp: new Date(),
+          }
+          setMessages(prev => [...prev, newMessage])
+        }, 2000)
+      }, 1000)
+    }
+  }, [selectedUser])
 
   // Sample messages for selected conversation
   const getMessages = (userId: string): Message[] => {
@@ -265,7 +317,11 @@ export default function Messages() {
         timestamp: new Date(),
         status: "sent"
       }
-      setMessages(prev => [...prev, newMessage])
+      setMessages(prev => {
+        const updated = [...prev, newMessage]
+        setTimeout(() => scrollToBottom(), 0)
+        return updated
+      })
       setMessage("")
 
       // Simulate status updates for demo
@@ -287,7 +343,11 @@ export default function Messages() {
             sender: selectedUser!,
             timestamp: new Date(),
           }
-          setMessages(prev => [...prev, response])
+          setMessages(prev => {
+            const updated = [...prev, response]
+            setTimeout(() => scrollToBottom(), 0)
+            return updated
+          })
         }, 2000)
       }, 1000)
     }
@@ -306,6 +366,25 @@ export default function Messages() {
     router.push(`/messages?user=${userId}`)
   }
 
+  // --- Block/Delete logic ---
+  const handleBlockChat = (chatId: string) => {
+    if (chatId === 'admin') return
+    const updated = [...blockedChats, chatId]
+    setBlockedChats(updated)
+    localStorage.setItem('blockedChats', JSON.stringify(updated))
+    setShowOptions(null)
+    toast({ title: 'User blocked', description: 'You have blocked this user.' })
+  }
+  const handleDeleteChat = (chatId: string) => {
+    if (chatId === 'admin') return
+    const updated = [...deletedChats, chatId]
+    setDeletedChats(updated)
+    localStorage.setItem('deletedChats', JSON.stringify(updated))
+    setShowOptions(null)
+    toast({ title: 'Chat deleted', description: 'This chat has been deleted.' })
+    if (selectedUser === chatId) setSelectedUser(null)
+  }
+
   // Get current user's privacy settings from localStorage (simulate profile)
   let showReadReceipts = true;
   try {
@@ -314,10 +393,11 @@ export default function Messages() {
   } catch {}
 
   return (
-    <div className="h-screen bg-gray-50 dark:bg-gray-900 flex w-screen max-w-none">
+    <div className="h-screen bg-gray-50 dark:bg-gray-900 flex w-screen max-w-none overflow-hidden">
       {/* Contacts List */}
       <div
         className={`${selectedUser ? "hidden md:flex" : "flex"} flex-col w-full md:w-80 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex-shrink-0 h-full`}
+        style={{ overflow: 'visible' }}
       >
         {/* Header */}
           {!selectedUser && (
@@ -350,7 +430,18 @@ export default function Messages() {
               <div
                 key={conversation.id}
                 onClick={() => conversation.isConnected && handleUserSelect(conversation.id)}
-                className={`p-3 rounded-xl transition-colors ${
+                onContextMenu={(e) => {
+                  e.preventDefault();
+                  if (conversation.id !== 'admin') setShowOptions(conversation.id)
+                }}
+                onTouchStart={() => {
+                  if (conversation.id === 'admin') return
+                  optionsTimeout.current = setTimeout(() => setShowOptions(conversation.id), 600)
+                }}
+                onTouchEnd={() => {
+                  clearTimeout(optionsTimeout.current)
+                }}
+                className={`p-3 rounded-xl transition-colors relative ${
                   selectedUser === conversation.id
                     ? "bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800"
                     : conversation.isConnected 
@@ -358,6 +449,29 @@ export default function Messages() {
                       : "opacity-60 cursor-not-allowed"
                 }`}
               >
+                {/* Chat options menu */}
+                {showOptions === conversation.id && conversation.id !== 'admin' && (
+                  <div className="absolute right-2 top-2 z-50 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg flex flex-col">
+                    <button
+                      className="px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 text-sm"
+                      onClick={() => handleDeleteChat(conversation.id)}
+                    >
+                      Delete chat
+                    </button>
+                    <button
+                      className="px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 text-sm"
+                      onClick={() => handleBlockChat(conversation.id)}
+                    >
+                      Block this user
+                    </button>
+                    <button
+                      className="px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 text-sm text-red-500"
+                      onClick={() => setShowOptions(null)}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                )}
                 <div className="flex items-center space-x-3">
                   <div className="relative flex-shrink-0">
                     <Avatar className="h-12 w-12">
@@ -439,7 +553,7 @@ export default function Messages() {
           </div>
 
           {/* Messages - Scrollable with top padding for sticky headers */}
-          <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4 pt-4 pb-32">
+          <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4 pt-4 pb-32 conversation-scroll-area" style={{ overflowY: 'auto' }}>
             {messages.map((msg) => (
               <div key={msg.id} className={`flex ${msg.sender === "me" ? "justify-end" : "justify-start"}`}>
                 <div
@@ -545,8 +659,8 @@ export default function Messages() {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Message Input - Fixed Bottom */}
-          <div className="fixed bottom-0 z-50 p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 md:left-80 left-0 right-0 pb-20">
+          {/* Message Input - Sticky Bottom, always visible above keyboard */}
+          <div className="sticky bottom-0 z-50 p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800" style={{paddingBottom: 'env(safe-area-inset-bottom, 0)'}}>
             <div className="flex items-center space-x-2">
               <Input
                 placeholder="Type a message..."
