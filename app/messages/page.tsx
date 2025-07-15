@@ -519,8 +519,11 @@ export default function Messages() {
       {/* Chat Area */}
       {selectedUser ? (
         <div className="h-full min-h-0 flex flex-col bg-white dark:bg-gray-800 flex-1 w-full max-w-none relative">
-          {/* Chat Header - Sticky at the very top, replaces main header */}
-          <div className="sticky top-0 z-50 px-6 py-4 h-[64px] border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-[#B22222] to-[#8B0000] text-white shadow-md flex items-center unmovable-chat-header" style={{position: 'sticky', top: 0, zIndex: 50, touchAction: 'none'}}>
+          {/* Chat Header - Fixed on mobile, sticky on desktop */}
+          <div
+            className="fixed top-0 left-0 right-0 z-50 w-full px-6 py-4 h-[64px] border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-[#B22222] to-[#8B0000] text-white shadow-md flex items-center unmovable-chat-header md:sticky md:top-0 md:left-auto md:right-auto md:w-auto"
+            style={{ touchAction: 'none' }}
+          >
             <div className="flex items-center gap-4">
               <Button variant="ghost" size="icon" className="md:hidden mr-2 text-white hover:bg-white/20" onClick={() => {
                 setSelectedUser(null)
@@ -552,8 +555,8 @@ export default function Messages() {
             </div>
           </div>
 
-          {/* Messages - Scrollable with top padding for sticky headers */}
-          <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4 pt-4 pb-32 conversation-scroll-area" style={{ overflowY: 'auto' }}>
+          {/* Messages - Scrollable with top padding for sticky/fixed headers */}
+          <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4 pb-32 conversation-scroll-area pt-[64px] md:pt-4" style={{ overflowY: 'auto', marginTop: 0 }}>
             {messages.map((msg) => (
               <div key={msg.id} className={`flex ${msg.sender === "me" ? "justify-end" : "justify-start"}`}>
                 <div
