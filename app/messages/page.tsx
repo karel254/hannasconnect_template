@@ -520,7 +520,7 @@ export default function Messages() {
       {selectedUser ? (
         <div className="h-full min-h-0 flex flex-col bg-white dark:bg-gray-800 flex-1 w-full max-w-none relative">
           {/* Chat Header - Sticky at the very top, replaces main header */}
-          <div className="sticky top-0 z-50 px-6 py-4 h-[64px] border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-[#B22222] to-[#8B0000] text-white shadow-md flex items-center">
+          <div className="sticky top-0 z-50 px-6 py-4 h-[64px] border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-[#B22222] to-[#8B0000] text-white shadow-md flex items-center unmovable-chat-header" style={{position: 'sticky', top: 0, zIndex: 50, touchAction: 'none'}}>
             <div className="flex items-center gap-4">
               <Button variant="ghost" size="icon" className="md:hidden mr-2 text-white hover:bg-white/20" onClick={() => {
                 setSelectedUser(null)
