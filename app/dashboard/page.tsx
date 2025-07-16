@@ -137,13 +137,17 @@ export default function Dashboard() {
   const connectedConversations = sampleConversations.filter(c => c.isConnected);
   const connections = connectedConversations.length;
 
+  const [showHelpDialog, setShowHelpDialog] = useState(false);
+  const [helpMessage, setHelpMessage] = useState("");
+  const [helpSubmitted, setHelpSubmitted] = useState(""); // '' | 'whatsapp' | 'email'
+
   const stats = [
     {
-      label: "Profile Views",
-      value: profileViews,
+      label: "Hanna's Help",
+      value: null,
       icon: Users,
       color: "text-blue-600",
-      onClick: null,
+      onClick: () => setShowHelpDialog(true),
     },
     {
       label: "New Matches",
@@ -1328,6 +1332,75 @@ export default function Dashboard() {
           <DialogFooter>
             <Button variant="ghost" onClick={() => setIsConnectionsModalOpen(false)}>Close</Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Hanna's Help Dialog */}
+      <Dialog open={showHelpDialog} onOpenChange={setShowHelpDialog}>
+        <DialogContent className="max-w-md w-full">
+          <DialogHeader>
+            <DialogTitle className="text-[#B22222] text-xl font-bold">Hanna's Help</DialogTitle>
+          </DialogHeader>
+          <div className="mb-2 text-sm text-gray-700 dark:text-gray-200">Describe your issue or question below. Our team will get back to you as soon as possible.</div>
+          <div className="mb-2 text-xs text-gray-500">Your email and username will be revealed to the admin.</div>
+          <div className="mb-4">
+            <div className="mb-1 font-semibold">Username: <span className="font-normal">{user?.username}</span></div>
+            <div className="mb-1 font-semibold">Email: <span className="font-normal">{user?.email}</span></div>
+          </div>
+          <textarea
+            className="w-full border rounded-md p-2 min-h-[80px] text-sm mb-8"
+            placeholder="Type your issue here..."
+            value={helpMessage}
+            onChange={e => setHelpMessage(e.target.value)}
+            disabled={helpSubmitted}
+          />
+          <div className="flex flex-col gap-3 mt-0 w-full">
+            <Button
+              className={`w-full ${helpSubmitted === 'whatsapp' ? 'bg-blue-600 hover:bg-blue-700' : 'bg-green-600 hover:bg-green-700'} text-white`}
+              disabled={!!helpSubmitted || !helpMessage.trim()}
+              onClick={() => {
+                const text = encodeURIComponent(`Hanna's Help\nUser: ${user?.username}\nEmail: ${user?.email}\nMessage: ${helpMessage}`);
+                window.open(`https://wa.me/254723438717?text=${text}`, '_blank');
+                setHelpSubmitted('whatsapp');
+                toast({ title: 'Submitted!', description: 'Your issue has been delivered and is currently being looked in to, thank you for counting on us!' });
+                setTimeout(() => {
+                  setShowHelpDialog(false);
+                  setHelpMessage("");
+                  setHelpSubmitted("");
+                }, 2000);
+              }}
+            >
+              {helpSubmitted === 'whatsapp' ? 'Submitted!' : 'Submit to the WhatsApp team'}
+            </Button>
+            <Button
+              className={`w-full ${helpSubmitted === 'email' ? 'bg-blue-600 hover:bg-blue-700' : 'bg-red-600 hover:bg-red-700'} text-white`}
+              disabled={!!helpSubmitted || !helpMessage.trim()}
+              onClick={() => {
+                const subject = encodeURIComponent("Hanna's Help Issue");
+                const body = encodeURIComponent(
+                  `User: ${user?.username}\nEmail: ${user?.email}\nMessage: ${helpMessage}`.replace(/\n/g, '%0D%0A')
+                );
+                const mailto = `mailto:support@hannasconnect.com,assist@hannasconnect.com?subject=${subject}&body=${body}`;
+                window.location.href = mailto;
+                setHelpSubmitted('email');
+                toast({ title: 'Submitted!', description: 'Your issue has been delivered and is currently being looked in to, thank you for counting on us!' });
+                setTimeout(() => {
+                  setShowHelpDialog(false);
+                  setHelpMessage("");
+                  setHelpSubmitted("");
+                }, 2000);
+              }}
+            >
+              {helpSubmitted === 'email' ? 'Submitted!' : 'Submit to the email team'}
+            </Button>
+          </div>
+          {helpSubmitted && (
+            <div className="mt-4 flex justify-end">
+              <Button variant="outline" onClick={() => { setShowHelpDialog(false); setHelpMessage(""); setHelpSubmitted(""); }}>
+                <ArrowLeft className="h-4 w-4 mr-1" /> Back
+              </Button>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>

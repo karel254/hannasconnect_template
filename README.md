@@ -198,3 +198,71 @@ This project includes a full client-side push notification setup for a Next.js P
 - You can customize the notification options and click behavior as needed.
 
 ---
+
+# Hanna's Connect Backend API
+
+## Hanna's Help Email Endpoint
+
+This endpoint allows the frontend to send user help requests directly to the admin/support team via email.
+
+### Endpoint
+
+`POST /api/send-help`
+
+### Request Body (JSON)
+```
+{
+  "username": "kajwangbrian420",
+  "email": "kajwangbrian420@outlook.com",
+  "message": "Describe the user's issue here"
+}
+```
+
+### Response (JSON)
+- On success:
+  ```
+  { "success": true }
+  ```
+- On error:
+  ```
+  { "success": false, "error": "Error message" }
+  ```
+
+### What the backend should do
+- Validate all fields are present and valid.
+- Compose an email with:
+  - **To:** support@hannasconnect.com, assist@hannasconnect.com
+  - **Subject:** "Hanna's Help Issue"
+  - **Body:**
+    ```
+    User: <username>
+    Email: <email>
+    Message: <message>
+    ```
+- Send the email using a secure mail service (e.g., Nodemailer, SendGrid, Mailgun, etc.).
+- Return a JSON response indicating success or failure.
+
+### Example Implementation (see `app/api/send-help.ts`)
+- Accepts POST requests only.
+- Validates input.
+- Uses Nodemailer (or similar) to send the email (backend dev must configure SMTP credentials).
+- Returns `{ success: true }` on success, or `{ success: false, error }` on failure.
+
+### Example Node.js/Express/Next.js Handler
+```js
+// See app/api/send-help.ts for a full template
+export default async function handler(req, res) {
+  if (req.method !== 'POST') return res.status(405).json({ success: false, error: 'Method not allowed' });
+  const { username, email, message } = req.body;
+  if (!username || !email || !message) return res.status(400).json({ success: false, error: 'Missing required fields' });
+  // ...send email logic here...
+  return res.status(200).json({ success: true });
+}
+```
+
+---
+
+**Backend developer:**
+- See `app/api/send-help.ts` for a full, commented template.
+- Configure your SMTP/email provider and credentials securely.
+- Test with the frontend to ensure emails are delivered as expected.
