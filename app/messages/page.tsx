@@ -537,7 +537,7 @@ export default function Messages() {
           {/* Chat Header - Fixed at the very top */}
           <div
             className="fixed top-0 left-0 right-0 z-50 w-full px-6 py-4 h-[64px] border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-[#B22222] to-[#8B0000] text-white shadow-md flex items-center unmovable-chat-header"
-            style={{ touchAction: 'none' }}
+            style={{ touchAction: 'none', pointerEvents: 'auto' }}
           >
             <div className="flex items-center gap-4">
               <Button variant="ghost" size="icon" className="md:hidden mr-2 text-white hover:bg-white/20" onClick={() => {
@@ -571,14 +571,14 @@ export default function Messages() {
           </div>
 
           {/* Messages - Fills space between header and input, no overlays */}
-          <div className="flex-1 w-full overflow-y-auto conversation-scroll-area" style={{
-            paddingTop: 64, // header height
+          <div className="flex-1 w-full overflow-y-auto conversation-scroll-area pt-[88px]" style={{
+            paddingTop: 88, // header height (64px) + extra space (24px)
             paddingBottom: 72, // input height
             minHeight: 0,
             background: 'inherit',
           }}>
-            {messages.map((msg) => (
-              <div key={msg.id} className={`flex ${msg.sender === "me" ? "justify-end" : "justify-start"} mb-3 md:mb-4`}>
+            {messages.map((msg, idx) => (
+              <div key={msg.id} className={`flex ${msg.sender === "me" ? "justify-end" : "justify-start"} mb-3 md:mb-4${idx === 0 ? ' mt-3' : ''}`}>
                 <div
                   className={`flex items-end space-x-2 max-w-xs lg:max-w-md ${msg.sender === "me" ? "flex-row-reverse space-x-reverse" : ""}`}
                 >
@@ -683,7 +683,7 @@ export default function Messages() {
           </div>
 
           {/* Message Input - Fixed at the very bottom */}
-          <div className="fixed bottom-0 left-0 right-0 z-50 w-full p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800" style={{ height: 72, boxSizing: 'border-box' }}>
+          <div className="fixed bottom-0 left-0 right-0 z-50 w-full p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800" style={{ height: 72, boxSizing: 'border-box', pointerEvents: 'auto' }}>
             <div className="flex items-center space-x-2">
               <Input
                 placeholder="Type a message..."
