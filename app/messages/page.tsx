@@ -578,7 +578,7 @@ export default function Messages() {
             background: 'inherit',
           }}>
             {messages.map((msg) => (
-              <div key={msg.id} className={`flex ${msg.sender === "me" ? "justify-end" : "justify-start"}`}>
+              <div key={msg.id} className={`flex ${msg.sender === "me" ? "justify-end" : "justify-start"} mb-3 md:mb-4`}>
                 <div
                   className={`flex items-end space-x-2 max-w-xs lg:max-w-md ${msg.sender === "me" ? "flex-row-reverse space-x-reverse" : ""}`}
                 >
