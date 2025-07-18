@@ -2,21 +2,17 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { User, UserX, MessageCircle, MoreVertical, Search, Filter, ArrowLeft, Clock } from "lucide-react"
+import { User, UserX, Search, ArrowLeft, MessageCircle, MoreVertical, Clock } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useToast } from "../../hooks/use-toast"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import ProfileModal from "@/components/ProfileModal";
+import ProfileModal from "@/components/ProfileModal"
+import { useNavigationHistory } from "../../hooks/use-navigation-history"
 
 interface Connection {
   id: string
@@ -35,6 +31,7 @@ interface Connection {
 
 export default function ConnectionsPage() {
   const router = useRouter()
+  const { goBack } = useNavigationHistory()
   const { toast } = useToast()
   const [user, setUser] = useState<any>(null)
   const [connections, setConnections] = useState<Connection[]>([])
@@ -669,7 +666,7 @@ export default function ConnectionsPage() {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => router.push("/dashboard")}
+            onClick={goBack}
             className="text-white hover:bg-white/20"
           >
             <ArrowLeft className="h-5 w-5" />
@@ -688,7 +685,7 @@ export default function ConnectionsPage() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => router.push("/dashboard")}
+              onClick={goBack}
               className="text-white hover:bg-white/20"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
@@ -704,26 +701,32 @@ export default function ConnectionsPage() {
 
       <div className="container mx-auto px-4 py-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-            <TabsTrigger 
-              value="connected" 
-              className="data-[state=active]:bg-[#B22222] data-[state=active]:text-white"
-            >
-              Connected
-              <Badge className="ml-2 bg-gray-200 text-gray-700 dark:bg-gray-600 dark:text-gray-300">
-                {connections.filter(c => c.status === "connected").length}
-              </Badge>
-            </TabsTrigger>
-            <TabsTrigger 
-              value="blocked" 
-              className="data-[state=active]:bg-[#B22222] data-[state=active]:text-white"
-            >
-              Blocked
-              <Badge className="ml-2 bg-gray-200 text-gray-700 dark:bg-gray-600 dark:text-gray-300">
-                {connections.filter(c => c.status === "blocked").length}
-              </Badge>
-            </TabsTrigger>
-          </TabsList>
+          <div className="tabs-container flex justify-start items-stretch flex-nowrap w-full overflow-hidden md:flex-row flex-col md:gap-0 gap-2">
+            <TabsList className="grid w-full grid-cols-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+              <TabsTrigger 
+                value="connected" 
+                className="data-[state=active]:bg-[#B22222] data-[state=active]:text-white relative overflow-hidden"
+              >
+                <div className="tab-item flex items-center gap-2 px-4 box-border w-full">
+                  <span>Connected</span>
+                  <Badge className="tab-badge min-w-6 h-6 leading-6 text-center rounded-full bg-white text-gray-700 data-[state=active]:bg-white data-[state=active]:text-[#B22222]">
+                    {connections.filter(c => c.status === "connected").length}
+                  </Badge>
+                </div>
+              </TabsTrigger>
+              <TabsTrigger 
+                value="blocked" 
+                className="data-[state=active]:bg-[#B22222] data-[state=active]:text-white relative overflow-hidden"
+              >
+                <div className="tab-item flex items-center gap-2 px-4 box-border w-full">
+                  <span>Blocked</span>
+                  <Badge className="tab-badge min-w-6 h-6 leading-6 text-center rounded-full bg-white text-gray-700 data-[state=active]:bg-white data-[state=active]:text-[#B22222]">
+                    {connections.filter(c => c.status === "blocked").length}
+                  </Badge>
+                </div>
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
           {/* Search */}
           <div className="relative">
@@ -750,69 +753,73 @@ export default function ConnectionsPage() {
                 </CardContent>
               </Card>
             ) : (
-              filteredConnections.map((connection) => (
-                <Card key={connection.id} className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
-                  <CardContent className="p-4">
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                      <Avatar className="h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0">
-                        <AvatarImage src={connection.avatar} alt={connection.name} />
-                        <AvatarFallback className="bg-[#B22222] text-white text-sm sm:text-lg">{connection.name?.charAt(0) || 'U'}</AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 min-w-0 space-y-2">
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                          <div className="space-y-1">
-                            <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm sm:text-base truncate">
-                              @{connection.username}, {connection.age}
-                            </h3>
-                            <p className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm truncate">{connection.occupation}</p>
-                            <p className="text-gray-500 dark:text-gray-400 text-xs truncate">{connection.location}</p>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Badge className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400 text-xs">
-                              Connected
-                            </Badge>
-                            <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
-                              <Clock className="h-3 w-3 mr-1" />
-                              {formatTime(connection.lastSeen)}
+              <div className="grid gap-4">
+                {filteredConnections.map((connection) => (
+                  <Card key={connection.id} className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
+                    <CardContent className="p-4">
+                      <div className="flex items-start gap-4">
+                        <Avatar className="h-16 w-16 flex-shrink-0">
+                          <AvatarImage src={connection.avatar} alt={connection.name} />
+                          <AvatarFallback className="bg-[#B22222] text-white text-lg">{connection.name?.charAt(0) || 'U'}</AvatarFallback>
+                        </Avatar>
+                        
+                        <div className="flex-1 min-w-0">
+                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
+                            <div className="space-y-1">
+                              <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-base truncate">
+                                @{connection.username}, {connection.age}
+                              </h3>
+                              <p className="text-gray-600 dark:text-gray-300 text-sm truncate">{connection.occupation}</p>
+                              <p className="text-gray-500 dark:text-gray-400 text-xs truncate">{connection.location}</p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Badge className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400 text-xs">
+                                Connected
+                              </Badge>
+                              <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
+                                <Clock className="h-3 w-3 mr-1" />
+                                {formatTime(connection.lastSeen)}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-                          <Button
-                            onClick={() => router.push(`/messages?user=${connection.userId}`)}
-                            size="sm"
-                            className="bg-[#B22222] hover:bg-[#8B0000] text-white text-sm min-h-[44px]"
-                          >
-                            <MessageCircle className="h-4 w-4 mr-1" />
-                            Message
-                          </Button>
                           
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="sm" className="min-h-[44px]">
-                                <MoreVertical className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => { setSelectedProfile(connection); setIsProfileModalOpen(true); }}>
-                                View Profile
-                              </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleUnfriend(connection.id)}>
-                                <UserX className="h-4 w-4 mr-2" />
-                                Remove Connection
-                              </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleBlock(connection.id)}>
-                                <UserX className="h-4 w-4 mr-2" />
-                                Block User
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
+                          <div className="flex gap-2">
+                            <Button
+                              onClick={() => router.push(`/messages?user=${connection.userId}`)}
+                              size="sm"
+                              className="bg-[#B22222] hover:bg-[#8B0000] text-white text-sm h-10 flex-1"
+                            >
+                              <MessageCircle className="h-4 w-4 mr-2" />
+                              Chat
+                            </Button>
+                            
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="outline" size="sm" className="h-10 border-[#B22222] text-[#B22222] hover:bg-[#B22222] hover:text-white flex-1">
+                                  More
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem onClick={() => { setSelectedProfile(connection); setIsProfileModalOpen(true); }}>
+                                  View Profile
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleUnfriend(connection.id)}>
+                                  <UserX className="h-4 w-4 mr-2" />
+                                  Remove Connection
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleBlock(connection.id)}>
+                                  <UserX className="h-4 w-4 mr-2" />
+                                  Block User
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
             )}
           </TabsContent>
 
@@ -830,49 +837,51 @@ export default function ConnectionsPage() {
                 </CardContent>
               </Card>
             ) : (
-              filteredConnections.map((connection) => (
-                <Card key={connection.id} className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <Avatar className="h-16 w-16">
-                          <AvatarImage src={connection.avatar} alt={connection.name} />
-                          <AvatarFallback className="bg-[#B22222] text-white">
-                            {connection.name?.charAt(0) || 'U'}
-                          </AvatarFallback>
-                        </Avatar>
-                        
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-2 mb-1">
-                            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                              @{connection.username}, {connection.age}
-                            </h3>
-                            <Badge className="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
-                              Blocked
-                            </Badge>
+              <div className="grid gap-4">
+                {filteredConnections.map((connection) => (
+                  <Card key={connection.id} className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <Avatar className="h-16 w-16 flex-shrink-0">
+                            <AvatarImage src={connection.avatar} alt={connection.name} />
+                            <AvatarFallback className="bg-[#B22222] text-white text-lg">
+                              {connection.name?.charAt(0) || 'U'}
+                            </AvatarFallback>
+                          </Avatar>
+                          
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 truncate">
+                                @{connection.username}, {connection.age}
+                              </h3>
+                              <Badge className="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 text-xs">
+                                Blocked
+                              </Badge>
+                            </div>
+                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1 truncate">
+                              {connection.occupation} • {connection.location}
+                            </p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                              Blocked on {connection.lastSeen.toLocaleDateString()}
+                            </p>
                           </div>
-                          <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-                            {connection.occupation} • {connection.location}
-                          </p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">
-                            Blocked on {connection.lastSeen.toLocaleDateString()}
-                          </p>
                         </div>
+                        
+                        <Button
+                          onClick={() => handleUnblock(connection.id)}
+                          variant="outline"
+                          size="sm"
+                          className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 h-10"
+                        >
+                          <User className="h-4 w-4 mr-2" />
+                          Unblock
+                        </Button>
                       </div>
-                      
-                      <Button
-                        onClick={() => handleUnblock(connection.id)}
-                        variant="outline"
-                        size="sm"
-                        className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300"
-                      >
-                        <User className="h-4 w-4 mr-1" />
-                        Unblock
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
             )}
           </TabsContent>
         </Tabs>

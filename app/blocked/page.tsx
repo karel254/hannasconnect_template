@@ -9,7 +9,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { useToast } from "../../hooks/use-toast"
-import ProfileModal from "@/components/ProfileModal";
+import ProfileModal from "@/components/ProfileModal"
+import { useNavigationHistory } from "../../hooks/use-navigation-history"
 
 interface BlockedUser {
   id: string
@@ -28,6 +29,7 @@ interface BlockedUser {
 
 export default function BlockedUsersPage() {
   const router = useRouter()
+  const { goBack } = useNavigationHistory()
   const { toast } = useToast()
   const [user, setUser] = useState<any>(null)
   const [blockedUsers, setBlockedUsers] = useState<BlockedUser[]>([])
@@ -198,7 +200,7 @@ export default function BlockedUsersPage() {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => router.push("/dashboard")}
+            onClick={goBack}
             className="text-white hover:bg-white/20"
           >
             <ArrowLeft className="h-5 w-5" />
@@ -217,7 +219,7 @@ export default function BlockedUsersPage() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => router.push("/dashboard")}
+              onClick={goBack}
               className="text-white hover:bg-white/20"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
@@ -263,47 +265,47 @@ export default function BlockedUsersPage() {
             </CardContent>
           </Card>
         ) : (
-          <div className="space-y-4">
+          <div className="grid gap-4">
             {filteredBlockedUsers.map((blockedUser) => (
               <Card key={blockedUser.id} className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-                <CardContent className="p-6">
+                <CardContent className="p-4">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                      <Avatar className="h-16 w-16">
+                    <div className="flex items-center gap-4">
+                      <Avatar className="h-16 w-16 flex-shrink-0">
                         <AvatarImage src={blockedUser.avatar} alt={blockedUser.name} />
-                        <AvatarFallback className="bg-[#B22222] text-white">
+                        <AvatarFallback className="bg-[#B22222] text-white text-lg">
                           {blockedUser.name?.charAt(0) || 'U'}
                         </AvatarFallback>
                       </Avatar>
                       
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-2 mb-1">
-                          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 truncate">
                             @{blockedUser.username}, {blockedUser.age || calculateAge(blockedUser.dateOfBirth)}
                           </h3>
-                          <Badge className="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
+                          <Badge className="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 text-xs">
                             Blocked
                           </Badge>
                         </div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-1 truncate">
                           {blockedUser.occupation} • {blockedUser.location}
                         </p>
                         <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
                           Blocked {formatBlockedDate(blockedUser.blockedDate)}
                         </p>
                         {blockedUser.reason && (
-                          <p className="text-xs text-red-600 dark:text-red-400">
+                          <p className="text-xs text-red-600 dark:text-red-400 truncate">
                             Reason: {blockedUser.reason}
                           </p>
                         )}
                       </div>
                     </div>
                     
-                    <div className="flex gap-2">
+                    <div className="flex flex-col sm:flex-row gap-2">
                       <Button
                         variant="outline"
                         size="sm"
-                        className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300"
+                        className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 h-10"
                         onClick={() => { setSelectedProfile(blockedUser); setIsProfileModalOpen(true); }}
                       >
                         View Profile
@@ -312,9 +314,9 @@ export default function BlockedUsersPage() {
                         onClick={() => handleUnblock(blockedUser.id)}
                         variant="outline"
                         size="sm"
-                        className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300"
+                        className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 h-10"
                       >
-                        <User className="h-4 w-4 mr-1" />
+                        <User className="h-4 w-4 mr-2" />
                         Unblock
                       </Button>
                     </div>

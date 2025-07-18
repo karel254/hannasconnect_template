@@ -25,6 +25,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useToast } from "../../hooks/use-toast"
 import { ToastAction } from "@/components/ui/toast"
 import ProfileModal from "@/components/ProfileModal";
+import { useNavigationHistory } from "../../hooks/use-navigation-history"
 
 interface ConnectionRequest {
   id: string
@@ -58,6 +59,7 @@ function calculateAge(dateOfBirth: string) {
 export default function RequestsPage() {
   const router = useRouter()
   const { toast } = useToast()
+  const { goBack } = useNavigationHistory()
   // MOCK: current user is loaded from localStorage. Replace with real auth/session.
   const [user, setUser] = useState<any>(null)
   // MOCK DATA: requests and statuses are placeholders. Replace with API calls to fetch and update real request data from backend.
@@ -775,7 +777,7 @@ export default function RequestsPage() {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => router.push("/dashboard")}
+            onClick={goBack}
             className="text-white hover:bg-white/20"
           >
             <ArrowLeft className="h-5 w-5" />
@@ -794,7 +796,7 @@ export default function RequestsPage() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => router.push("/dashboard")}
+              onClick={goBack}
               className="text-white hover:bg-white/20"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />

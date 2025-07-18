@@ -37,6 +37,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { useToast } from "../../hooks/use-toast"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { useTheme } from "@/contexts/theme-context"
+import { useNavigationHistory } from "../../hooks/use-navigation-history"
 
 interface UserProfile {
   username: string
@@ -294,6 +295,7 @@ export default function ProfilePage() {
   const router = useRouter()
   const { toast } = useToast()
   const { theme, effectiveTheme, toggleTheme } = useTheme()
+  const { goBack } = useNavigationHistory()
   const [isEditing, setIsEditing] = useState(false)
   const [showAvatarSelection, setShowAvatarSelection] = useState(false)
   const [profile, setProfile] = useState<UserProfile>({
@@ -2378,10 +2380,10 @@ export default function ProfilePage() {
                 <CardTitle className="text-gray-900 dark:text-gray-100">Connection Management</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <Users className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-                    <div>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <Users className="h-5 w-5 text-gray-600 dark:text-gray-400 flex-shrink-0" />
+                    <div className="min-w-0">
                       <Label className="text-gray-700 dark:text-gray-300">Manage Connections</Label>
                       <p className="text-sm text-gray-500 dark:text-gray-400">
                         View and manage your connections
@@ -2392,16 +2394,16 @@ export default function ProfilePage() {
                     variant="outline"
                     size="sm"
                     onClick={() => router.push("/connections")}
-                    className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300"
+                    className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 h-10"
                   >
                     Manage
                   </Button>
                 </div>
                 
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <UserX className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-                    <div>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <UserX className="h-5 w-5 text-gray-600 dark:text-gray-400 flex-shrink-0" />
+                    <div className="min-w-0">
                       <Label className="text-gray-700 dark:text-gray-300">Blocked Users</Label>
                       <p className="text-sm text-gray-500 dark:text-gray-400">
                         Manage blocked users and privacy
@@ -2412,16 +2414,16 @@ export default function ProfilePage() {
                     variant="outline"
                     size="sm"
                     onClick={() => router.push("/blocked")}
-                    className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300"
+                    className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 h-10"
                   >
                     View
                   </Button>
                 </div>
                 
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <Clock className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-                    <div>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <Clock className="h-5 w-5 text-gray-600 dark:text-gray-400 flex-shrink-0" />
+                    <div className="min-w-0">
                       <Label className="text-gray-700 dark:text-gray-300">Pending Requests</Label>
                       <p className="text-sm text-gray-500 dark:text-gray-400">
                         View and manage pending connection requests
@@ -2432,7 +2434,7 @@ export default function ProfilePage() {
                     variant="outline"
                     size="sm"
                     onClick={() => router.push("/requests")}
-                    className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300"
+                    className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 h-10"
                   >
                     View
                   </Button>
