@@ -1255,6 +1255,107 @@ export default function Browse() {
                     </div>
                   </details>
 
+                  {/* Health */}
+                  <details className="mb-4">
+                    <summary className="font-semibold text-gray-900 dark:text-gray-100 cursor-pointer py-2">Health</summary>
+                    <div className="space-y-3 mt-2">
+                      {/* HIV Status */}
+                      <Label>HIV Status</Label>
+                      <Select value={selectedHivStatus} onValueChange={setSelectedHivStatus}>
+                        <SelectTrigger className="rounded-xl">
+                          <SelectValue placeholder="Any HIV Status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="any">Any</SelectItem>
+                          <SelectItem value="negative">Negative</SelectItem>
+                          <SelectItem value="positive">Positive</SelectItem>
+                          <SelectItem value="prefer-not-to-say">Prefer not to say</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      {/* Disability */}
+                      <Label>Disability</Label>
+                      <Select value={selectedDisability} onValueChange={setSelectedDisability}>
+                        <SelectTrigger className="rounded-xl">
+                          <SelectValue placeholder="Any Disability" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="any">Any</SelectItem>
+                          <SelectItem value="none">None</SelectItem>
+                          <SelectItem value="physical">Physical</SelectItem>
+                          <SelectItem value="visual">Visual</SelectItem>
+                          <SelectItem value="hearing">Hearing</SelectItem>
+                          <SelectItem value="cognitive">Cognitive</SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      {/* Chronic Illness */}
+                      <Label>Chronic Illness</Label>
+                      <Select value={selectedChronicIllness} onValueChange={setSelectedChronicIllness}>
+                        <SelectTrigger className="rounded-xl">
+                          <SelectValue placeholder="Any Chronic Illness" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="any">Any</SelectItem>
+                          <SelectItem value="none">None</SelectItem>
+                          <SelectItem value="diabetes">Diabetes</SelectItem>
+                          <SelectItem value="hypertension">Hypertension</SelectItem>
+                          <SelectItem value="asthma">Asthma</SelectItem>
+                          <SelectItem value="arthritis">Arthritis</SelectItem>
+                          <SelectItem value="heart-disease">Heart Disease</SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      {/* Allergies */}
+                      <Label>Allergies</Label>
+                      <Select value={selectedAllergies} onValueChange={setSelectedAllergies}>
+                        <SelectTrigger className="rounded-xl">
+                          <SelectValue placeholder="Any Allergies" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="any">Any</SelectItem>
+                          <SelectItem value="none">None</SelectItem>
+                          <SelectItem value="food">Food</SelectItem>
+                          <SelectItem value="medication">Medication</SelectItem>
+                          <SelectItem value="environmental">Environmental</SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      {/* Blood Type */}
+                      <Label>Blood Type</Label>
+                      <Select value={selectedBloodType} onValueChange={setSelectedBloodType}>
+                        <SelectTrigger className="rounded-xl">
+                          <SelectValue placeholder="Any Blood Type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="any">Any</SelectItem>
+                          <SelectItem value="a-positive">A+</SelectItem>
+                          <SelectItem value="a-negative">A-</SelectItem>
+                          <SelectItem value="b-positive">B+</SelectItem>
+                          <SelectItem value="b-negative">B-</SelectItem>
+                          <SelectItem value="ab-positive">AB+</SelectItem>
+                          <SelectItem value="ab-negative">AB-</SelectItem>
+                          <SelectItem value="o-positive">O+</SelectItem>
+                          <SelectItem value="o-negative">O-</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      {/* Exercise Frequency */}
+                      <Label>Exercise Frequency</Label>
+                      <Select value={selectedExerciseFrequency} onValueChange={setSelectedExerciseFrequency}>
+                        <SelectTrigger className="rounded-xl">
+                          <SelectValue placeholder="Any Exercise Frequency" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="any">Any</SelectItem>
+                          <SelectItem value="never">Never</SelectItem>
+                          <SelectItem value="rarely">Rarely</SelectItem>
+                          <SelectItem value="sometimes">Sometimes</SelectItem>
+                          <SelectItem value="regularly">Regularly</SelectItem>
+                          <SelectItem value="daily">Daily</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </details>
+
                   {/* Lifestyle */}
                   <details className="mb-4">
                     <summary className="font-semibold text-gray-900 dark:text-gray-100 cursor-pointer py-2">Lifestyle</summary>
@@ -1590,66 +1691,6 @@ export default function Browse() {
                   </div>
                 </details>
 
-                {/* Lifestyle */}
-                <details className="mb-4">
-                  <summary className="font-semibold text-gray-900 dark:text-gray-100 cursor-pointer py-2">Lifestyle</summary>
-                  <div className="space-y-3 mt-2">
-                    {/* Smoking */}
-                    <Label>Smoking</Label>
-                    <Select value={selectedSmoking} onValueChange={setSelectedSmoking}>
-                      <SelectTrigger className="rounded-xl">
-                        <SelectValue placeholder="Any Smoking" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="any">Any</SelectItem>
-                        <SelectItem value="yes">Yes</SelectItem>
-                        <SelectItem value="no">No</SelectItem>
-                        <SelectItem value="occasionally">Occasionally</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    {/* Alcohol */}
-                    <Label>Alcohol</Label>
-                    <Select value={selectedAlcohol} onValueChange={setSelectedAlcohol}>
-                      <SelectTrigger className="rounded-xl">
-                        <SelectValue placeholder="Any Alcohol" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="any">Any</SelectItem>
-                        <SelectItem value="yes">Yes</SelectItem>
-                        <SelectItem value="no">No</SelectItem>
-                        <SelectItem value="occasionally">Occasionally</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    {/* Dietary Preference */}
-                    <Label>Dietary Preference</Label>
-                    <Input value={selectedDietaryPreference} onChange={e => setSelectedDietaryPreference(e.target.value)} placeholder="Any Diet" className="rounded-xl" />
-                    {/* Pets */}
-                    <Label>Pets</Label>
-                    <Select value={selectedPets} onValueChange={setSelectedPets}>
-                      <SelectTrigger className="rounded-xl">
-                        <SelectValue placeholder="Any Pets" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="any">Any</SelectItem>
-                        <SelectItem value="yes">Yes</SelectItem>
-                        <SelectItem value="no">No</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    {/* Snoring */}
-                    <Label>Snoring</Label>
-                    <Select value={selectedSnoring} onValueChange={setSelectedSnoring}>
-                      <SelectTrigger className="rounded-xl">
-                        <SelectValue placeholder="Any Snoring" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="any">Any</SelectItem>
-                        <SelectItem value="yes">Yes</SelectItem>
-                        <SelectItem value="no">No</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </details>
-
                 {/* Health */}
                 <details className="mb-4">
                   <summary className="font-semibold text-gray-900 dark:text-gray-100 cursor-pointer py-2">Health</summary>
@@ -1746,6 +1787,66 @@ export default function Browse() {
                         <SelectItem value="sometimes">Sometimes</SelectItem>
                         <SelectItem value="regularly">Regularly</SelectItem>
                         <SelectItem value="daily">Daily</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </details>
+
+                {/* Lifestyle */}
+                <details className="mb-4">
+                  <summary className="font-semibold text-gray-900 dark:text-gray-100 cursor-pointer py-2">Lifestyle</summary>
+                  <div className="space-y-3 mt-2">
+                    {/* Smoking */}
+                    <Label>Smoking</Label>
+                    <Select value={selectedSmoking} onValueChange={setSelectedSmoking}>
+                      <SelectTrigger className="rounded-xl">
+                        <SelectValue placeholder="Any Smoking" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="any">Any</SelectItem>
+                        <SelectItem value="yes">Yes</SelectItem>
+                        <SelectItem value="no">No</SelectItem>
+                        <SelectItem value="occasionally">Occasionally</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {/* Alcohol */}
+                    <Label>Alcohol</Label>
+                    <Select value={selectedAlcohol} onValueChange={setSelectedAlcohol}>
+                      <SelectTrigger className="rounded-xl">
+                        <SelectValue placeholder="Any Alcohol" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="any">Any</SelectItem>
+                        <SelectItem value="yes">Yes</SelectItem>
+                        <SelectItem value="no">No</SelectItem>
+                        <SelectItem value="occasionally">Occasionally</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {/* Dietary Preference */}
+                    <Label>Dietary Preference</Label>
+                    <Input value={selectedDietaryPreference} onChange={e => setSelectedDietaryPreference(e.target.value)} placeholder="Any Diet" className="rounded-xl" />
+                    {/* Pets */}
+                    <Label>Pets</Label>
+                    <Select value={selectedPets} onValueChange={setSelectedPets}>
+                      <SelectTrigger className="rounded-xl">
+                        <SelectValue placeholder="Any Pets" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="any">Any</SelectItem>
+                        <SelectItem value="yes">Yes</SelectItem>
+                        <SelectItem value="no">No</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {/* Snoring */}
+                    <Label>Snoring</Label>
+                    <Select value={selectedSnoring} onValueChange={setSelectedSnoring}>
+                      <SelectTrigger className="rounded-xl">
+                        <SelectValue placeholder="Any Snoring" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="any">Any</SelectItem>
+                        <SelectItem value="yes">Yes</SelectItem>
+                        <SelectItem value="no">No</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
