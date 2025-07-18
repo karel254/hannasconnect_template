@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import { User, UserX, Search, ArrowLeft, MessageCircle, MoreVertical, Clock } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -36,10 +36,8 @@ export default function ConnectionsPage() {
   const [user, setUser] = useState<any>(null)
   const [connections, setConnections] = useState<Connection[]>([])
   const [searchQuery, setSearchQuery] = useState("")
-  const [activeTab, setActiveTab] = useState("connected")
-  // Add state for modal open/close and selected profile
-  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
-  const [selectedProfile, setSelectedProfile] = useState(null);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false)
+  const [selectedProfile, setSelectedProfile] = useState<any>(null)
 
   useEffect(() => {
     // Check if user is logged in
@@ -55,526 +53,92 @@ export default function ConnectionsPage() {
   }, [router])
 
   const loadConnections = () => {
-    // Sample connections data
+    // Sample connections data - only connected users
     const sampleConnections: Connection[] = [
-      // Kenyan users
       {
         id: "1",
         userId: "brianotieno",
-        name: "Brian Otieno",
         username: "brianotieno",
+        name: "Brian Otieno",
         age: 34,
-        gender: "Male",
-        dateOfBirth: "1990-02-10",
         occupation: "Engineer",
         location: "Kisumu, Kenya",
-        county: "Kisumu",
-        country: "Kenya",
-        tribe: "Luo",
-        languages: ["English", "Swahili", "Dholuo"],
         avatar: "/images/male3.jpg",
-        lastSeen: new Date(Date.now() - 30 * 60 * 1000),
+        lastSeen: new Date(Date.now() - 30 * 60 * 1000), // 30 minutes ago
         isOnline: true,
         compatibility: 93,
-        status: "connected",
-        // Personal Info
-        race: "African",
-        // Physical Appearance
-        height: "5'10\"",
-        weight: "75kg",
-        bodyType: "Athletic",
-        complexion: "Dark",
-        eyeColor: "Brown",
-        dimples: "No",
-        teethFeatures: "Straight",
-        tattoos: "No",
-        piercings: "No",
-        glasses: "No",
-        selfDescriptionPhysical: "Athletic build with a warm smile",
-        // Health
-        hivStatus: "Negative",
-        disability: "None",
-        chronicIllness: "None",
-        allergies: "None",
-        bloodType: "O+",
-        snoring: "Occasionally",
-        // Work & Lifestyle
-        employmentStatus: "Employed",
-        workCountry: "Kenya",
-        workCounty: "Kisumu",
-        workConstituency: "Kisumu Central",
-        workWard: "Kisumu Central",
-        workState: "Kisumu",
-        financialStability: "Stable",
-        alcohol: "Occasionally",
-        smoking: "No",
-        dietaryPreference: "No restrictions",
-        hasPets: "No",
-        exerciseFrequency: "3-4 times per week",
-        hobbies: "Reading, hiking, cooking",
-        // Beliefs
-        religion: "Christian",
-        religiousness: 7,
-        denomination: "Protestant",
-        churchAttendance: "Regular",
-        // Family
-        maritalStatus: "Single",
-        hasChildren: "No",
-        numberOfChildren: 0,
-        childrenAges: "N/A",
-        childrenLiveWithUser: "N/A",
-        wantsChildren: "Yes",
-        acceptsPartnerWithKids: "Yes",
-        // Preferences
-        openToRelocate: "Yes",
-        sexualOrientation: "Straight",
-        relationshipTradition: "Traditional",
-        longDistanceOk: "Yes",
-        datingPerspective: "Serious",
-        dealBreakers: "Dishonesty, lack of ambition",
-        relationshipHopes: "Marriage and family",
-        partnerPreferences: "Kind, ambitious, family-oriented",
-        personalityType: "INTJ",
-        dontContactIf: "Not interested in serious relationships",
-        imperfections: "I'm not perfect, and I don't expect perfection",
-        politicalViews: "Moderate",
-        dateDifferentPolitics: "Yes",
-        believesInMarriage: "Yes",
-        // About Me
-        bio: "Engineer from Kisumu with a passion for technology and community development.",
-        selfDescription: "I'm a dedicated engineer who loves solving problems and building things that make a difference. When I'm not coding, you'll find me playing football or exploring new places. I believe in the power of community and am always looking for ways to give back."
+        status: "connected"
       },
       {
         id: "2",
         userId: "faithwambui",
-        name: "Faith Wambui",
         username: "faithwambui",
+        name: "Faith Wambui",
         age: 27,
-        gender: "Female",
-        dateOfBirth: "1997-06-18",
         occupation: "Banker",
         location: "Nairobi, Kenya",
-        county: "Nairobi",
-        country: "Kenya",
-        tribe: "Kikuyu",
-        languages: ["English", "Swahili", "Kikuyu"],
         avatar: "/images/female3.jpg",
-        lastSeen: new Date(Date.now() - 2 * 60 * 60 * 1000),
+        lastSeen: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
         isOnline: false,
-        compatibility: 89,
-        status: "connected",
-        // Personal Info
-        race: "African",
-        // Physical Appearance
-        height: "5'6\"",
-        weight: "60kg",
-        bodyType: "Slim",
-        complexion: "Medium",
-        eyeColor: "Brown",
-        dimples: "Yes",
-        teethFeatures: "Straight",
-        tattoos: "No",
-        piercings: "Earrings only",
-        glasses: "No",
-        selfDescriptionPhysical: "Slim build with a bright smile and dimples",
-        // Health
-        hivStatus: "Negative",
-        disability: "None",
-        chronicIllness: "None",
-        allergies: "None",
-        bloodType: "A+",
-        snoring: "No",
-        // Work & Lifestyle
-        employmentStatus: "Employed",
-        workCountry: "Kenya",
-        workCounty: "Nairobi",
-        workConstituency: "Nairobi Central",
-        workWard: "Nairobi Central",
-        workState: "Nairobi",
-        financialStability: "Stable",
-        alcohol: "No",
-        smoking: "No",
-        dietaryPreference: "Vegetarian",
-        hasPets: "Yes",
-        exerciseFrequency: "2-3 times per week",
-        hobbies: "Baking, yoga, reading novels",
-        // Beliefs
-        religion: "Christian",
-        religiousness: 8,
-        denomination: "Catholic",
-        churchAttendance: "Regular",
-        // Family
-        maritalStatus: "Single",
-        hasChildren: "No",
-        numberOfChildren: 0,
-        childrenAges: "N/A",
-        childrenLiveWithUser: "N/A",
-        wantsChildren: "Yes",
-        acceptsPartnerWithKids: "Yes",
-        // Preferences
-        openToRelocate: "Within Kenya",
-        sexualOrientation: "Straight",
-        relationshipTradition: "Traditional",
-        longDistanceOk: "No",
-        datingPerspective: "Serious",
-        dealBreakers: "Smoking, dishonesty",
-        relationshipHopes: "Marriage and family",
-        partnerPreferences: "Honest, family-oriented, ambitious",
-        personalityType: "ENFJ",
-        dontContactIf: "Not looking for serious relationships",
-        imperfections: "I'm a work in progress, just like everyone else",
-        politicalViews: "Conservative",
-        dateDifferentPolitics: "Yes",
-        believesInMarriage: "Yes",
-        // About Me
-        bio: "Banker in Nairobi with a love for cooking and reading.",
-        selfDescription: "I'm a passionate banker who believes in financial literacy and helping others achieve their dreams. I love experimenting with new recipes and getting lost in good books. I value honesty, family, and building meaningful connections."
+        compatibility: 87,
+        status: "connected"
       },
       {
         id: "3",
         userId: "janetmwikali",
-        name: "Janet Mwikali",
         username: "janetmwikali",
+        name: "Janet Mwikali",
         age: 29,
-        gender: "Female",
-        dateOfBirth: "1995-04-12",
         occupation: "Teacher",
         location: "Machakos, Kenya",
-        county: "Machakos",
-        country: "Kenya",
-        tribe: "Kamba",
-        languages: ["English", "Swahili", "Kikamba"],
         avatar: "/images/female4.jpg",
-        lastSeen: new Date(Date.now() - 24 * 60 * 60 * 1000),
+        lastSeen: new Date(Date.now() - 1 * 60 * 60 * 1000), // 1 hour ago
         isOnline: false,
         compatibility: 91,
-        status: "connected",
-        // Personal Info
-        race: "African",
-        // Physical Appearance
-        height: "5'7\"",
-        weight: "65kg",
-        bodyType: "Average",
-        complexion: "Medium",
-        eyeColor: "Brown",
-        dimples: "No",
-        teethFeatures: "Straight",
-        tattoos: "No",
-        piercings: "No",
-        glasses: "Yes",
-        selfDescriptionPhysical: "Average build with glasses and a warm smile",
-        // Health
-        hivStatus: "Negative",
-        disability: "None",
-        chronicIllness: "None",
-        allergies: "Dust",
-        bloodType: "B+",
-        snoring: "No",
-        // Work & Lifestyle
-        employmentStatus: "Employed",
-        workCountry: "Kenya",
-        workCounty: "Machakos",
-        workConstituency: "Machakos Town",
-        workWard: "Machakos Town",
-        workState: "Machakos",
-        financialStability: "Stable",
-        alcohol: "No",
-        smoking: "No",
-        dietaryPreference: "No restrictions",
-        hasPets: "No",
-        exerciseFrequency: "Daily walks",
-        hobbies: "Singing, community service, reading",
-        // Beliefs
-        religion: "Christian",
-        religiousness: 9,
-        denomination: "Protestant",
-        churchAttendance: "Regular",
-        // Family
-        maritalStatus: "Single",
-        hasChildren: "No",
-        numberOfChildren: 0,
-        childrenAges: "N/A",
-        childrenLiveWithUser: "N/A",
-        wantsChildren: "Yes",
-        acceptsPartnerWithKids: "Yes",
-        // Preferences
-        openToRelocate: "Within Kenya",
-        sexualOrientation: "Straight",
-        relationshipTradition: "Traditional",
-        longDistanceOk: "No",
-        datingPerspective: "Serious",
-        dealBreakers: "Lack of values, dishonesty",
-        relationshipHopes: "Marriage and family",
-        partnerPreferences: "Values-driven, family-oriented, kind",
-        personalityType: "INFJ",
-        dontContactIf: "Not interested in serious relationships",
-        imperfections: "I'm perfectly imperfect and embrace it",
-        politicalViews: "Moderate",
-        dateDifferentPolitics: "Yes",
-        believesInMarriage: "Yes",
-        // About Me
-        bio: "Teacher from Machakos passionate about education and community service.",
-        selfDescription: "I'm a dedicated teacher who believes in the power of education to transform lives. I love music and find joy in helping others through community service. I'm looking for someone who shares my values and commitment to making a positive impact."
+        status: "connected"
       },
       {
         id: "4",
         userId: "petermwangi",
-        name: "Peter Mwangi",
         username: "petermwangi",
+        name: "Peter Mwangi",
         age: 44,
-        gender: "Male",
-        dateOfBirth: "1980-09-03",
         occupation: "Businessman",
         location: "Nakuru, Kenya",
-        county: "Nakuru",
-        country: "Kenya",
-        tribe: "Kikuyu",
-        languages: ["English", "Swahili", "Kikuyu"],
         avatar: "/images/male4.jpeg",
-        lastSeen: new Date(Date.now() - 48 * 60 * 60 * 1000),
+        lastSeen: new Date(Date.now() - 15 * 60 * 1000), // 15 minutes ago
         isOnline: true,
-        compatibility: 87,
-        status: "connected",
-        // Personal Info
-        race: "African",
-        // Physical Appearance
-        height: "6'0\"",
-        weight: "85kg",
-        bodyType: "Athletic",
-        complexion: "Medium",
-        eyeColor: "Brown",
-        dimples: "No",
-        teethFeatures: "Straight",
-        tattoos: "No",
-        piercings: "No",
-        glasses: "No",
-        selfDescriptionPhysical: "Athletic build with a confident presence",
-        // Health
-        hivStatus: "Negative",
-        disability: "None",
-        chronicIllness: "None",
-        allergies: "None",
-        bloodType: "O+",
-        snoring: "Occasionally",
-        // Work & Lifestyle
-        employmentStatus: "Self-employed",
-        workCountry: "Kenya",
-        workCounty: "Nakuru",
-        workConstituency: "Nakuru Town East",
-        workWard: "Nakuru Town East",
-        workState: "Nakuru",
-        financialStability: "Very stable",
-        alcohol: "Occasionally",
-        smoking: "No",
-        dietaryPreference: "No restrictions",
-        hasPets: "Yes",
-        exerciseFrequency: "3 times per week",
-        hobbies: "Golf, business networking, travel",
-        // Beliefs
-        religion: "Christian",
-        religiousness: 6,
-        denomination: "Protestant",
-        churchAttendance: "Occasional",
-        // Family
-        maritalStatus: "Divorced",
-        hasChildren: "Yes",
-        numberOfChildren: 2,
-        childrenAges: "12, 15",
-        childrenLiveWithUser: "Part-time",
-        wantsChildren: "Open to more",
-        acceptsPartnerWithKids: "Yes",
-        // Preferences
-        openToRelocate: "No",
-        sexualOrientation: "Straight",
-        relationshipTradition: "Traditional",
-        longDistanceOk: "No",
-        datingPerspective: "Serious",
-        dealBreakers: "Dishonesty, lack of ambition",
-        relationshipHopes: "Companionship and partnership",
-        partnerPreferences: "Independent, ambitious, family-oriented",
-        personalityType: "ENTJ",
-        dontContactIf: "Not interested in serious relationships",
-        imperfections: "I'm human and embrace my flaws",
-        politicalViews: "Conservative",
-        dateDifferentPolitics: "Yes",
-        believesInMarriage: "Yes",
-        // About Me
-        bio: "Businessman in Nakuru with a passion for golf and travel.",
-        selfDescription: "I'm a successful businessman who values hard work and family. I enjoy golf and traveling to new places. I'm looking for someone who is independent, ambitious, and shares my values of family and success."
+        compatibility: 78,
+        status: "connected"
       },
-      // International users
       {
         id: "5",
         userId: "emilysmith",
-        name: "Emily Smith",
         username: "emilysmith",
+        name: "Emily Smith",
         age: 31,
-        gender: "Female",
-        dateOfBirth: "1993-11-10",
         occupation: "Software Engineer",
         location: "London, UK",
-        county: "Greater London",
-        country: "UK",
-        tribe: "N/A",
-        languages: ["English", "French"],
         avatar: "/images/female5.jpg",
-        lastSeen: new Date(Date.now() - 72 * 60 * 60 * 1000),
+        lastSeen: new Date(Date.now() - 45 * 60 * 1000), // 45 minutes ago
         isOnline: false,
-        compatibility: 80,
-        status: "connected",
-        // Personal Info
-        race: "Caucasian",
-        // Physical Appearance
-        height: "5'7\"",
-        weight: "65kg",
-        bodyType: "Slim",
-        complexion: "Fair",
-        eyeColor: "Blue",
-        dimples: "No",
-        teethFeatures: "Straight",
-        tattoos: "No",
-        piercings: "Earrings only",
-        glasses: "No",
-        selfDescriptionPhysical: "Slim build with blue eyes and a warm smile",
-        // Health
-        hivStatus: "Negative",
-        disability: "None",
-        chronicIllness: "None",
-        allergies: "None",
-        bloodType: "A+",
-        snoring: "No",
-        // Work & Lifestyle
-        employmentStatus: "Employed",
-        workCountry: "UK",
-        workCounty: "Greater London",
-        workConstituency: "N/A",
-        workWard: "N/A",
-        workState: "London",
-        financialStability: "Stable",
-        alcohol: "Occasionally",
-        smoking: "No",
-        dietaryPreference: "Vegetarian",
-        hasPets: "Yes",
-        exerciseFrequency: "Yoga and gym",
-        hobbies: "Coding, yoga, exploring new cities",
-        // Beliefs
-        religion: "Agnostic",
-        religiousness: 3,
-        denomination: "N/A",
-        churchAttendance: "Never",
-        // Family
-        maritalStatus: "Single",
-        hasChildren: "No",
-        numberOfChildren: 0,
-        childrenAges: "N/A",
-        childrenLiveWithUser: "N/A",
-        wantsChildren: "Maybe",
-        acceptsPartnerWithKids: "Yes",
-        // Preferences
-        openToRelocate: "Yes",
-        sexualOrientation: "Straight",
-        relationshipTradition: "Modern",
-        longDistanceOk: "Yes",
-        datingPerspective: "Casual to serious",
-        dealBreakers: "Lack of ambition, closed-mindedness",
-        relationshipHopes: "Partnership and growth",
-        partnerPreferences: "Ambitious, open-minded, adventurous",
-        personalityType: "INTJ",
-        dontContactIf: "Not interested in relationships",
-        imperfections: "I embrace my imperfections and quirks",
-        politicalViews: "Liberal",
-        dateDifferentPolitics: "Yes",
-        believesInMarriage: "Maybe",
-        // About Me
-        bio: "Software engineer from London with a passion for technology and travel.",
-        selfDescription: "I'm a tech enthusiast who loves solving complex problems and exploring new places. I value independence, growth, and meaningful connections. I'm looking for someone who shares my curiosity and passion for life."
+        compatibility: 85,
+        status: "connected"
       },
       {
         id: "6",
         userId: "rajpatel",
-        name: "Raj Patel",
         username: "rajpatel",
+        name: "Raj Patel",
         age: 36,
-        gender: "Male",
-        dateOfBirth: "1988-05-22",
         occupation: "Doctor",
         location: "Mumbai, India",
-        county: "Maharashtra",
-        country: "India",
-        tribe: "N/A",
-        languages: ["English", "Hindi", "Gujarati"],
         avatar: "/images/male2.jpg",
-        lastSeen: new Date(Date.now() - 96 * 60 * 60 * 1000),
+        lastSeen: new Date(Date.now() - 3 * 60 * 60 * 1000), // 3 hours ago
         isOnline: false,
-        compatibility: 78,
-        status: "connected",
-        // Personal Info
-        race: "Asian",
-        // Physical Appearance
-        height: "5'9\"",
-        weight: "72kg",
-        bodyType: "Average",
-        complexion: "Medium",
-        eyeColor: "Brown",
-        dimples: "No",
-        teethFeatures: "Straight",
-        tattoos: "No",
-        piercings: "No",
-        glasses: "No",
-        selfDescriptionPhysical: "Average build with a professional appearance",
-        // Health
-        hivStatus: "Negative",
-        disability: "None",
-        chronicIllness: "None",
-        allergies: "None",
-        bloodType: "B+",
-        snoring: "Occasionally",
-        // Work & Lifestyle
-        employmentStatus: "Employed",
-        workCountry: "India",
-        workCounty: "Maharashtra",
-        workConstituency: "Mumbai Central",
-        workWard: "Mumbai Central",
-        workState: "Maharashtra",
-        financialStability: "Very stable",
-        alcohol: "No",
-        smoking: "No",
-        dietaryPreference: "Vegetarian",
-        hasPets: "No",
-        exerciseFrequency: "3 times per week",
-        hobbies: "Cricket, cooking, reading medical journals",
-        // Beliefs
-        religion: "Hindu",
-        religiousness: 8,
-        denomination: "N/A",
-        churchAttendance: "Regular temple visits",
-        // Family
-        maritalStatus: "Single",
-        hasChildren: "No",
-        numberOfChildren: 0,
-        childrenAges: "N/A",
-        childrenLiveWithUser: "N/A",
-        wantsChildren: "Yes",
-        acceptsPartnerWithKids: "Yes",
-        // Preferences
-        openToRelocate: "Within India",
-        sexualOrientation: "Straight",
-        relationshipTradition: "Traditional",
-        longDistanceOk: "No",
-        datingPerspective: "Serious",
-        dealBreakers: "Dishonesty, lack of family values",
-        relationshipHopes: "Marriage and family",
-        partnerPreferences: "Family-oriented, educated, kind",
-        personalityType: "ISFJ",
-        dontContactIf: "Not interested in serious relationships",
-        imperfections: "I'm human and embrace my flaws",
-        politicalViews: "Moderate",
-        dateDifferentPolitics: "Yes",
-        believesInMarriage: "Yes",
-        // About Me
-        bio: "Doctor from Mumbai with a passion for medicine and cricket.",
-        selfDescription: "I'm a dedicated doctor who believes in serving others and maintaining strong family values. I love cricket and cooking traditional Indian dishes. I'm looking for someone who shares my values of family, education, and service to others."
-      },
+        compatibility: 82,
+        status: "connected"
+      }
     ]
     setConnections(sampleConnections)
   }
@@ -591,33 +155,20 @@ export default function ConnectionsPage() {
   }
 
   const handleBlock = (connectionId: string) => {
+    // Remove the connection from the list (it will go to blocked users page)
     setConnections(prev => 
-      prev.map(conn => 
-        conn.id === connectionId 
-          ? { ...conn, status: "blocked" as const }
-          : conn
-      )
+      prev.filter(conn => conn.id !== connectionId)
     )
     
     toast({
       title: "User Blocked",
-      description: "The user has been blocked successfully.",
+      description: "The user has been blocked. You can manage blocked users in the Blocked Users section.",
     })
-  }
-
-  const handleUnblock = (connectionId: string) => {
-    setConnections(prev => 
-      prev.map(conn => 
-        conn.id === connectionId 
-          ? { ...conn, status: "connected" as const }
-          : conn
-      )
-    )
     
-    toast({
-      title: "User Unblocked",
-      description: "The user has been unblocked successfully.",
-    })
+    // Optionally redirect to blocked users page
+    setTimeout(() => {
+      router.push("/blocked")
+    }, 1500)
   }
 
   const formatLastSeen = (date: Date): string => {
@@ -640,12 +191,17 @@ export default function ConnectionsPage() {
     return `${Math.floor(diffInMinutes / 1440)}d ago`;
   };
 
-  const filteredConnections = connections.filter(connection => {
-    const matchesSearch = connection.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         connection.occupation.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesTab = activeTab === "connected" ? connection.status === "connected" : connection.status === "blocked"
-    return matchesSearch && matchesTab
-  })
+  // Filter connections to only show connected users
+  const filteredConnections = useMemo(() => {
+    return connections
+      .filter(connection => connection.status === "connected")
+      .filter(connection =>
+        connection.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        connection.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        connection.occupation.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        connection.location.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+  }, [connections, searchQuery])
 
   if (!user) {
     return (
@@ -699,192 +255,100 @@ export default function ConnectionsPage() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-6">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <div className="tabs-container flex justify-start items-stretch flex-nowrap w-full overflow-hidden md:flex-row flex-col md:gap-0 gap-2">
-            <TabsList className="grid w-full grid-cols-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-              <TabsTrigger 
-                value="connected" 
-                className="data-[state=active]:bg-[#B22222] data-[state=active]:text-white relative overflow-hidden"
-              >
-                <div className="tab-item flex items-center gap-2 px-4 box-border w-full">
-                  <span>Connected</span>
-                  <Badge className="tab-badge min-w-6 h-6 leading-6 text-center rounded-full bg-white text-gray-700 data-[state=active]:bg-white data-[state=active]:text-[#B22222]">
-                    {connections.filter(c => c.status === "connected").length}
-                  </Badge>
-                </div>
-              </TabsTrigger>
-              <TabsTrigger 
-                value="blocked" 
-                className="data-[state=active]:bg-[#B22222] data-[state=active]:text-white relative overflow-hidden"
-              >
-                <div className="tab-item flex items-center gap-2 px-4 box-border w-full">
-                  <span>Blocked</span>
-                  <Badge className="tab-badge min-w-6 h-6 leading-6 text-center rounded-full bg-white text-gray-700 data-[state=active]:bg-white data-[state=active]:text-[#B22222]">
-                    {connections.filter(c => c.status === "blocked").length}
-                  </Badge>
-                </div>
-              </TabsTrigger>
-            </TabsList>
-          </div>
+      <div className="container mx-auto px-2 sm:px-4 py-6">
+        {/* Search */}
+        <div className="relative mb-6">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+          <Input
+            placeholder="Search connections..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+          />
+        </div>
 
-          {/* Search */}
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input
-              placeholder="Search connections..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
-            />
-          </div>
-
-          <TabsContent value="connected" className="space-y-4">
-            {filteredConnections.length === 0 ? (
-              <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-                <CardContent className="p-8 text-center">
-                  <User className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
-                    No Connections Found
-                  </h3>
-                  <p className="text-gray-500 dark:text-gray-400">
-                    {searchQuery ? "No connections match your search." : "You don't have any connections yet."}
-                  </p>
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="grid gap-4">
-                {filteredConnections.map((connection) => (
-                  <Card key={connection.id} className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
-                    <CardContent className="p-4">
-                      <div className="flex items-start gap-4">
-                        <Avatar className="h-16 w-16 flex-shrink-0">
-                          <AvatarImage src={connection.avatar} alt={connection.name} />
-                          <AvatarFallback className="bg-[#B22222] text-white text-lg">{connection.name?.charAt(0) || 'U'}</AvatarFallback>
-                        </Avatar>
-                        
-                        <div className="flex-1 min-w-0">
-                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
-                            <div className="space-y-1">
-                              <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-base truncate">
-                                @{connection.username}, {connection.age}
-                              </h3>
-                              <p className="text-gray-600 dark:text-gray-300 text-sm truncate">{connection.occupation}</p>
-                              <p className="text-gray-500 dark:text-gray-400 text-xs truncate">{connection.location}</p>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Badge className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400 text-xs">
-                                Connected
-                              </Badge>
-                              <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
-                                <Clock className="h-3 w-3 mr-1" />
-                                {formatTime(connection.lastSeen)}
-                              </div>
-                            </div>
-                          </div>
-                          
-                          <div className="flex gap-2">
-                            <Button
-                              onClick={() => router.push(`/messages?user=${connection.userId}`)}
-                              size="sm"
-                              className="bg-[#B22222] hover:bg-[#8B0000] text-white text-sm h-10 flex-1"
-                            >
-                              <MessageCircle className="h-4 w-4 mr-2" />
-                              Chat
-                            </Button>
-                            
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button variant="outline" size="sm" className="h-10 border-[#B22222] text-[#B22222] hover:bg-[#B22222] hover:text-white flex-1">
-                                  More
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => { setSelectedProfile(connection); setIsProfileModalOpen(true); }}>
-                                  View Profile
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleUnfriend(connection.id)}>
-                                  <UserX className="h-4 w-4 mr-2" />
-                                  Remove Connection
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleBlock(connection.id)}>
-                                  <UserX className="h-4 w-4 mr-2" />
-                                  Block User
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
+        {/* Connections List */}
+        {filteredConnections.length === 0 ? (
+          <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+            <CardContent className="p-4 sm:p-8 text-center">
+              <User className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+                No Connections Found
+              </h3>
+              <p className="text-gray-500 dark:text-gray-400">
+                {searchQuery ? "No connections match your search." : "You don't have any connections yet."}
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid gap-4">
+            {filteredConnections.map((connection) => (
+              <Card key={connection.id} className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
+                <CardContent className="p-3 sm:p-4">
+                  <div className="flex items-start gap-3 sm:gap-4">
+                    <Avatar className="h-12 w-12 sm:h-16 sm:w-16 flex-shrink-0">
+                      <AvatarImage src={connection.avatar} alt={connection.name} />
+                      <AvatarFallback className="bg-[#B22222] text-white text-sm sm:text-lg">{connection.name?.charAt(0) || 'U'}</AvatarFallback>
+                    </Avatar>
+                    
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
+                        <div className="space-y-1">
+                          <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm sm:text-base truncate">
+                            @{connection.username}, {connection.age}
+                          </h3>
+                          <p className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm truncate">{connection.occupation}</p>
+                          <p className="text-gray-500 dark:text-gray-400 text-xs truncate">{connection.location}</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Badge className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400 text-xs">
+                            Connected
+                          </Badge>
+                          <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
+                            <Clock className="h-3 w-3 mr-1" />
+                            {formatTime(connection.lastSeen)}
                           </div>
                         </div>
                       </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            )}
-          </TabsContent>
-
-          <TabsContent value="blocked" className="space-y-4">
-            {filteredConnections.length === 0 ? (
-              <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-                <CardContent className="p-8 text-center">
-                  <UserX className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
-                    No Blocked Users
-                  </h3>
-                  <p className="text-gray-500 dark:text-gray-400">
-                    {searchQuery ? "No blocked users match your search." : "You haven't blocked any users."}
-                  </p>
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="grid gap-4">
-                {filteredConnections.map((connection) => (
-                  <Card key={connection.id} className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-                    <CardContent className="p-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                          <Avatar className="h-16 w-16 flex-shrink-0">
-                            <AvatarImage src={connection.avatar} alt={connection.name} />
-                            <AvatarFallback className="bg-[#B22222] text-white text-lg">
-                              {connection.name?.charAt(0) || 'U'}
-                            </AvatarFallback>
-                          </Avatar>
-                          
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
-                              <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 truncate">
-                                @{connection.username}, {connection.age}
-                              </h3>
-                              <Badge className="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 text-xs">
-                                Blocked
-                              </Badge>
-                            </div>
-                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1 truncate">
-                              {connection.occupation} • {connection.location}
-                            </p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">
-                              Blocked on {connection.lastSeen.toLocaleDateString()}
-                            </p>
-                          </div>
-                        </div>
-                        
+                      
+                      <div className="flex gap-2">
                         <Button
-                          onClick={() => handleUnblock(connection.id)}
-                          variant="outline"
+                          onClick={() => router.push(`/messages?user=${connection.userId}`)}
                           size="sm"
-                          className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 h-10"
+                          className="bg-[#B22222] hover:bg-[#8B0000] text-white text-xs sm:text-sm h-8 sm:h-10 flex-1"
                         >
-                          <User className="h-4 w-4 mr-2" />
-                          Unblock
+                          <MessageCircle className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                          Chat
                         </Button>
+                        
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="outline" size="sm" className="h-8 sm:h-10 border-[#B22222] text-[#B22222] hover:bg-[#B22222] hover:text-white flex-1">
+                              <span className="text-xs sm:text-sm">More</span>
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => { setSelectedProfile(connection); setIsProfileModalOpen(true); }}>
+                              View Profile
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleUnfriend(connection.id)}>
+                              <UserX className="h-4 w-4 mr-2" />
+                              Remove Connection
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleBlock(connection.id)}>
+                              <UserX className="h-4 w-4 mr-2" />
+                              Block User
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            )}
-          </TabsContent>
-        </Tabs>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+                </div>
+        )}
       </div>
       <ProfileModal open={isProfileModalOpen} onOpenChange={setIsProfileModalOpen} profile={selectedProfile} />
     </div>

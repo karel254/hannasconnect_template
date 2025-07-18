@@ -18,6 +18,28 @@ export function useNavigationHistory() {
   // Routes that should be skipped in back navigation
   const skipRoutes = ['/login', '/register', '/signup', '/verification']
 
+  // Define parent-child page relationships
+  const pageHierarchy = {
+    '/connections': '/profile',
+    '/blocked': '/profile', 
+    '/requests': '/profile',
+    '/messages': '/connections',
+    '/browse': '/dashboard',
+    '/profile': '/dashboard',
+    '/blog': '/dashboard',
+    '/about': '/dashboard',
+    '/contact': '/dashboard',
+    '/faq': '/dashboard',
+    '/how-it-works': '/dashboard',
+    '/privacy': '/dashboard',
+    '/terms': '/dashboard',
+    '/disclaimer': '/dashboard',
+    '/success-stories': '/dashboard',
+    '/more-about': '/dashboard',
+    '/notifications': '/dashboard',
+    '/members': '/dashboard',
+  }
+
   useEffect(() => {
     // Don't add protected routes to history unless user is logged out
     const isLoggedIn = typeof window !== 'undefined' && localStorage.getItem('demoUser')
@@ -59,7 +81,7 @@ export function useNavigationHistory() {
     // Remove current page from history
     const previousPages = history.slice(0, -1)
     
-    // Find the last valid page to go back to
+    // First try to find a valid previous page in history
     let targetPage = '/dashboard' // fallback
     
     for (let i = previousPages.length - 1; i >= 0; i--) {
@@ -70,8 +92,34 @@ export function useNavigationHistory() {
       }
     }
 
+    // If we found a valid previous page, use it
+    if (targetPage !== '/dashboard') {
+      isNavigatingRef.current = true
+      router.push(targetPage)
+      
+      // Reset flag after navigation
+      setTimeout(() => {
+        isNavigatingRef.current = false
+      }, 100)
+      return
+    }
+
+    // If no valid previous page found, check if current page has a parent
+    const parentPage = pageHierarchy[pathname as keyof typeof pageHierarchy]
+    if (parentPage) {
+      isNavigatingRef.current = true
+      router.push(parentPage)
+      
+      // Reset flag after navigation
+      setTimeout(() => {
+        isNavigatingRef.current = false
+      }, 100)
+      return
+    }
+
+    // Final fallback to dashboard
     isNavigatingRef.current = true
-    router.push(targetPage)
+    router.push('/dashboard')
     
     // Reset flag after navigation
     setTimeout(() => {
@@ -90,7 +138,10 @@ export function useNavigationHistory() {
         return page.path
       }
     }
-    return '/dashboard'
+    
+    // If no valid previous page found, check parent page
+    const parentPage = pageHierarchy[pathname as keyof typeof pageHierarchy]
+    return parentPage || '/dashboard'
   }
 
   return {

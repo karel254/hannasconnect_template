@@ -195,19 +195,19 @@ export default function BlockedUsersPage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20">
       {/* Mobile Header with Back Navigation */}
-      <div className="md:hidden sticky top-0 z-40 bg-gradient-to-r from-[#B22222] to-[#8B0000] text-white px-4 py-3 flex items-center justify-between shadow-md">
-        <div className="flex items-center gap-3">
+      <div className="md:hidden sticky top-0 z-40 bg-gradient-to-r from-[#B22222] to-[#8B0000] text-white px-3 sm:px-4 py-3 flex items-center justify-between shadow-md">
+        <div className="flex items-center gap-2 sm:gap-3">
           <Button
             variant="ghost"
             size="icon"
             onClick={goBack}
-            className="text-white hover:bg-white/20"
+            className="text-white hover:bg-white/20 h-8 w-8 sm:h-10 sm:w-10"
           >
-            <ArrowLeft className="h-5 w-5" />
+            <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
           </Button>
-          <h1 className="text-xl font-bold text-white">Blocked Users</h1>
+          <h1 className="text-lg sm:text-xl font-bold text-white">Blocked Users</h1>
         </div>
-        <div className="text-sm text-white/80">
+        <div className="text-xs sm:text-sm text-white/80">
           {blockedUsers.length} blocked
         </div>
       </div>
@@ -239,7 +239,7 @@ export default function BlockedUsersPage() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-6 space-y-6">
+      <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-6 space-y-4 sm:space-y-6">
         {/* Search */}
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -247,47 +247,47 @@ export default function BlockedUsersPage() {
             placeholder="Search blocked users..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+            className="pl-10 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 h-10 sm:h-11"
           />
         </div>
 
         {/* Blocked Users List */}
         {filteredBlockedUsers.length === 0 ? (
           <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-            <CardContent className="p-8 text-center">
-              <UserX className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+            <CardContent className="p-6 sm:p-8 text-center">
+              <UserX className="h-10 w-10 sm:h-12 sm:w-12 text-gray-400 mx-auto mb-3 sm:mb-4" />
+              <h3 className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
                 No Blocked Users
               </h3>
-              <p className="text-gray-500 dark:text-gray-400">
+              <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400">
                 {searchQuery ? "No blocked users match your search." : "You haven't blocked any users yet."}
               </p>
             </CardContent>
           </Card>
         ) : (
-          <div className="grid gap-4">
+          <div className="grid gap-3 sm:gap-4">
             {filteredBlockedUsers.map((blockedUser) => (
-              <Card key={blockedUser.id} className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <Avatar className="h-16 w-16 flex-shrink-0">
+              <Card key={blockedUser.id} className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 overflow-hidden">
+                <CardContent className="p-3 sm:p-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+                    <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+                      <Avatar className="h-12 w-12 sm:h-16 sm:w-16 flex-shrink-0">
                         <AvatarImage src={blockedUser.avatar} alt={blockedUser.name} />
-                        <AvatarFallback className="bg-[#B22222] text-white text-lg">
+                        <AvatarFallback className="bg-[#B22222] text-white text-sm sm:text-lg">
                           {blockedUser.name?.charAt(0) || 'U'}
                         </AvatarFallback>
                       </Avatar>
                       
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
-                          <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 truncate">
+                          <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-gray-100 truncate">
                             @{blockedUser.username}, {blockedUser.age || calculateAge(blockedUser.dateOfBirth)}
                           </h3>
-                          <Badge className="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 text-xs">
+                          <Badge className="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 text-xs flex-shrink-0">
                             Blocked
                           </Badge>
                         </div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-1 truncate">
+                        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-1 truncate">
                           {blockedUser.occupation} • {blockedUser.location}
                         </p>
                         <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
@@ -301,11 +301,11 @@ export default function BlockedUsersPage() {
                       </div>
                     </div>
                     
-                    <div className="flex flex-col sm:flex-row gap-2">
+                    <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                       <Button
                         variant="outline"
                         size="sm"
-                        className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 h-10"
+                        className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 h-8 sm:h-10 text-xs sm:text-sm"
                         onClick={() => { setSelectedProfile(blockedUser); setIsProfileModalOpen(true); }}
                       >
                         View Profile
@@ -314,9 +314,9 @@ export default function BlockedUsersPage() {
                         onClick={() => handleUnblock(blockedUser.id)}
                         variant="outline"
                         size="sm"
-                        className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 h-10"
+                        className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 h-8 sm:h-10 text-xs sm:text-sm"
                       >
-                        <User className="h-4 w-4 mr-2" />
+                        <User className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                         Unblock
                       </Button>
                     </div>
@@ -329,24 +329,24 @@ export default function BlockedUsersPage() {
 
         {/* Privacy Information */}
         <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-          <CardHeader>
-            <CardTitle className="text-gray-900 dark:text-gray-100">Privacy Information</CardTitle>
+          <CardHeader className="pb-3 sm:pb-4">
+            <CardTitle className="text-base sm:text-lg text-gray-900 dark:text-gray-100">Privacy Information</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="flex items-start space-x-3">
-              <UserX className="h-5 w-5 text-gray-600 dark:text-gray-400 mt-0.5" />
-              <div>
-                <h4 className="font-medium text-gray-900 dark:text-gray-100">Blocked Users</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+          <CardContent className="space-y-3 sm:space-y-4">
+            <div className="flex items-start space-x-2 sm:space-x-3">
+              <UserX className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600 dark:text-gray-400 mt-0.5 flex-shrink-0" />
+              <div className="min-w-0">
+                <h4 className="font-medium text-sm sm:text-base text-gray-900 dark:text-gray-100">Blocked Users</h4>
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                   Blocked users cannot see your profile, send you messages, or contact you in any way.
                 </p>
               </div>
             </div>
-            <div className="flex items-start space-x-3">
-              <User className="h-5 w-5 text-gray-600 dark:text-gray-400 mt-0.5" />
-              <div>
-                <h4 className="font-medium text-gray-900 dark:text-gray-100">Unblocking</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+            <div className="flex items-start space-x-2 sm:space-x-3">
+              <User className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600 dark:text-gray-400 mt-0.5 flex-shrink-0" />
+              <div className="min-w-0">
+                <h4 className="font-medium text-sm sm:text-base text-gray-900 dark:text-gray-100">Unblocking</h4>
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                   When you unblock a user, they will be able to see your profile and contact you again.
                 </p>
               </div>
