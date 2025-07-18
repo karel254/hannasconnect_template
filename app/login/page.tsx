@@ -21,14 +21,6 @@ export default function LoginPage() {
   const router = useRouter()
   const { toast } = useToast()
 
-  useEffect(() => {
-    const handlePopState = () => {
-      window.location.href = "/";
-    };
-    window.addEventListener("popstate", handlePopState);
-    return () => window.removeEventListener("popstate", handlePopState);
-  }, []);
-
   // --- Admin password logic ---
   // Store admin password in localStorage if not set
   useEffect(() => {

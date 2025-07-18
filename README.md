@@ -90,74 +90,472 @@ Pull requests are welcome! For major changes, please open an issue first to disc
 ## License
 [MIT](LICENSE)
 
-# Backend Migration & Integration Guide
+---
+
+# 🚀 Backend Integration Guide
 
 ## Overview
-This frontend currently uses mock data, localStorage, and in-memory state for all user profiles, connection requests, and authentication. The following guide is for the backend developer (Rust) to migrate these placeholders to real backend endpoints, authentication, and websocket integration **without changing any UI/UX**.
+This frontend is ready for backend integration. All mock data and localStorage usage can be replaced with real API calls without changing the UI/UX. The following guide provides organized API endpoints and implementation details for the backend developer.
 
 ---
 
-## Migration Checklist
+## 📋 API Endpoints Overview
 
-### 1. User Profiles & Listings
-- **Current:** Hardcoded in `baseUsers` (browse), `suggestions` (dashboard), etc.
-- **Backend:** Replace with API endpoints to fetch user lists, individual profiles, and update preferences.
-- **Websockets:** If using, add hooks for real-time profile updates.
+### 🔐 Authentication Endpoints
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/login` - User login
+- `POST /api/auth/logout` - User logout
+- `GET /api/auth/me` - Get current user
+- `POST /api/auth/refresh` - Refresh token
 
-### 2. Authentication & Current User
-- **Current:** Loaded from `localStorage` as `demoUser`.
-- **Backend:** Implement secure authentication (JWT, OAuth, etc.) and session management. Fetch current user from backend.
+### 👤 User Profile Endpoints
+- `GET /api/users` - Get all users (with filters)
+- `GET /api/users/:id` - Get specific user profile
+- `PUT /api/users/:id` - Update user profile
+- `GET /api/users/suggestions` - Get dashboard suggestions
+- `POST /api/users/avatar` - Upload avatar
 
-### 3. Connection Requests
-- **Current:** Mock data and status changes in frontend state/localStorage.
-- **Backend:** Replace with endpoints for sending, accepting, rejecting, and fetching requests. Persist status changes.
-- **Websockets:** Add hooks for real-time request updates if needed.
+### 💬 Messaging Endpoints
+- `GET /api/messages` - Get conversations
+- `GET /api/messages/:conversationId` - Get messages for conversation
+- `POST /api/messages` - Send message
+- `PUT /api/messages/:id/read` - Mark message as read
 
-### 4. Messaging/Chat
-- **Current:** Placeholder or missing.
-- **Backend:** Implement endpoints for sending, receiving, and fetching messages. Add real-time support if needed.
+### 🔗 Connection Endpoints
+- `GET /api/connections` - Get user connections
+- `GET /api/connections/requests` - Get connection requests
+- `POST /api/connections/request` - Send connection request
+- `PUT /api/connections/request/:id/accept` - Accept request
+- `PUT /api/connections/request/:id/reject` - Reject request
+- `DELETE /api/connections/:id` - Remove connection
+- `POST /api/connections/:id/block` - Block user
+- `DELETE /api/connections/:id/block` - Unblock user
 
-### 5. Compatibility Calculation
-- **Current:** Done on frontend using all available fields.
-- **Backend:** For scale, consider moving to backend or supporting websocket-driven live updates.
+### 🔍 Search & Filter Endpoints
+- `GET /api/users/search` - Search users with filters
+- `GET /api/users/filters` - Get available filter options
 
-### 6. Filtering, Pagination, Search
-- **Current:** Done in-memory on frontend.
-- **Backend:** Implement server-side filtering, pagination, and search for scalability.
+### 📧 Notification Endpoints
+- `GET /api/notifications` - Get user notifications
+- `PUT /api/notifications/:id/read` - Mark notification as read
+- `POST /api/push-subscribe` - Subscribe to push notifications
 
-### 7. Blog, Notifications, More About This App
-- **Current:** Hardcoded or missing.
-- **Backend:** Add endpoints for blog posts, notifications, and "More About This App" content.
-
----
-
-## Admin Site (Planned)
-- **Purpose:** Separate admin site will control all accounts, blogs, privileges, "More About This App" data, and have access to all user data, passwords, and chats.
-- **Features:**
-  - View and manage all accounts (registered, unregistered, men, women, diaspora, etc.)
-  - Update blogs, app info, and user privileges
-  - View all payments and transactions
-  - Log in as any user (no notification to user)
-  - Full access to all chats and data
-
----
-
-## Websocket Integration
-- If using websockets for real-time updates (profiles, requests, chat):
-  - Add connection and event handling in the relevant React files (see comments in code).
-  - Ensure all updates are reflected in the UI without requiring a page reload.
+### 📝 Content Endpoints
+- `GET /api/blog` - Get blog posts
+- `GET /api/blog/:id` - Get specific blog post
+- `GET /api/success-stories` - Get success stories
+- `GET /api/faq` - Get FAQ content
 
 ---
 
-## General Notes
-- **Do not change any UI/UX or frontend logic.**
-- All placeholder/mock logic is clearly commented in the code for easy replacement.
-- See comments in `app/browse/page.tsx`, `app/dashboard/page.tsx`, and `app/requests/page.tsx` for exact locations to replace with backend logic.
+## 🔧 Detailed Implementation Guide
+
+### 1. Authentication Integration
+
+**Current State:** Uses localStorage with `demoUser` object
+**Backend Implementation:**
+
+```typescript
+// Replace in app/login/page.tsx and app/register/page.tsx
+const handleLogin = async (credentials: LoginCredentials) => {
+  try {
+    const response = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(credentials)
+    });
+    
+    if (response.ok) {
+      const { user, token } = await response.json();
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
+      router.push('/dashboard');
+    }
+  } catch (error) {
+    // Handle error
+  }
+};
+```
+
+**Required Backend Endpoints:**
+- `POST /api/auth/login` - Return `{ user, token }`
+- `POST /api/auth/register` - Return `{ user, token }`
+- `GET /api/auth/me` - Return current user data
+
+### 2. User Profile Integration
+
+**Current State:** Mock data in `baseUsers` array
+**Backend Implementation:**
+
+```typescript
+// Replace in app/browse/page.tsx, app/dashboard/page.tsx
+const fetchUsers = async (filters?: UserFilters) => {
+  const queryParams = new URLSearchParams(filters);
+  const response = await fetch(`/api/users?${queryParams}`);
+  return response.json();
+};
+
+const fetchSuggestions = async () => {
+  const response = await fetch('/api/users/suggestions');
+  return response.json();
+};
+```
+
+**Required Backend Endpoints:**
+- `GET /api/users` - Support query parameters for filtering
+- `GET /api/users/suggestions` - Return compatible users for dashboard
+- `GET /api/users/:id` - Return detailed user profile
+
+### 3. Connection Requests Integration
+
+**Current State:** Mock data and localStorage
+**Backend Implementation:**
+
+```typescript
+// Replace in app/requests/page.tsx
+const fetchRequests = async () => {
+  const response = await fetch('/api/connections/requests');
+  return response.json();
+};
+
+const handleAcceptRequest = async (requestId: string) => {
+  await fetch(`/api/connections/request/${requestId}/accept`, {
+    method: 'PUT'
+  });
+  // Refresh requests list
+};
+```
+
+**Required Backend Endpoints:**
+- `GET /api/connections/requests` - Return pending requests
+- `POST /api/connections/request` - Send new request
+- `PUT /api/connections/request/:id/accept` - Accept request
+- `PUT /api/connections/request/:id/reject` - Reject request
+
+### 4. Messaging Integration
+
+**Current State:** Placeholder/mock data
+**Backend Implementation:**
+
+```typescript
+// Replace in app/messages/page.tsx
+const fetchConversations = async () => {
+  const response = await fetch('/api/messages');
+  return response.json();
+};
+
+const sendMessage = async (conversationId: string, message: string) => {
+  await fetch('/api/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ conversationId, message })
+  });
+};
+```
+
+**Required Backend Endpoints:**
+- `GET /api/messages` - Return user conversations
+- `GET /api/messages/:conversationId` - Return messages for conversation
+- `POST /api/messages` - Send new message
+- `PUT /api/messages/:id/read` - Mark as read
+
+### 5. Profile Management Integration
+
+**Current State:** localStorage updates
+**Backend Implementation:**
+
+```typescript
+// Replace in app/profile/page.tsx
+const updateProfile = async (profileData: Partial<UserProfile>) => {
+  const response = await fetch(`/api/users/${userId}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(profileData)
+  });
+  return response.json();
+};
+```
+
+**Required Backend Endpoints:**
+- `PUT /api/users/:id` - Update user profile
+- `POST /api/users/avatar` - Upload avatar image
+
+### 6. Search & Filter Integration
+
+**Current State:** Client-side filtering
+**Backend Implementation:**
+
+```typescript
+// Replace in app/browse/page.tsx
+const searchUsers = async (filters: SearchFilters) => {
+  const queryParams = new URLSearchParams();
+  Object.entries(filters).forEach(([key, value]) => {
+    if (value && value !== 'any') {
+      queryParams.append(key, value.toString());
+    }
+  });
+  
+  const response = await fetch(`/api/users/search?${queryParams}`);
+  return response.json();
+};
+```
+
+**Required Backend Endpoints:**
+- `GET /api/users/search` - Support all filter parameters
+- `GET /api/users/filters` - Return available filter options
 
 ---
 
-## Questions?
-Contact the frontend team for clarification on any integration points or UI requirements.
+## 🔄 Real-time Integration (WebSockets)
+
+### Connection Status Updates
+```typescript
+// In app/connections/page.tsx
+useEffect(() => {
+  const ws = new WebSocket('ws://your-backend/connections');
+  
+  ws.onmessage = (event) => {
+    const { type, data } = JSON.parse(event.data);
+    if (type === 'connection_update') {
+      // Update connection status
+    }
+  };
+}, []);
+```
+
+### Real-time Messaging
+```typescript
+// In app/messages/page.tsx
+useEffect(() => {
+  const ws = new WebSocket('ws://your-backend/messages');
+  
+  ws.onmessage = (event) => {
+    const { type, data } = JSON.parse(event.data);
+    if (type === 'new_message') {
+      // Add new message to conversation
+    }
+  };
+}, []);
+```
+
+---
+
+## 📊 Data Models
+
+### User Profile
+```typescript
+interface UserProfile {
+  id: string;
+  username: string;
+  email: string;
+  name: string;
+  age: number;
+  location: string;
+  occupation: string;
+  bio: string;
+  avatar: string;
+  gender: string;
+  country: string;
+  // ... all other profile fields
+  preferences: {
+    ageRange: [number, number];
+    lookingFor: string;
+    // ... all preference fields
+  };
+  settings: {
+    notifications: {
+      messages: boolean;
+      matches: boolean;
+      // ... other notification settings
+    };
+    privacy: {
+      showOnline: boolean;
+      showReadReceipts: boolean;
+      // ... other privacy settings
+    };
+  };
+}
+```
+
+### Connection Request
+```typescript
+interface ConnectionRequest {
+  id: string;
+  fromUserId: string;
+  toUserId: string;
+  status: 'pending' | 'accepted' | 'rejected';
+  message?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+```
+
+### Message
+```typescript
+interface Message {
+  id: string;
+  conversationId: string;
+  senderId: string;
+  content: string;
+  isRead: boolean;
+  createdAt: string;
+}
+```
+
+---
+
+## 🔒 Security Considerations
+
+### Authentication
+- Implement JWT tokens with refresh mechanism
+- Store tokens securely (httpOnly cookies recommended)
+- Implement proper session management
+
+### Authorization
+- Validate user permissions for all endpoints
+- Ensure users can only access their own data
+- Implement rate limiting
+
+### Data Validation
+- Validate all input data on backend
+- Sanitize user inputs
+- Implement proper error handling
+
+---
+
+## 📱 Push Notifications
+
+### Backend Implementation
+```typescript
+// Store subscription in database
+POST /api/push-subscribe
+{
+  "userId": "user_id",
+  "subscription": {
+    "endpoint": "https://fcm.googleapis.com/...",
+    "keys": {
+      "p256dh": "...",
+      "auth": "..."
+    }
+  }
+}
+
+// Send notification
+const sendPushNotification = async (userId: string, notification: {
+  title: string;
+  body: string;
+  icon?: string;
+  data?: any;
+}) => {
+  // Use Web Push Protocol with VAPID keys
+};
+```
+
+---
+
+## 🎯 Migration Checklist
+
+### Phase 1: Core Authentication
+- [ ] Implement login/register endpoints
+- [ ] Replace localStorage auth with backend auth
+- [ ] Add token refresh mechanism
+
+### Phase 2: User Profiles
+- [ ] Implement user CRUD endpoints
+- [ ] Replace mock user data
+- [ ] Add avatar upload functionality
+
+### Phase 3: Connections
+- [ ] Implement connection request endpoints
+- [ ] Replace mock connection data
+- [ ] Add real-time status updates
+
+### Phase 4: Messaging
+- [ ] Implement messaging endpoints
+- [ ] Add real-time messaging
+- [ ] Add message read receipts
+
+### Phase 5: Search & Filters
+- [ ] Implement server-side filtering
+- [ ] Add pagination support
+- [ ] Optimize search performance
+
+### Phase 6: Notifications
+- [ ] Implement push notifications
+- [ ] Add in-app notifications
+- [ ] Add email notifications
+
+---
+
+## 🛠️ Development Tips
+
+### Error Handling
+```typescript
+// Implement consistent error handling
+const handleApiError = (error: any) => {
+  if (error.status === 401) {
+    // Redirect to login
+    router.push('/login');
+  } else if (error.status === 403) {
+    // Show access denied
+    toast.error('Access denied');
+  } else {
+    // Show generic error
+    toast.error('Something went wrong');
+  }
+};
+```
+
+### Loading States
+```typescript
+// Add loading states for better UX
+const [isLoading, setIsLoading] = useState(false);
+
+const fetchData = async () => {
+  setIsLoading(true);
+  try {
+    const data = await apiCall();
+    setData(data);
+  } catch (error) {
+    handleApiError(error);
+  } finally {
+    setIsLoading(false);
+  }
+};
+```
+
+### Caching Strategy
+```typescript
+// Implement caching for better performance
+const useCachedData = (key: string, fetcher: () => Promise<any>) => {
+  const [data, setData] = useState(null);
+  const [cache, setCache] = useState({});
+
+  useEffect(() => {
+    if (cache[key]) {
+      setData(cache[key]);
+    } else {
+      fetcher().then(result => {
+        setData(result);
+        setCache(prev => ({ ...prev, [key]: result }));
+      });
+    }
+  }, [key]);
+};
+```
+
+---
+
+## 📞 Support
+
+For backend integration questions or clarifications:
+- Review the code comments in each component
+- Check the TypeScript interfaces for data structures
+- Test endpoints with the provided frontend
+
+The frontend is designed to be backend-agnostic and can work with any RESTful API that follows the specified endpoints and data structures.
+
+---
 
 ## Push Notifications (Frontend PWA)
 
@@ -247,22 +645,3 @@ This endpoint allows the frontend to send user help requests directly to the adm
 - Validates input.
 - Uses Nodemailer (or similar) to send the email (backend dev must configure SMTP credentials).
 - Returns `{ success: true }` on success, or `{ success: false, error }` on failure.
-
-### Example Node.js/Express/Next.js Handler
-```js
-// See app/api/send-help.ts for a full template
-export default async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).json({ success: false, error: 'Method not allowed' });
-  const { username, email, message } = req.body;
-  if (!username || !email || !message) return res.status(400).json({ success: false, error: 'Missing required fields' });
-  // ...send email logic here...
-  return res.status(200).json({ success: true });
-}
-```
-
----
-
-**Backend developer:**
-- See `app/api/send-help.ts` for a full, commented template.
-- Configure your SMTP/email provider and credentials securely.
-- Test with the frontend to ensure emails are delivered as expected.

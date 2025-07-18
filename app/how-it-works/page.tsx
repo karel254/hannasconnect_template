@@ -4,7 +4,7 @@ import { Shield, EyeOff, UserCheck, Users, Search, MessageCircle, Heart, Info, U
 export default function HowItWorksPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 flex items-center justify-center py-8 px-2">
-      <div className="max-w-3xl w-full bg-white/95 rounded-3xl shadow-2xl p-8 md:p-14 border border-amber-200">
+      <div className="max-w-3xl w-full bg-white/95 rounded-3xl shadow-2xl p-8 md:p-14 border border-amber-200 text-gray-900">
         {/* Header Section */}
         <div className="flex flex-col items-center text-center gap-4 mb-8">
           <Heart className="h-14 w-14 text-red-600 mb-2" fill="#fee2e2" />
@@ -14,26 +14,26 @@ export default function HowItWorksPage() {
         {/* Membership & Privacy Section */}
         <div className="grid md:grid-cols-2 gap-8 mb-10">
           <div className="space-y-4">
-            <div className="flex items-center gap-2 text-base md:text-lg text-gray-800">
+            <div className="flex items-center gap-2 text-base md:text-lg text-gray-900">
               <UserCheck className="h-5 w-5 text-red-700" />
               <span className="font-semibold">Members-only</span> for adults <span className="font-bold">25+</span>
             </div>
-            <div className="flex items-center gap-2 text-base md:text-lg text-gray-800">
+            <div className="flex items-center gap-2 text-base md:text-lg text-gray-900">
               <Star className="h-5 w-5 text-yellow-500" />
               <span>3,000 KES for <span className="font-bold">180 days</span> access</span>
             </div>
-            <div className="flex items-center gap-2 text-base md:text-lg text-gray-800">
+            <div className="flex items-center gap-2 text-base md:text-lg text-gray-900">
               <XCircle className="h-5 w-5 text-gray-400" />
               <span>Non-refundable & non-transferable</span>
             </div>
             <div className="space-y-4 mt-4">
               <div className="bg-white rounded-xl shadow p-6 border border-amber-100 flex flex-col gap-2">
                 <div className="flex items-center gap-3 mb-2"><EyeOff className="h-6 w-6 text-amber-700" /><span className="font-semibold text-lg">Privacy is at our core.</span></div>
-                <div className="text-gray-700 text-base">No public browsing—only verified members can view profiles.</div>
+                <div className="text-gray-900 text-base">No public browsing—only verified members can view profiles.</div>
               </div>
               <div className="bg-white rounded-xl shadow p-6 border border-orange-100 flex flex-col gap-2">
                 <div className="flex items-center gap-3 mb-2"><AlertTriangle className="h-6 w-6 text-orange-500" /><span className="font-semibold text-lg">Discretion matters.</span></div>
-                <div className="text-gray-700 text-base">No public advertising. <span className="inline-flex items-center gap-1"><User className="h-4 w-4 text-gray-500" /> Avatar-style profile images</span> let you engage without revealing your full face.</div>
+                <div className="text-gray-900 text-base">No public advertising. <span className="inline-flex items-center gap-1"><User className="h-4 w-4 text-gray-700" /> Avatar-style profile images</span> let you engage without revealing your full face.</div>
               </div>
             </div>
           </div>

@@ -888,6 +888,14 @@ export default function Browse() {
   const [selectedSexualOrientation, setSelectedSexualOrientation] = useState<string>("any");
   const [selectedRelationshipTradition, setSelectedRelationshipTradition] = useState<string>("any");
 
+  // Health filter states
+  const [selectedHivStatus, setSelectedHivStatus] = useState<string>("any");
+  const [selectedDisability, setSelectedDisability] = useState<string>("any");
+  const [selectedChronicIllness, setSelectedChronicIllness] = useState<string>("any");
+  const [selectedAllergies, setSelectedAllergies] = useState<string>("any");
+  const [selectedBloodType, setSelectedBloodType] = useState<string>("any");
+  const [selectedExerciseFrequency, setSelectedExerciseFrequency] = useState<string>("any");
+
   // Get user's country from localStorage or default to Kenya
   const userCountry = localStorage.getItem("userCountry") || "Kenya"
 
@@ -946,9 +954,24 @@ export default function Browse() {
       if (selectedSexualOrientation && selectedSexualOrientation !== "any" && user.sexualOrientation !== selectedSexualOrientation) return false;
       // Relationship Tradition
       if (selectedRelationshipTradition && selectedRelationshipTradition !== "any" && user.relationshipTradition !== selectedRelationshipTradition) return false;
+      
+      // Health filters
+      // HIV Status
+      if (selectedHivStatus !== "any" && user.hivStatus !== selectedHivStatus) return false;
+      // Disability
+      if (selectedDisability !== "any" && user.disability !== selectedDisability) return false;
+      // Chronic Illness
+      if (selectedChronicIllness !== "any" && user.chronicIllness !== selectedChronicIllness) return false;
+      // Allergies
+      if (selectedAllergies !== "any" && user.allergies !== selectedAllergies) return false;
+      // Blood Type
+      if (selectedBloodType !== "any" && user.bloodType !== selectedBloodType) return false;
+      // Exercise Frequency
+      if (selectedExerciseFrequency !== "any" && user.exerciseFrequency !== selectedExerciseFrequency) return false;
+      
       return true;
     });
-  }, [allUsers, memberType, userCountry, ageRange, selectedGoals, selectedGender, selectedRace, selectedCountry, selectedCounty, selectedTribe, selectedLanguages, selectedReligion, selectedDenomination, selectedReligiousness, selectedChurchAttendance, selectedMaritalStatus, selectedHasChildren, selectedWantsChildren, selectedAcceptsPartnerWithKids, selectedSmoking, selectedAlcohol, selectedDietaryPreference, selectedPets, selectedSnoring, selectedOpenToRelocate, selectedSexualOrientation, selectedRelationshipTradition]);
+  }, [allUsers, memberType, userCountry, ageRange, selectedGoals, selectedGender, selectedRace, selectedCountry, selectedCounty, selectedTribe, selectedLanguages, selectedReligion, selectedDenomination, selectedReligiousness, selectedChurchAttendance, selectedMaritalStatus, selectedHasChildren, selectedWantsChildren, selectedAcceptsPartnerWithKids, selectedSmoking, selectedAlcohol, selectedDietaryPreference, selectedPets, selectedSnoring, selectedOpenToRelocate, selectedSexualOrientation, selectedRelationshipTradition, selectedHivStatus, selectedDisability, selectedChronicIllness, selectedAllergies, selectedBloodType, selectedExerciseFrequency]);
 
   // Calculate pagination
   const totalPages = Math.ceil(filteredUsers.length / USERS_PER_PAGE)
@@ -1622,6 +1645,107 @@ export default function Browse() {
                         <SelectItem value="any">Any</SelectItem>
                         <SelectItem value="yes">Yes</SelectItem>
                         <SelectItem value="no">No</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </details>
+
+                {/* Health */}
+                <details className="mb-4">
+                  <summary className="font-semibold text-gray-900 dark:text-gray-100 cursor-pointer py-2">Health</summary>
+                  <div className="space-y-3 mt-2">
+                    {/* HIV Status */}
+                    <Label>HIV Status</Label>
+                    <Select value={selectedHivStatus} onValueChange={setSelectedHivStatus}>
+                      <SelectTrigger className="rounded-xl">
+                        <SelectValue placeholder="Any HIV Status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="any">Any</SelectItem>
+                        <SelectItem value="negative">Negative</SelectItem>
+                        <SelectItem value="positive">Positive</SelectItem>
+                        <SelectItem value="prefer-not-to-say">Prefer not to say</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {/* Disability */}
+                    <Label>Disability</Label>
+                    <Select value={selectedDisability} onValueChange={setSelectedDisability}>
+                      <SelectTrigger className="rounded-xl">
+                        <SelectValue placeholder="Any Disability" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="any">Any</SelectItem>
+                        <SelectItem value="none">None</SelectItem>
+                        <SelectItem value="physical">Physical</SelectItem>
+                        <SelectItem value="visual">Visual</SelectItem>
+                        <SelectItem value="hearing">Hearing</SelectItem>
+                        <SelectItem value="cognitive">Cognitive</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {/* Chronic Illness */}
+                    <Label>Chronic Illness</Label>
+                    <Select value={selectedChronicIllness} onValueChange={setSelectedChronicIllness}>
+                      <SelectTrigger className="rounded-xl">
+                        <SelectValue placeholder="Any Chronic Illness" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="any">Any</SelectItem>
+                        <SelectItem value="none">None</SelectItem>
+                        <SelectItem value="diabetes">Diabetes</SelectItem>
+                        <SelectItem value="hypertension">Hypertension</SelectItem>
+                        <SelectItem value="asthma">Asthma</SelectItem>
+                        <SelectItem value="arthritis">Arthritis</SelectItem>
+                        <SelectItem value="heart-disease">Heart Disease</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {/* Allergies */}
+                    <Label>Allergies</Label>
+                    <Select value={selectedAllergies} onValueChange={setSelectedAllergies}>
+                      <SelectTrigger className="rounded-xl">
+                        <SelectValue placeholder="Any Allergies" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="any">Any</SelectItem>
+                        <SelectItem value="none">None</SelectItem>
+                        <SelectItem value="food">Food</SelectItem>
+                        <SelectItem value="medication">Medication</SelectItem>
+                        <SelectItem value="environmental">Environmental</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {/* Blood Type */}
+                    <Label>Blood Type</Label>
+                    <Select value={selectedBloodType} onValueChange={setSelectedBloodType}>
+                      <SelectTrigger className="rounded-xl">
+                        <SelectValue placeholder="Any Blood Type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="any">Any</SelectItem>
+                        <SelectItem value="a-positive">A+</SelectItem>
+                        <SelectItem value="a-negative">A-</SelectItem>
+                        <SelectItem value="b-positive">B+</SelectItem>
+                        <SelectItem value="b-negative">B-</SelectItem>
+                        <SelectItem value="ab-positive">AB+</SelectItem>
+                        <SelectItem value="ab-negative">AB-</SelectItem>
+                        <SelectItem value="o-positive">O+</SelectItem>
+                        <SelectItem value="o-negative">O-</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {/* Exercise Frequency */}
+                    <Label>Exercise Frequency</Label>
+                    <Select value={selectedExerciseFrequency} onValueChange={setSelectedExerciseFrequency}>
+                      <SelectTrigger className="rounded-xl">
+                        <SelectValue placeholder="Any Exercise Frequency" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="any">Any</SelectItem>
+                        <SelectItem value="never">Never</SelectItem>
+                        <SelectItem value="rarely">Rarely</SelectItem>
+                        <SelectItem value="sometimes">Sometimes</SelectItem>
+                        <SelectItem value="regularly">Regularly</SelectItem>
+                        <SelectItem value="daily">Daily</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

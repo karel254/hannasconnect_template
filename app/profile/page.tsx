@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import {
   Camera,
@@ -49,48 +49,85 @@ interface UserProfile {
   avatar: string
   photos: string[]
   dateOfBirth?: string;
-  preferences: {
-    ageRange: [number, number]
-    lookingFor: string
-    gender?: string
-    race?: string
-    country?: string
-    county?: string
-    tribe?: string
-    languages?: string[]
-    religion?: string
-    denomination?: string
-    religiousness?: number
-    churchAttendance?: string
-    smoking?: string
-    alcohol?: string
-    dietaryPreference?: string
-    pets?: string
-    snoring?: string
-    maritalStatus?: string
-    hasChildren?: string
-    wantsChildren?: string
-    acceptsPartnerWithKids?: string
-    openToRelocate?: string
-    sexualOrientation?: string
-    relationshipTradition?: string
-  }
-  settings: {
-    theme: string
-    notifications: {
-      messages: boolean
-      matches: boolean
-      marketing: boolean
-      toastMessages?: boolean // Add for pop-up toasts
-      toastMatches?: boolean // Add for pop-up toasts
-    }
-    privacy: {
-      showAge: boolean
-      showLocation: boolean
-      showOnline: boolean
-      showReadReceipts?: boolean // Add for read receipts
-    }
-  }
+  gender?: string;
+  race?: string;
+  country?: string;
+  county?: string;
+  constituency?: string;
+  ward?: string;
+  state?: string;
+  tribe?: string;
+  languages?: string[];
+  height?: string;
+  weight?: string;
+  bodyType?: string;
+  complexion?: string;
+  eyeColor?: string;
+  dimples?: string;
+  teethFeatures?: string;
+  tattoos?: string;
+  piercings?: string;
+  glasses?: string;
+  hivStatus?: string;
+  disability?: string;
+  chronicIllness?: string;
+  allergies?: string;
+  bloodType?: string;
+  snoring?: string;
+  employmentStatus?: string;
+  workCountry?: string;
+  workCounty?: string;
+  workConstituency?: string;
+  workWard?: string;
+  workState?: string;
+  financialStability?: string;
+  alcohol?: string;
+  smoking?: string;
+  hobbies?: string;
+  religion?: string;
+  religiousness?: string;
+  denomination?: string;
+  churchAttendance?: string;
+  exerciseFrequency?: string;
+  maritalStatus?: string;
+  hasChildren?: string;
+  numberOfChildren?: string;
+  childrenAges?: string;
+  childrenLiveWithUser?: string;
+  wantsChildren?: string;
+  acceptsPartnerWithKids?: string;
+  longDistanceOk?: string;
+  datingPerspective?: string;
+  dealBreakers?: string;
+  relationshipHopes?: string;
+  partnerPreferences?: string;
+  personalityType?: string;
+  dontContactIf?: string;
+  imperfections?: string;
+  politicalViews?: string;
+  dateDifferentPolitics?: string;
+  believesInMarriage?: string;
+  selfDescription?: string;
+  openToRelocate?: string;
+  sexualOrientation?: string;
+  relationshipTradition?: string;
+  selfDescriptionPhysical?: string;
+  pets?: string;
+  expectFromMe?: string;
+  dietaryPreference?: string;
+  preferences: any;
+  settings: any;
+  customGender?: string;
+  sexualOrientationOther?: string;
+  tattoosDescription?: string;
+  piercingsDescription?: string;
+  dimplesDescription?: string;
+  glassesDescription?: string;
+  acceptsPartnerWithKidsDescription?: string;
+  heightUnit?: string;
+  weightUnit?: string;
+  heightFt?: string;
+  heightIn?: string;
 }
 
 const availableAvatars = [
@@ -142,6 +179,115 @@ function calculateAge(dateOfBirth: string) {
     age--;
   }
   return age;
+}
+
+// SearchableSelect Component
+const SearchableSelect = ({
+  items,
+  value,
+  onValueChange,
+  placeholder,
+  searchPlaceholder,
+  label,
+  disabled = false,
+}: {
+  items: string[]
+  value: string
+  onValueChange: (value: string) => void
+  placeholder: string
+  searchPlaceholder: string
+  label: string
+  disabled?: boolean
+}) => {
+  const [search, setSearch] = useState("")
+
+  const filteredItems = useMemo(
+    () => items.filter((item) => item.toLowerCase().includes(search.toLowerCase())),
+    [items, search],
+  )
+
+  return (
+    <div className="space-y-2">
+      <Label>{label}</Label>
+      <div className="space-y-2">
+        <Input
+          placeholder={searchPlaceholder}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="transition-all duration-200"
+          disabled={disabled}
+        />
+        <Select
+          value={value}
+          onValueChange={(val) => {
+            onValueChange(val)
+            setSearch("")
+          }}
+          disabled={disabled}
+        >
+          <SelectTrigger className="transition-all duration-200">
+            <SelectValue placeholder={placeholder} />
+          </SelectTrigger>
+          <SelectContent className="max-h-60 overflow-y-auto">
+            {filteredItems.map((item) => (
+              <SelectItem key={item} value={item} className="transition-colors duration-150">
+                {item}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+    </div>
+  )
+}
+
+// DATA_CONSTANTS from registration form
+const DATA_CONSTANTS = {
+  worldCountries: [
+    "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina", "Armenia", "Australia", "Austria", "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bhutan", "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei", "Bulgaria", "Burkina Faso", "Burundi", "Cabo Verde", "Cambodia", "Cameroon", "Canada", "Central African Republic", "Chad", "Chile", "China", "Colombia", "Comoros", "Congo", "Costa Rica", "Croatia", "Cuba", "Cyprus", "Czech Republic", "Democratic Republic of the Congo", "Denmark", "Djibouti", "Dominica", "Dominican Republic", "East Timor", "Ecuador", "Egypt", "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", "Eswatini", "Ethiopia", "Fiji", "Finland", "France", "Gabon", "Gambia", "Georgia", "Germany", "Ghana", "Greece", "Grenada", "Guatemala", "Guinea", "Guinea-Bissau", "Guyana", "Haiti", "Honduras", "Hungary", "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Israel", "Italy", "Ivory Coast", "Jamaica", "Japan", "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Kuwait", "Kyrgyzstan", "Laos", "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania", "Luxembourg", "Madagascar", "Malawi", "Malaysia", "Maldives", "Mali", "Malta", "Marshall Islands", "Mauritania", "Mauritius", "Mexico", "Micronesia", "Moldova", "Monaco", "Mongolia", "Montenegro", "Morocco", "Mozambique", "Myanmar", "Namibia", "Nauru", "Nepal", "Netherlands", "New Zealand", "Nicaragua", "Niger", "Nigeria", "North Korea", "North Macedonia", "Norway", "Oman", "Pakistan", "Palau", "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Poland", "Portugal", "Qatar", "Romania", "Russia", "Rwanda", "Saint Kitts and Nevis", "Saint Lucia", "Saint Vincent and the Grenadines", "Samoa", "San Marino", "Sao Tome and Principe", "Saudi Arabia", "Senegal", "Serbia", "Seychelles", "Sierra Leone", "Singapore", "Slovakia", "Slovenia", "Solomon Islands", "Somalia", "South Africa", "South Korea", "South Sudan", "Spain", "Sri Lanka", "Sudan", "Suriname", "Sweden", "Switzerland", "Syria", "Taiwan", "Tajikistan", "Tanzania", "Thailand", "Togo", "Tonga", "Trinidad and Tobago", "Tunisia", "Turkey", "Turkmenistan", "Tuvalu", "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "United States", "Uruguay", "Uzbekistan", "Vanuatu", "Vatican City", "Venezuela", "Vietnam", "Yemen", "Zambia", "Zimbabwe",
+  ],
+  kenyanCounties: [
+    "Baringo", "Bomet", "Bungoma", "Busia", "Elgeyo-Marakwet", "Embu", "Garissa", "Homa Bay", "Isiolo", "Kajiado", "Kakamega", "Kericho", "Kiambu", "Kilifi", "Kirinyaga", "Kisii", "Kisumu", "Kitui", "Kwale", "Laikipia", "Lamu", "Machakos", "Makueni", "Mandera", "Marsabit", "Meru", "Migori", "Mombasa", "Murang'a", "Nairobi", "Nakuru", "Nandi", "Narok", "Nyamira", "Nyandarua", "Nyeri", "Samburu", "Siaya", "Taita-Taveta", "Tana River", "Tharaka-Nithi", "Trans Nzoia", "Turkana", "Uasin Gishu", "Vihiga", "Wajir", "West Pokot",
+  ],
+  kenyanWards: {
+    Westlands: ["Kitisuru", "Parklands/Highridge", "Karura", "Kangemi", "Mountain View"],
+    "Lang'ata": ["Karen", "Nairobi West", "Mugumo-ini", "South C", "Nyayo Highrise"],
+    Starehe: ["Nairobi Central", "Ngara", "Pangani", "Ziwani/Kariokor", "Landimawe"],
+    Kasarani: ["Clay City", "Mwiki", "Kasarani", "Njiru", "Ruai"],
+  },
+  kenyanTribes: [
+    "Agikuyu", "Akamba", "Abaluhya", "Aluo", "Ameru", "Abagusii", "Amiji", "Turkana", "Aembu", "Akurya", "Asomali", "Kalenjin", "Ataita", "Asuba", "Agalla", "Abakuria", "Maasai", "Samburu", "Ambeere", "Adakama", "Apokomo", "Malakote", "Yaaku", "Abwaidakho", "Dahalo", "Boni", "Sanye", "Sakuye", "Garre", "Gabra", "Borana", "Burji", "Konso", "Rendille", "Ariaal", "Elmolo", "Munyoyaya", "Ogiek", "Sengwer", "Endorois", "Makonde", "Taita", "Taveta", "Duruma", "Digo", "Rabai", "Ribe", "Kauma", "Chonyi", "Jibana", "Kambe", "Giriama",
+  ],
+  genderOptions: ["male", "female", "other"],
+  raceOptions: ["Black", "White", "Asian", "Latino", "Mixed"],
+  bodyTypeOptions: ["slim", "average", "athletic", "curvy", "plus-size", "other"],
+  complexionOptions: ["Fair", "Dark", "Light brown"],
+  eyeColorOptions: ["brown", "black", "blue", "green", "hazel", "grey", "other"],
+  dimplesOptions: ["yes", "no"],
+  tattoosOptions: ["yes", "no"],
+  piercingsOptions: ["yes", "no"],
+  glassesOptions: ["yes", "no"],
+  disabilityOptions: ["yes", "no"],
+  chronicIllnessOptions: ["yes", "no"],
+  bloodTypeOptions: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],
+  snoringOptions: ["yes", "no"],
+  employmentStatusOptions: ["employed", "unemployed", "student", "retired", "self-employed"],
+  financialStabilityOptions: ["stable", "unstable", "building"],
+  alcoholOptions: ["yes", "no", "occasionally"],
+  smokingOptions: ["yes", "no", "occasionally"],
+  dietaryPreferenceOptions: ["omnivore", "vegetarian", "vegan", "pescatarian", "keto", "paleo", "other"],
+  hasPetsOptions: ["yes", "no"],
+  exerciseFrequencyOptions: ["daily", "weekly", "monthly", "rarely", "never"],
+  religionOptions: ["Christianity", "Islam", "Hinduism", "Buddhism", "Judaism", "Atheism", "Agnosticism", "Other"],
+  maritalStatusOptions: ["single", "divorced", "widowed", "separated"],
+  hasChildrenOptions: ["yes", "no"],
+  wantsChildrenOptions: ["yes", "no", "maybe"],
+  acceptsPartnerWithKidsOptions: ["yes", "no"],
+  longDistanceOkOptions: ["yes", "no"],
+  sexualOrientationOptions: ["Straight", "Gay", "Lesbian", "Bisexual", "Other"],
+  personalityTypeOptions: ["introvert", "extrovert", "ambivert"],
+  dateDifferentPoliticsOptions: ["yes", "no"],
+  believesInMarriageOptions: ["yes", "no", "maybe"],
 }
 
 export default function ProfilePage() {
@@ -664,169 +810,1046 @@ export default function ProfilePage() {
               </CardContent>
             </Card>
 
-            {isEditing && (
               <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 mt-6">
                 <CardHeader>
-                  <CardTitle className="text-gray-900 dark:text-gray-100">Demographics & Preferences</CardTitle>
+                  <CardTitle className="text-gray-900 dark:text-gray-100">Full Profile</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-3">
-                  {/* Race */}
-                  <Label>Race</Label>
-                  <Select value={profile.preferences?.race || "any"} onValueChange={value => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, race: value } }))}>
-                    <SelectTrigger className="rounded-xl">
-                      <SelectValue placeholder="Any Race" />
+                <CardContent className="space-y-8">
+                  {/* Personal Info */}
+                  <div>
+                    <h3 className="font-bold text-lg text-[#B22222] mb-2">Personal Info</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div><Label>Username</Label><Input value={profile.username || ''} onChange={e => setProfile(prev => ({ ...prev, username: e.target.value }))} disabled={!isEditing} /></div>
+                      <div><Label>Gender</Label>
+                        <Select
+                          value={profile.gender || ''}
+                          onValueChange={value => setProfile(prev => ({ ...prev, gender: value }))}
+                          disabled={!isEditing}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select gender" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="any">Any Race</SelectItem>
-                      <SelectItem value="african">African</SelectItem>
-                      <SelectItem value="asian">Asian</SelectItem>
-                      <SelectItem value="caucasian">Caucasian</SelectItem>
-                      <SelectItem value="latino">Latino</SelectItem>
-                      <SelectItem value="other">Other</SelectItem>
+                            {DATA_CONSTANTS.genderOptions.map(option => (
+                              <SelectItem key={option} value={option}>{option.charAt(0).toUpperCase() + option.slice(1)}</SelectItem>
+                            ))}
                     </SelectContent>
                   </Select>
-                  {/* Country */}
-                  <Label>Country</Label>
-                  <Input value={profile.preferences?.country || ""} onChange={e => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, country: e.target.value } }))} placeholder="Any Country" className="rounded-xl" />
-                  {/* County */}
-                  <Label>County</Label>
-                  <Input value={profile.preferences?.county || ""} onChange={e => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, county: e.target.value } }))} placeholder="Any County" className="rounded-xl" />
-                  {/* Tribe */}
-                  <Label>Tribe</Label>
-                  <Input value={profile.preferences?.tribe || ""} onChange={e => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, tribe: e.target.value } }))} placeholder="Any Tribe" className="rounded-xl" />
-                  {/* Languages */}
-                  <Label>Fluent in (comma separated)</Label>
-                  <Input value={profile.preferences?.languages?.join(", ") || ""} onChange={e => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, languages: e.target.value.split(",").map(s => s.trim()) } }))} placeholder="e.g. English, Swahili" className="rounded-xl" />
-                  {/* Religion */}
+                        {profile.gender === 'other' && (
+                          <Input
+                            value={profile.customGender || ''}
+                            onChange={e => setProfile(prev => ({ ...prev, customGender: e.target.value }))}
+                            placeholder="Please describe"
+                            className="transition-all duration-200 mt-2 animate-in slide-in-from-top-2"
+                            disabled={!isEditing}
+                          />
+                        )}
+                      </div>
+                      <div><Label>Age</Label><Input value={profile.age || (profile.dateOfBirth ? calculateAge(profile.dateOfBirth) : '')} disabled /></div>
+                      <div><Label>Race</Label>
+                        <Select
+                          value={profile.race || ''}
+                          onValueChange={value => setProfile(prev => ({ ...prev, race: value }))}
+                          disabled={!isEditing}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select race" />
+                    </SelectTrigger>
+                    <SelectContent>
+                            {DATA_CONSTANTS.raceOptions.map(option => (
+                              <SelectItem key={option} value={option}>{option}</SelectItem>
+                            ))}
+                    </SelectContent>
+                  </Select>
+                      </div>
+                      <div>
+                        <SearchableSelect
+                          items={DATA_CONSTANTS.worldCountries}
+                          value={profile.country || ''}
+                          onValueChange={(value) => {
+                            setProfile(prev => ({ 
+                              ...prev, 
+                              country: value,
+                              county: "",
+                              constituency: "",
+                              ward: "",
+                              state: ""
+                            }))
+                          }}
+                          placeholder="Select country"
+                          searchPlaceholder="Search countries..."
+                          label="Country"
+                          disabled={!isEditing}
+                        />
+                      </div>
+
+                      {/* Kenya-specific location fields */}
+                      {profile.country === "Kenya" && (
+                        <div className="space-y-4 animate-in slide-in-from-top-4">
+                          <SearchableSelect
+                            items={DATA_CONSTANTS.kenyanCounties}
+                            value={profile.county || ''}
+                            onValueChange={(value) => {
+                              setProfile(prev => ({ 
+                                ...prev, 
+                                county: value,
+                                constituency: "",
+                                ward: ""
+                              }))
+                            }}
+                            placeholder="Select county"
+                            searchPlaceholder="Search counties..."
+                            label="County"
+                            disabled={!isEditing}
+                          />
+                          {/* Constituency as free text input, not dropdown */}
+                          <div className="space-y-2">
+                            <Label>Constituency</Label>
+                            <Input
+                              value={profile.constituency || ''}
+                              onChange={e => setProfile(prev => ({ ...prev, constituency: e.target.value }))}
+                              placeholder="Enter your constituency"
+                              className="transition-all duration-200"
+                              disabled={!isEditing}
+                            />
+                          </div>
+                          {/* Ward remains as before (optional) */}
+                          {profile.constituency && DATA_CONSTANTS.kenyanWards[profile.constituency as keyof typeof DATA_CONSTANTS.kenyanWards] && (
+                            <SearchableSelect
+                              items={DATA_CONSTANTS.kenyanWards[profile.constituency as keyof typeof DATA_CONSTANTS.kenyanWards]}
+                              value={profile.ward || ''}
+                              onValueChange={(value) => setProfile(prev => ({ ...prev, ward: value }))}
+                              placeholder="Select ward (optional)"
+                              searchPlaceholder="Search wards..."
+                              label="Ward (Optional)"
+                              disabled={!isEditing}
+                            />
+                          )}
+                        </div>
+                      )}
+
+                      {/* State for other countries as free text input */}
+                      {profile.country && profile.country !== "Kenya" && (
+                        <div className="animate-in slide-in-from-top-4 space-y-2">
+                          <Label>State/Province</Label>
+                          <Input
+                            value={profile.state || ''}
+                            onChange={e => setProfile(prev => ({ ...prev, state: e.target.value }))}
+                            placeholder="Enter your state/province"
+                            className="transition-all duration-200"
+                            disabled={!isEditing}
+                          />
+                        </div>
+                      )}
+
+                      {/* Tribe - only for Kenya */}
+                      {profile.country === "Kenya" && (
+                        <div className="animate-in slide-in-from-top-4">
+                          <SearchableSelect
+                            items={DATA_CONSTANTS.kenyanTribes}
+                            value={profile.tribe || ''}
+                            onValueChange={(value) => setProfile(prev => ({ ...prev, tribe: value }))}
+                            placeholder="Select tribe"
+                            searchPlaceholder="Search tribes..."
+                            label="Tribe"
+                            disabled={!isEditing}
+                          />
+                        </div>
+                      )}
+
+                      <div className="md:col-span-2"><Label>Languages</Label><Input value={profile.languages?.join(', ') || ''} onChange={e => setProfile(prev => ({ ...prev, languages: e.target.value.split(',').map(s => s.trim()) }))} disabled={!isEditing} /></div>
+                    </div>
+                  </div>
+                  {/* Physical Appearance */}
+                  <div>
+                    <h3 className="font-bold text-lg text-[#B22222] mb-2">Physical Appearance</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label>Height</Label>
+                        <div className="flex gap-2">
+                          {profile.heightUnit === "ft" ? (
+                            <>
+                              <Input 
+                                type="number" 
+                                value={profile.heightFt || ''} 
+                                onChange={e => setProfile(prev => ({ ...prev, heightFt: e.target.value }))} 
+                                placeholder="ft" 
+                                className="flex-1" 
+                                min={0} 
+                                disabled={!isEditing}
+                              />
+                              <Input 
+                                type="number" 
+                                value={profile.heightIn || ''} 
+                                onChange={e => setProfile(prev => ({ ...prev, heightIn: e.target.value }))} 
+                                placeholder="in" 
+                                className="flex-1" 
+                                min={0} 
+                                max={11} 
+                                disabled={!isEditing}
+                              />
+                            </>
+                          ) : (
+                            <Input 
+                              type="number" 
+                              value={profile.height || ''} 
+                              onChange={e => setProfile(prev => ({ ...prev, height: e.target.value }))} 
+                              placeholder="Height" 
+                              className="flex-1" 
+                              min={0} 
+                              disabled={!isEditing}
+                            />
+                          )}
+                          <Select 
+                            value={profile.heightUnit || 'cm'} 
+                            onValueChange={v => setProfile(prev => ({ ...prev, heightUnit: v }))}
+                            disabled={!isEditing}
+                          >
+                            <SelectTrigger className="w-24">
+                              <SelectValue placeholder="Unit" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="cm">cm</SelectItem>
+                              <SelectItem value="ft">ft</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                      <div>
+                        <Label>Weight</Label>
+                        <div className="flex gap-2">
+                          <Input 
+                            type="number" 
+                            value={profile.weight || ''} 
+                            onChange={e => setProfile(prev => ({ ...prev, weight: e.target.value }))} 
+                            placeholder="Weight" 
+                            className="flex-1" 
+                            disabled={!isEditing}
+                          />
+                          <Select 
+                            value={profile.weightUnit || 'kg'} 
+                            onValueChange={v => setProfile(prev => ({ ...prev, weightUnit: v }))}
+                            disabled={!isEditing}
+                          >
+                            <SelectTrigger className="w-24">
+                              <SelectValue placeholder="Unit" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="kg">kg</SelectItem>
+                              <SelectItem value="lb">lb</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                      <div>
+                        <Label>Body Type</Label>
+                        <Select
+                          value={profile.bodyType || ''}
+                          onValueChange={value => setProfile(prev => ({ ...prev, bodyType: value }))}
+                          disabled
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select body type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {DATA_CONSTANTS.bodyTypeOptions.map(option => (
+                              <SelectItem key={option} value={option}>{option.charAt(0).toUpperCase() + option.slice(1)}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div><Label>Complexion</Label><Input value={profile.complexion || ''} onChange={e => setProfile(prev => ({ ...prev, complexion: e.target.value }))} disabled /></div>
+                      <div>
+                        <Label>Eye Color</Label>
+                        <Select
+                          value={profile.eyeColor || ''}
+                          onValueChange={value => setProfile(prev => ({ ...prev, eyeColor: value }))}
+                          disabled
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select eye color" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {DATA_CONSTANTS.eyeColorOptions.map(option => (
+                              <SelectItem key={option} value={option}>{option.charAt(0).toUpperCase() + option.slice(1)}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label>Dimples</Label>
+                        <Select
+                          value={profile.dimples || ''}
+                          onValueChange={value => setProfile(prev => ({ ...prev, dimples: value }))}
+                          disabled
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select dimples" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {DATA_CONSTANTS.dimplesOptions.map(option => (
+                              <SelectItem key={option} value={option}>{option.charAt(0).toUpperCase() + option.slice(1)}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        {profile.dimples === 'yes' && (
+                          <>
+                            <Input 
+                              value={profile.dimplesDescription || ''}
+                              onChange={e => {
+                                const value = e.target.value.split(/\s+/).slice(0, 25).join(" ");
+                                setProfile(prev => ({ ...prev, dimplesDescription: value }));
+                              }}
+                              placeholder="Describe your dimples"
+                              className="mt-2"
+                              disabled
+                            />
+                            <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">
+                              {(profile.dimplesDescription ?? '').trim() ? (profile.dimplesDescription ?? '').trim().split(/\s+/).length : 0}/25 words
+                            </div>
+                          </>
+                        )}
+                      </div>
+                      <div><Label>Teeth Features</Label><Input value={profile.teethFeatures || ''} onChange={e => setProfile(prev => ({ ...prev, teethFeatures: e.target.value }))} disabled /></div>
+                      <div>
+                        <Label>Tattoos</Label>
+                        <Select
+                          value={profile.tattoos || ''}
+                          onValueChange={value => setProfile(prev => ({ ...prev, tattoos: value }))}
+                          disabled
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select tattoos" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {DATA_CONSTANTS.tattoosOptions.map(option => (
+                              <SelectItem key={option} value={option}>{option.charAt(0).toUpperCase() + option.slice(1)}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        {profile.tattoos === 'yes' && (
+                          <>
+                            <Input 
+                              value={profile.tattoosDescription || ''}
+                              onChange={e => {
+                                const value = e.target.value.split(/\s+/).slice(0, 25).join(" ");
+                                setProfile(prev => ({ ...prev, tattoosDescription: value }));
+                              }}
+                              placeholder="Describe your tattoos"
+                              className="mt-2"
+                              disabled
+                            />
+                            <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">
+                              {(profile.tattoosDescription ?? '').trim() ? (profile.tattoosDescription ?? '').trim().split(/\s+/).length : 0}/25 words
+                            </div>
+                          </>
+                        )}
+                      </div>
+                      <div>
+                        <Label>Piercings</Label>
+                        <Select
+                          value={profile.piercings || ''}
+                          onValueChange={value => setProfile(prev => ({ ...prev, piercings: value }))}
+                          disabled
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select piercings" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {DATA_CONSTANTS.piercingsOptions.map(option => (
+                              <SelectItem key={option} value={option}>{option.charAt(0).toUpperCase() + option.slice(1)}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        {profile.piercings === 'yes' && (
+                          <>
+                            <Input 
+                              value={profile.piercingsDescription || ''}
+                              onChange={e => {
+                                const value = e.target.value.split(/\s+/).slice(0, 25).join(" ");
+                                setProfile(prev => ({ ...prev, piercingsDescription: value }));
+                              }}
+                              placeholder="Describe your piercings"
+                              className="mt-2"
+                              disabled
+                            />
+                            <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">
+                              {(profile.piercingsDescription ?? '').trim() ? (profile.piercingsDescription ?? '').trim().split(/\s+/).length : 0}/25 words
+                            </div>
+                          </>
+                        )}
+                      </div>
+                      <div>
+                        <Label>Glasses</Label>
+                        <Select
+                          value={profile.glasses || ''}
+                          onValueChange={value => setProfile(prev => ({ ...prev, glasses: value }))}
+                          disabled
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select glasses" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {DATA_CONSTANTS.glassesOptions.map(option => (
+                              <SelectItem key={option} value={option}>{option.charAt(0).toUpperCase() + option.slice(1)}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        {profile.glasses === 'yes' && (
+                          <>
+                            <Input 
+                              value={profile.glassesDescription || ''}
+                              onChange={e => {
+                                const value = e.target.value.split(/\s+/).slice(0, 25).join(" ");
+                                setProfile(prev => ({ ...prev, glassesDescription: value }));
+                              }}
+                              placeholder="Describe your glasses"
+                              className="mt-2"
+                              disabled
+                            />
+                            <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">
+                              {(profile.glassesDescription ?? '').trim() ? (profile.glassesDescription ?? '').trim().split(/\s+/).length : 0}/25 words
+                            </div>
+                          </>
+                        )}
+                      </div>
+                      <div className="md:col-span-2">
+                        <Label>Self Description (Physical)</Label>
+                        <Textarea 
+                          value={profile.selfDescriptionPhysical || ''} 
+                          onChange={e => {
+                            const value = e.target.value.split(/\s+/).slice(0, 25).join(" ");
+                            setProfile(prev => ({ ...prev, selfDescriptionPhysical: value }));
+                          }}
+                          placeholder="Describe your physical appearance in your own words"
+                          disabled
+                        />
+                        <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">
+                          {((profile.bio || profile.selfDescription)?.trim() || '').split(/\s+/).length}/25 words
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  {/* Health */}
+                  <div>
+                    <h3 className="font-bold text-lg text-[#B22222] mb-2">Health</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div><Label>HIV Status</Label><Input value={profile.hivStatus || ''} disabled /></div>
+                      <div>
+                        <Label>Disability</Label>
+                        <Select
+                          value={profile.disability || ''}
+                          onValueChange={value => setProfile(prev => ({ ...prev, disability: value }))}
+                          disabled
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select disability" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {DATA_CONSTANTS.disabilityOptions.map(option => (
+                              <SelectItem key={option} value={option}>{option.charAt(0).toUpperCase() + option.slice(1)}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label>Chronic Illness</Label>
+                        <Select
+                          value={profile.chronicIllness || ''}
+                          onValueChange={value => setProfile(prev => ({ ...prev, chronicIllness: value }))}
+                          disabled
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select chronic illness" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {DATA_CONSTANTS.chronicIllnessOptions.map(option => (
+                              <SelectItem key={option} value={option}>{option.charAt(0).toUpperCase() + option.slice(1)}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div><Label>Allergies</Label><Input value={profile.allergies || ''} onChange={e => setProfile(prev => ({ ...prev, allergies: e.target.value }))} disabled /></div>
+                      <div>
+                        <Label>Blood Type</Label>
+                        <Select
+                          value={profile.bloodType || ''}
+                          onValueChange={value => setProfile(prev => ({ ...prev, bloodType: value }))}
+                          disabled
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select blood type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {DATA_CONSTANTS.bloodTypeOptions.map(option => (
+                              <SelectItem key={option} value={option}>{option.charAt(0).toUpperCase() + option.slice(1)}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label>Snoring</Label>
+                        <Select
+                          value={profile.snoring || ''}
+                          onValueChange={value => setProfile(prev => ({ ...prev, snoring: value }))}
+                          disabled={!isEditing}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select snoring" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {DATA_CONSTANTS.snoringOptions.map(option => (
+                              <SelectItem key={option} value={option}>{option.charAt(0).toUpperCase() + option.slice(1)}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </div>
+                  {/* Work & Lifestyle */}
+                  <div>
+                    <h3 className="font-bold text-lg text-[#B22222] mb-2">Work & Lifestyle</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label>Employment Status</Label>
+                        <Select
+                          value={profile.employmentStatus || ''}
+                          onValueChange={value => setProfile(prev => ({ ...prev, employmentStatus: value }))}
+                          disabled={!isEditing}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select employment status" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {DATA_CONSTANTS.employmentStatusOptions.map(option => (
+                              <SelectItem key={option} value={option}>{option.charAt(0).toUpperCase() + option.slice(1)}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div><Label>Occupation</Label><Input value={profile.occupation || ''} onChange={e => setProfile(prev => ({ ...prev, occupation: e.target.value }))} disabled={!isEditing} /></div>
+                      <div>
+                        <SearchableSelect
+                          items={DATA_CONSTANTS.worldCountries}
+                          value={profile.workCountry || ''}
+                          onValueChange={(value) => {
+                            setProfile(prev => ({ 
+                              ...prev, 
+                              workCountry: value,
+                              workCounty: "",
+                              workConstituency: "",
+                              workWard: "",
+                              workState: ""
+                            }))
+                          }}
+                          placeholder="Select work country"
+                          searchPlaceholder="Search countries..."
+                          label="Work Country"
+                          disabled={!isEditing}
+                        />
+                      </div>
+
+                      {/* Kenya-specific work location fields */}
+                      {profile.workCountry === "Kenya" && (
+                        <div className="space-y-4 animate-in slide-in-from-top-4">
+                          <SearchableSelect
+                            items={DATA_CONSTANTS.kenyanCounties}
+                            value={profile.workCounty || ''}
+                            onValueChange={(value) => {
+                              setProfile(prev => ({ 
+                                ...prev, 
+                                workCounty: value,
+                                workConstituency: "",
+                                workWard: ""
+                              }))
+                            }}
+                            placeholder="Select work county"
+                            searchPlaceholder="Search counties..."
+                            label="Work County"
+                            disabled={!isEditing}
+                          />
+                          {/* Work Constituency as free text input */}
+                          <div className="space-y-2">
+                            <Label>Work Constituency</Label>
+                            <Input
+                              value={profile.workConstituency || ''}
+                              onChange={e => setProfile(prev => ({ ...prev, workConstituency: e.target.value }))}
+                              placeholder="Enter your work constituency"
+                              className="transition-all duration-200"
+                              disabled={!isEditing}
+                            />
+                          </div>
+                          {/* Work Ward (optional) */}
+                          {profile.workConstituency && DATA_CONSTANTS.kenyanWards[profile.workConstituency as keyof typeof DATA_CONSTANTS.kenyanWards] && (
+                            <SearchableSelect
+                              items={DATA_CONSTANTS.kenyanWards[profile.workConstituency as keyof typeof DATA_CONSTANTS.kenyanWards]}
+                              value={profile.workWard || ''}
+                              onValueChange={(value) => setProfile(prev => ({ ...prev, workWard: value }))}
+                              placeholder="Select work ward (optional)"
+                              searchPlaceholder="Search wards..."
+                              label="Work Ward (Optional)"
+                              disabled={!isEditing}
+                            />
+                          )}
+                        </div>
+                      )}
+
+                      {/* Work State for other countries as free text input */}
+                      {profile.workCountry && profile.workCountry !== "Kenya" && (
+                        <div className="animate-in slide-in-from-top-4 space-y-2">
+                          <Label>Work State/Province</Label>
+                          <Input
+                            value={profile.workState || ''}
+                            onChange={e => setProfile(prev => ({ ...prev, workState: e.target.value }))}
+                            placeholder="Enter your work state/province"
+                            className="transition-all duration-200"
+                            disabled={!isEditing}
+                          />
+                        </div>
+                      )}
+                      <div>
+                        <Label>Financial Stability</Label>
+                        <Select
+                          value={profile.financialStability || ''}
+                          onValueChange={value => setProfile(prev => ({ ...prev, financialStability: value }))}
+                          disabled={!isEditing}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select financial stability" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {DATA_CONSTANTS.financialStabilityOptions.map(option => (
+                              <SelectItem key={option} value={option}>{option.charAt(0).toUpperCase() + option.slice(1)}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label>Alcohol</Label>
+                        <Select
+                          value={profile.alcohol || ''}
+                          onValueChange={value => setProfile(prev => ({ ...prev, alcohol: value }))}
+                          disabled={!isEditing}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select alcohol" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {DATA_CONSTANTS.alcoholOptions.map(option => (
+                              <SelectItem key={option} value={option}>{option.charAt(0).toUpperCase() + option.slice(1)}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label>Smoking</Label>
+                        <Select
+                          value={profile.smoking || ''}
+                          onValueChange={value => setProfile(prev => ({ ...prev, smoking: value }))}
+                          disabled={!isEditing}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select smoking" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {DATA_CONSTANTS.smokingOptions.map(option => (
+                              <SelectItem key={option} value={option}>{option.charAt(0).toUpperCase() + option.slice(1)}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label>Dietary Preference</Label>
+                        <Select
+                          value={profile.dietaryPreference || ''}
+                          onValueChange={value => setProfile(prev => ({ ...prev, dietaryPreference: value }))}
+                          disabled={!isEditing}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select dietary preference" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {DATA_CONSTANTS.dietaryPreferenceOptions.map(option => (
+                              <SelectItem key={option} value={option}>{option}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label>Has Pets</Label>
+                        <Select
+                          value={profile.pets || ''}
+                          onValueChange={value => setProfile(prev => ({ ...prev, pets: value }))}
+                          disabled={!isEditing}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select pets" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {DATA_CONSTANTS.hasPetsOptions.map(option => (
+                              <SelectItem key={option} value={option}>{option.charAt(0).toUpperCase() + option.slice(1)}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label>Exercise Frequency</Label>
+                        <Select
+                          value={profile.exerciseFrequency || ''}
+                          onValueChange={value => setProfile(prev => ({ ...prev, exerciseFrequency: value }))}
+                          disabled={!isEditing}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select exercise frequency" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {DATA_CONSTANTS.exerciseFrequencyOptions.map(option => (
+                              <SelectItem key={option} value={option}>{option.charAt(0).toUpperCase() + option.slice(1)}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div><Label>Hobbies</Label><Input value={profile.hobbies || ''} onChange={e => setProfile(prev => ({ ...prev, hobbies: e.target.value }))} disabled={!isEditing} /></div>
+                    </div>
+                  </div>
+                  {/* Beliefs */}
+                  <div>
+                    <h3 className="font-bold text-lg text-[#B22222] mb-2">Beliefs</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
                   <Label>Religion</Label>
-                  <Input value={profile.preferences?.religion || ""} onChange={e => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, religion: e.target.value } }))} placeholder="Any Religion" className="rounded-xl" />
-                  {/* Denomination */}
-                  <Label>Denomination</Label>
-                  <Input value={profile.preferences?.denomination || ""} onChange={e => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, denomination: e.target.value } }))} placeholder="Any Denomination" className="rounded-xl" />
-                  {/* Marital Status */}
+                        <Select
+                          value={profile.religion || ''}
+                          onValueChange={value => setProfile(prev => ({ ...prev, religion: value }))}
+                          disabled={!isEditing}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select religion" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {DATA_CONSTANTS.religionOptions.map(option => (
+                              <SelectItem key={option} value={option}>{option}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div><Label>Religiousness</Label><Input value={profile.religiousness || ''} onChange={e => setProfile(prev => ({ ...prev, religiousness: e.target.value }))} disabled={!isEditing} /></div>
+                      <div><Label>Denomination</Label><Input value={profile.denomination || ''} onChange={e => setProfile(prev => ({ ...prev, denomination: e.target.value }))} disabled={!isEditing} /></div>
+                      <div><Label>Church Attendance</Label><Input value={profile.churchAttendance || ''} onChange={e => setProfile(prev => ({ ...prev, churchAttendance: e.target.value }))} disabled={!isEditing} /></div>
+                    </div>
+                  </div>
+                  {/* Family */}
+                  <div>
+                    <h3 className="font-bold text-lg text-[#B22222] mb-2">Family</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
                   <Label>Marital Status</Label>
-                  <Select value={profile.preferences?.maritalStatus || "any"} onValueChange={value => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, maritalStatus: value } }))}>
-                    <SelectTrigger className="rounded-xl">
-                      <SelectValue placeholder="Any Marital Status" />
+                        <Select
+                          value={profile.maritalStatus || ''}
+                          onValueChange={value => setProfile(prev => ({ ...prev, maritalStatus: value }))}
+                          disabled={!isEditing}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select marital status" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="any">Any</SelectItem>
-                      <SelectItem value="single">Single</SelectItem>
-                      <SelectItem value="divorced">Divorced</SelectItem>
-                      <SelectItem value="widowed">Widowed</SelectItem>
-                      <SelectItem value="separated">Separated</SelectItem>
+                            {DATA_CONSTANTS.maritalStatusOptions.map(option => (
+                              <SelectItem key={option} value={option}>{option}</SelectItem>
+                            ))}
                     </SelectContent>
                   </Select>
-                  {/* Has Children */}
+                      </div>
+                      <div>
                   <Label>Has Children</Label>
-                  <Select value={profile.preferences?.hasChildren || "any"} onValueChange={value => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, hasChildren: value } }))}>
-                    <SelectTrigger className="rounded-xl">
-                      <SelectValue placeholder="Any" />
+                        <Select
+                          value={profile.hasChildren || ''}
+                          onValueChange={value => setProfile(prev => ({ ...prev, hasChildren: value }))}
+                          disabled={!isEditing}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select has children" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="any">Any</SelectItem>
-                      <SelectItem value="yes">Yes</SelectItem>
-                      <SelectItem value="no">No</SelectItem>
+                            {DATA_CONSTANTS.hasChildrenOptions.map(option => (
+                              <SelectItem key={option} value={option}>{option.charAt(0).toUpperCase() + option.slice(1)}</SelectItem>
+                            ))}
                     </SelectContent>
                   </Select>
-                  {/* Wants Children */}
+                      </div>
+                      <div><Label>Number of Children</Label><Input value={profile.numberOfChildren || ''} onChange={e => setProfile(prev => ({ ...prev, numberOfChildren: e.target.value }))} disabled={!isEditing} /></div>
+                      <div><Label>Children Ages</Label><Input value={profile.childrenAges || ''} onChange={e => setProfile(prev => ({ ...prev, childrenAges: e.target.value }))} disabled={!isEditing} /></div>
+                      <div><Label>Children Live With User</Label><Input value={profile.childrenLiveWithUser || ''} onChange={e => setProfile(prev => ({ ...prev, childrenLiveWithUser: e.target.value }))} disabled={!isEditing} /></div>
+                      <div>
                   <Label>Wants Children</Label>
-                  <Select value={profile.preferences?.wantsChildren || "any"} onValueChange={value => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, wantsChildren: value } }))}>
-                    <SelectTrigger className="rounded-xl">
-                      <SelectValue placeholder="Any" />
+                        <Select
+                          value={profile.wantsChildren || ''}
+                          onValueChange={value => setProfile(prev => ({ ...prev, wantsChildren: value }))}
+                          disabled={!isEditing}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select wants children" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="any">Any</SelectItem>
-                      <SelectItem value="yes">Yes</SelectItem>
-                      <SelectItem value="no">No</SelectItem>
+                            {DATA_CONSTANTS.wantsChildrenOptions.map(option => (
+                              <SelectItem key={option} value={option}>{option.charAt(0).toUpperCase() + option.slice(1)}</SelectItem>
+                            ))}
                     </SelectContent>
                   </Select>
-                  {/* Accepts Partner with Kids */}
-                  <Label>Accepts Partner with Kids</Label>
-                  <Select value={profile.preferences?.acceptsPartnerWithKids || "any"} onValueChange={value => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, acceptsPartnerWithKids: value } }))}>
-                    <SelectTrigger className="rounded-xl">
-                      <SelectValue placeholder="Any" />
+                      </div>
+                      <div className="md:col-span-2">
+                        <Label>Accepts Partner With Kids</Label>
+                        <Select
+                          value={profile.acceptsPartnerWithKids || ''}
+                          onValueChange={value => setProfile(prev => ({ ...prev, acceptsPartnerWithKids: value }))}
+                          disabled={!isEditing}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select accepts partner with kids" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="any">Any</SelectItem>
-                      <SelectItem value="yes">Yes</SelectItem>
-                      <SelectItem value="no">No</SelectItem>
+                            {DATA_CONSTANTS.acceptsPartnerWithKidsOptions.map(option => (
+                              <SelectItem key={option} value={option}>{option.charAt(0).toUpperCase() + option.slice(1)}</SelectItem>
+                            ))}
                     </SelectContent>
                   </Select>
-                  {/* Smoking */}
-                  <Label>Smoking</Label>
-                  <Select value={profile.preferences?.smoking || "any"} onValueChange={value => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, smoking: value } }))}>
-                    <SelectTrigger className="rounded-xl">
-                      <SelectValue placeholder="Any Smoking" />
+                        {profile.acceptsPartnerWithKids === "yes" && (
+                          <Input
+                            value={profile.acceptsPartnerWithKidsDescription || ''}
+                            onChange={e => setProfile(prev => ({ ...prev, acceptsPartnerWithKidsDescription: e.target.value }))}
+                            placeholder="Describe your preference"
+                            className="transition-all duration-200 mt-2"
+                            disabled={!isEditing}
+                          />
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  {/* Preferences */}
+                  <div>
+                    <h3 className="font-bold text-lg text-[#B22222] mb-2">Preferences</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div><Label>Open to Relocate</Label><Input value={profile.openToRelocate || ''} onChange={e => setProfile(prev => ({ ...prev, openToRelocate: e.target.value }))} disabled={!isEditing} /></div>
+                      <div>
+                        <Label>Sexual Orientation</Label>
+                        <Select
+                          value={profile.sexualOrientation || ''}
+                          onValueChange={value => setProfile(prev => ({ ...prev, sexualOrientation: value }))}
+                          disabled={!isEditing}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select sexual orientation" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="any">Any</SelectItem>
-                      <SelectItem value="yes">Yes</SelectItem>
-                      <SelectItem value="no">No</SelectItem>
-                      <SelectItem value="occasionally">Occasionally</SelectItem>
+                            {DATA_CONSTANTS.sexualOrientationOptions.map(option => (
+                              <SelectItem key={option} value={option}>{option}</SelectItem>
+                            ))}
                     </SelectContent>
                   </Select>
-                  {/* Alcohol */}
-                  <Label>Alcohol</Label>
-                  <Select value={profile.preferences?.alcohol || "any"} onValueChange={value => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, alcohol: value } }))}>
-                    <SelectTrigger className="rounded-xl">
-                      <SelectValue placeholder="Any Alcohol" />
+                        {profile.sexualOrientation === 'Other' && (
+                          <Input
+                            value={profile.sexualOrientationOther || ''}
+                            onChange={e => setProfile(prev => ({ ...prev, sexualOrientationOther: e.target.value }))}
+                            placeholder="Please specify"
+                            className="transition-all duration-200 mt-2"
+                            disabled={!isEditing}
+                          />
+                        )}
+                      </div>
+                      <div><Label>Relationship Tradition</Label><Input value={profile.relationshipTradition || ''} onChange={e => setProfile(prev => ({ ...prev, relationshipTradition: e.target.value }))} disabled={!isEditing} /></div>
+                      <div>
+                        <Label>Long Distance OK</Label>
+                        <Select
+                          value={profile.longDistanceOk || ''}
+                          onValueChange={value => setProfile(prev => ({ ...prev, longDistanceOk: value }))}
+                          disabled={!isEditing}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select long distance" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="any">Any</SelectItem>
-                      <SelectItem value="yes">Yes</SelectItem>
-                      <SelectItem value="no">No</SelectItem>
-                      <SelectItem value="occasionally">Occasionally</SelectItem>
+                            {DATA_CONSTANTS.longDistanceOkOptions.map(option => (
+                              <SelectItem key={option} value={option}>{option.charAt(0).toUpperCase() + option.slice(1)}</SelectItem>
+                            ))}
                     </SelectContent>
                   </Select>
-                  {/* Dietary Preference */}
-                  <Label>Dietary Preference</Label>
-                  <Input value={profile.preferences?.dietaryPreference || ""} onChange={e => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, dietaryPreference: e.target.value } }))} placeholder="Any Diet" className="rounded-xl" />
-                  {/* Pets */}
-                  <Label>Pets</Label>
-                  <Select value={profile.preferences?.pets || "any"} onValueChange={value => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, pets: value } }))}>
-                    <SelectTrigger className="rounded-xl">
-                      <SelectValue placeholder="Any Pets" />
+                      </div>
+                      <div>
+                        <Label>Dating Perspective</Label>
+                        <Input 
+                          value={profile.datingPerspective || ''} 
+                          onChange={e => {
+                            const value = e.target.value.split(/\s+/).slice(0, 25).join(" ");
+                            setProfile(prev => ({ ...prev, datingPerspective: value }));
+                          }}
+                          placeholder="What's your perspective on dating?"
+                          disabled={!isEditing}
+                        />
+                        <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">
+                          {profile.datingPerspective?.trim() ? profile.datingPerspective.trim().split(/\s+/).length : 0}/25 words
+                        </div>
+                      </div>
+                      <div>
+                        <Label>Deal Breakers</Label>
+                        <Input 
+                          value={profile.dealBreakers || ''} 
+                          onChange={e => {
+                            const value = e.target.value.split(/\s+/).slice(0, 25).join(" ");
+                            setProfile(prev => ({ ...prev, dealBreakers: value }));
+                          }}
+                          placeholder="What are your deal breakers?"
+                          disabled={!isEditing}
+                        />
+                        <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">
+                          {profile.dealBreakers?.trim() ? profile.dealBreakers.trim().split(/\s+/).length : 0}/25 words
+                        </div>
+                      </div>
+                      <div>
+                        <Label>Relationship Goals</Label>
+                        <Input 
+                          value={profile.relationshipHopes || ''} 
+                          onChange={e => {
+                            const value = e.target.value.split(/\s+/).slice(0, 25).join(" ");
+                            setProfile(prev => ({ ...prev, relationshipHopes: value }));
+                          }}
+                          placeholder="What do you hope for in a relationship?"
+                          disabled={!isEditing}
+                        />
+                        <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">
+                          {profile.relationshipHopes?.trim() ? profile.relationshipHopes.trim().split(/\s+/).length : 0}/25 words
+                        </div>
+                      </div>
+                      <div>
+                        <Label>Partner Preferences</Label>
+                        <Input 
+                          value={profile.partnerPreferences || ''} 
+                          onChange={e => {
+                            const value = e.target.value.split(/\s+/).slice(0, 25).join(" ");
+                            setProfile(prev => ({ ...prev, partnerPreferences: value }));
+                          }}
+                          placeholder="What are you looking for in a partner?"
+                          disabled={!isEditing}
+                        />
+                        <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">
+                          {profile.partnerPreferences?.trim() ? profile.partnerPreferences.trim().split(/\s+/).length : 0}/25 words
+                        </div>
+                      </div>
+                      <div>
+                        <Label>Personality Type</Label>
+                        <Select
+                          value={profile.personalityType || ''}
+                          onValueChange={value => setProfile(prev => ({ ...prev, personalityType: value }))}
+                          disabled={!isEditing}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select personality type" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="any">Any</SelectItem>
-                      <SelectItem value="yes">Yes</SelectItem>
-                      <SelectItem value="no">No</SelectItem>
+                            {DATA_CONSTANTS.personalityTypeOptions.map(option => (
+                              <SelectItem key={option} value={option}>{option.charAt(0).toUpperCase() + option.slice(1)}</SelectItem>
+                            ))}
                     </SelectContent>
                   </Select>
-                  {/* Snoring */}
-                  <Label>Snoring</Label>
-                  <Select value={profile.preferences?.snoring || "any"} onValueChange={value => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, snoring: value } }))}>
-                    <SelectTrigger className="rounded-xl">
-                      <SelectValue placeholder="Any Snoring" />
+                      </div>
+                      <div>
+                        <Label>Don't Contact If</Label>
+                        <Input 
+                          value={profile.dontContactIf || ''} 
+                          onChange={e => {
+                            const value = e.target.value.split(/\s+/).slice(0, 25).join(" ");
+                            setProfile(prev => ({ ...prev, dontContactIf: value }));
+                          }}
+                          placeholder="What would make you not want to be contacted?"
+                          disabled={!isEditing}
+                        />
+                        <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">
+                          {profile.dontContactIf?.trim() ? profile.dontContactIf.trim().split(/\s+/).length : 0}/25 words
+                        </div>
+                      </div>
+                      <div>
+                        <Label>If we end up together, here's what you can expect from me</Label>
+                        <Input 
+                          value={profile.expectFromMe || ''} 
+                          onChange={e => {
+                            const value = e.target.value.split(/\s+/).slice(0, 25).join(" ");
+                            setProfile(prev => ({ ...prev, expectFromMe: value }));
+                          }}
+                          placeholder="Describe what your partner can expect from you"
+                          disabled={!isEditing}
+                        />
+                        <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">
+                          {profile.expectFromMe?.trim() ? profile.expectFromMe.trim().split(/\s+/).length : 0}/25 words
+                        </div>
+                      </div>
+                      <div>
+                        <Label>Imperfections</Label>
+                        <Input 
+                          value={profile.imperfections || ''} 
+                          onChange={e => {
+                            const value = e.target.value.split(/\s+/).slice(0, 25).join(" ");
+                            setProfile(prev => ({ ...prev, imperfections: value }));
+                          }}
+                          placeholder="What are some of your imperfections?"
+                          disabled={!isEditing}
+                        />
+                        <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">
+                          {profile.imperfections?.trim() ? profile.imperfections.trim().split(/\s+/).length : 0}/25 words
+                        </div>
+                      </div>
+                      <div><Label>Political Views</Label><Input value={profile.politicalViews || ''} onChange={e => setProfile(prev => ({ ...prev, politicalViews: e.target.value }))} disabled={!isEditing} /></div>
+                      <div>
+                        <Label>Date Different Politics</Label>
+                        <Select
+                          value={profile.dateDifferentPolitics || ''}
+                          onValueChange={value => setProfile(prev => ({ ...prev, dateDifferentPolitics: value }))}
+                          disabled={!isEditing}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select date different politics" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="any">Any</SelectItem>
-                      <SelectItem value="yes">Yes</SelectItem>
-                      <SelectItem value="no">No</SelectItem>
+                            {DATA_CONSTANTS.dateDifferentPoliticsOptions.map(option => (
+                              <SelectItem key={option} value={option}>{option.charAt(0).toUpperCase() + option.slice(1)}</SelectItem>
+                            ))}
                     </SelectContent>
                   </Select>
-                  {/* Open to Relocate */}
-                  <Label>Open to Relocate</Label>
-                  <Select value={profile.preferences?.openToRelocate || "any"} onValueChange={value => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, openToRelocate: value } }))}>
-                    <SelectTrigger className="rounded-xl">
-                      <SelectValue placeholder="Any" />
+                      </div>
+                      <div>
+                        <Label>Believes in Marriage</Label>
+                        <Select
+                          value={profile.believesInMarriage || ''}
+                          onValueChange={value => setProfile(prev => ({ ...prev, believesInMarriage: value }))}
+                          disabled={!isEditing}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select believes in marriage" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="any">Any</SelectItem>
-                      <SelectItem value="yes">Yes</SelectItem>
-                      <SelectItem value="no">No</SelectItem>
+                            {DATA_CONSTANTS.believesInMarriageOptions.map(option => (
+                              <SelectItem key={option} value={option}>{option.charAt(0).toUpperCase() + option.slice(1)}</SelectItem>
+                            ))}
                     </SelectContent>
                   </Select>
-                  {/* Sexual Orientation */}
-                  <Label>Sexual Orientation</Label>
-                  <Input value={profile.preferences?.sexualOrientation || ""} onChange={e => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, sexualOrientation: e.target.value } }))} placeholder="Any" className="rounded-xl" />
-                  {/* Relationship Tradition */}
-                  <Label>Relationship Tradition</Label>
-                  <Input value={profile.preferences?.relationshipTradition || ""} onChange={e => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, relationshipTradition: e.target.value } }))} placeholder="Any" className="rounded-xl" />
+                      </div>
+                    </div>
+                  </div>
+                  {/* About Me */}
+                  <div>
+                    <h3 className="font-bold text-lg text-[#B22222] mb-2">About Me</h3>
+                    <Textarea 
+                      value={profile.bio || profile.selfDescription || ''} 
+                      onChange={e => {
+                        const value = e.target.value.split(/\s+/).slice(0, 25).join(" ");
+                        setProfile(prev => ({ ...prev, bio: value, selfDescription: value }));
+                      }}
+                      placeholder="Describe yourself in your own words"
+                      disabled={!isEditing}
+                    />
+                    <div className="text-xs text-gray-700 mt-1 block w-full text-right whitespace-nowrap">
+                      {((profile.bio || profile.selfDescription)?.trim() || '').split(/\s+/).length}/25 words
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
-            )}
           </TabsContent>
 
           <TabsContent value="preferences" className="space-y-6">
@@ -837,10 +1860,10 @@ export default function ProfilePage() {
               <CardContent className="space-y-6 max-h-[70vh] overflow-y-auto scrollbar-thin scrollbar-thumb-[#B22222] scrollbar-track-gray-200 dark:scrollbar-thumb-red-400 dark:scrollbar-track-gray-800">
                 <div>
                   <Label className="text-gray-700 dark:text-gray-300 mb-3 block">
-                    Age Range: {profile.preferences.ageRange[0]} - {profile.preferences.ageRange[1]} years
+                    Age Range: {profile.preferences?.ageRange?.[0] || 25} - {profile.preferences?.ageRange?.[1] || 35} years
                   </Label>
                   <Slider
-                    value={profile.preferences.ageRange}
+                    value={profile.preferences?.ageRange || [25, 35]}
                     onValueChange={(value) =>
                       setProfile((prev) => ({
                         ...prev,
@@ -859,7 +1882,7 @@ export default function ProfilePage() {
                     Looking For
                   </Label>
                   <Select
-                    value={profile.preferences.lookingFor}
+                    value={profile.preferences?.lookingFor || "serious"}
                     onValueChange={(value) =>
                       setProfile((prev) => ({
                         ...prev,
@@ -1007,6 +2030,106 @@ export default function ProfilePage() {
         <SelectItem value="any">Any</SelectItem>
         <SelectItem value="yes">Yes</SelectItem>
         <SelectItem value="no">No</SelectItem>
+      </SelectContent>
+    </Select>
+  </div>
+</details>
+
+<details className="mb-4">
+  <summary className="font-semibold text-gray-900 dark:text-gray-100 cursor-pointer py-2">Health</summary>
+  <div className="space-y-3 mt-2">
+    {/* HIV Status */}
+    <Label>HIV Status</Label>
+    <Select value={profile.preferences?.hivStatus || "any"} onValueChange={value => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, hivStatus: value } }))} disabled={!isEditing}>
+      <SelectTrigger className="rounded-xl">
+        <SelectValue placeholder="Any HIV Status" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="any">Any</SelectItem>
+        <SelectItem value="negative">Negative</SelectItem>
+        <SelectItem value="positive">Positive</SelectItem>
+        <SelectItem value="prefer-not-to-say">Prefer not to say</SelectItem>
+      </SelectContent>
+    </Select>
+    {/* Disability */}
+    <Label>Disability</Label>
+    <Select value={profile.preferences?.disability || "any"} onValueChange={value => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, disability: value } }))} disabled={!isEditing}>
+      <SelectTrigger className="rounded-xl">
+        <SelectValue placeholder="Any Disability" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="any">Any</SelectItem>
+        <SelectItem value="none">None</SelectItem>
+        <SelectItem value="physical">Physical</SelectItem>
+        <SelectItem value="visual">Visual</SelectItem>
+        <SelectItem value="hearing">Hearing</SelectItem>
+        <SelectItem value="cognitive">Cognitive</SelectItem>
+        <SelectItem value="other">Other</SelectItem>
+      </SelectContent>
+    </Select>
+    {/* Chronic Illness */}
+    <Label>Chronic Illness</Label>
+    <Select value={profile.preferences?.chronicIllness || "any"} onValueChange={value => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, chronicIllness: value } }))} disabled={!isEditing}>
+      <SelectTrigger className="rounded-xl">
+        <SelectValue placeholder="Any Chronic Illness" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="any">Any</SelectItem>
+        <SelectItem value="none">None</SelectItem>
+        <SelectItem value="diabetes">Diabetes</SelectItem>
+        <SelectItem value="hypertension">Hypertension</SelectItem>
+        <SelectItem value="asthma">Asthma</SelectItem>
+        <SelectItem value="arthritis">Arthritis</SelectItem>
+        <SelectItem value="heart-disease">Heart Disease</SelectItem>
+        <SelectItem value="other">Other</SelectItem>
+      </SelectContent>
+    </Select>
+    {/* Allergies */}
+    <Label>Allergies</Label>
+    <Select value={profile.preferences?.allergies || "any"} onValueChange={value => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, allergies: value } }))} disabled={!isEditing}>
+      <SelectTrigger className="rounded-xl">
+        <SelectValue placeholder="Any Allergies" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="any">Any</SelectItem>
+        <SelectItem value="none">None</SelectItem>
+        <SelectItem value="food">Food</SelectItem>
+        <SelectItem value="medication">Medication</SelectItem>
+        <SelectItem value="environmental">Environmental</SelectItem>
+        <SelectItem value="other">Other</SelectItem>
+      </SelectContent>
+    </Select>
+    {/* Blood Type */}
+    <Label>Blood Type</Label>
+    <Select value={profile.preferences?.bloodType || "any"} onValueChange={value => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, bloodType: value } }))} disabled={!isEditing}>
+      <SelectTrigger className="rounded-xl">
+        <SelectValue placeholder="Any Blood Type" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="any">Any</SelectItem>
+        <SelectItem value="a-positive">A+</SelectItem>
+        <SelectItem value="a-negative">A-</SelectItem>
+        <SelectItem value="b-positive">B+</SelectItem>
+        <SelectItem value="b-negative">B-</SelectItem>
+        <SelectItem value="ab-positive">AB+</SelectItem>
+        <SelectItem value="ab-negative">AB-</SelectItem>
+        <SelectItem value="o-positive">O+</SelectItem>
+        <SelectItem value="o-negative">O-</SelectItem>
+      </SelectContent>
+    </Select>
+    {/* Exercise Frequency */}
+    <Label>Exercise Frequency</Label>
+    <Select value={profile.preferences?.exerciseFrequency || "any"} onValueChange={value => setProfile(prev => ({ ...prev, preferences: { ...prev.preferences, exerciseFrequency: value } }))} disabled={!isEditing}>
+      <SelectTrigger className="rounded-xl">
+        <SelectValue placeholder="Any Exercise Frequency" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="any">Any</SelectItem>
+        <SelectItem value="never">Never</SelectItem>
+        <SelectItem value="rarely">Rarely</SelectItem>
+        <SelectItem value="sometimes">Sometimes</SelectItem>
+        <SelectItem value="regularly">Regularly</SelectItem>
+        <SelectItem value="daily">Daily</SelectItem>
       </SelectContent>
     </Select>
   </div>
